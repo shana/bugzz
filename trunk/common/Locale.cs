@@ -1,3 +1,16 @@
+//
+// Locale.cs
+//
+// Author:
+//   Miguel de Icaza (miguel@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) 2001 - 2003 Ximian, Inc (http://www.ximian.com)
+//
+
+//
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -17,63 +30,22 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2001-2005 Novell, Inc.
-//
-// Authors:
-//	Miguel de Icaza (miguel@ximian.com)
-//	Andreas Nahr	(ClassDevelopment@A-SoftTech.com)
-//	Peter Bartok	(pbartok@novell.com)
-//
-//
-
-// NOT COMPLETE
 
 using System;
-using System.Globalization;
-using System.Reflection;
-using System.Resources;
 
 internal sealed class Locale {
-	#region Local Variables
-	private static ResourceManager	rm;
-	#endregion	// Local Variables
 
-	#region Constructors
-	static Locale () {
-		rm = new ResourceManager("System.Windows.Forms", Assembly.GetExecutingAssembly());
-	}
-	#endregion
-
-	#region Static Properties
-	public static ResourceManager ResourceManager {
-		get {
-			return rm;
-		}
+	private Locale ()
+	{
 	}
 
-	#endregion	// Static Properties
-
-	#region Static Methods
-	public static string GetText (string msg){
-		string ret;
-
-// This code and behaviour may change without notice. It's a placeholder until I
-// understand how Miguels wants localization of strings done.
-		ret = (string)rm.GetObject(msg);
-		if (ret != null) {
-			return ret;
-		}
+	public static string GetText (string msg)
+	{
 		return msg;
 	}
 
-	public static string GetText (string msg, params object [] args)
+	public static string GetText (string fmt, params object [] args)
 	{
-		return String.Format (GetText (msg), args);
+		return String.Format (fmt, args);
 	}
-
-	public static object GetResource(string name) {
-		return rm.GetObject(name);
-	}
-	#endregion	// Static Methods
 }
-

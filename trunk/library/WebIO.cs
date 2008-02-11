@@ -18,6 +18,9 @@ namespace Bugzz.Network
 		
 		public WebIO (string baseUrl)
 		{
+			if (String.IsNullOrEmpty (baseUrl))
+				throw new ArgumentNullException ("Base request URL must be specified.", "baseUrl");
+			
 			try {
 				this.baseUrl = new Uri (baseUrl);
 			} catch (Exception ex) {
@@ -25,7 +28,7 @@ namespace Bugzz.Network
 			}
 		}
 
-		protected string GetDocument (string relativeUrl)
+		public string GetDocument (string relativeUrl)
 		{
 			WebClient wc = new WebClient ();
 			wc.Headers.Add ("user-agent", userAgent);
@@ -41,7 +44,7 @@ namespace Bugzz.Network
 			}
 			
 			try {
-				using (Stream data = wc.OpenRead (relativeUrl)) {
+				using (Stream data = wc.OpenRead (fullUrl)) {
 					using (StreamReader reader = new StreamReader (data)) {
 						return reader.ReadToEnd ();
 					}
