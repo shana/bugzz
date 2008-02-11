@@ -1,6 +1,8 @@
 2008-02-11  Marek Habersack  <mhabersack@novell.com>
 
-	* BugzzException.cs, BugzzWebIOException.cs, WebIO.cs: added
+	* BugzzException.cs, BugzzWebIOException.cs, WebIO.cs,
+	Bugzilla.cs, BugzillaData.cs, BugzillaVersionData.cs,
+	BugzzBugzillaException.cs: added
 
 	* Makefile.am (Bugzz.dll): make target depend on the sources.
 

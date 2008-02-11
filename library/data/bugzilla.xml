@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<bugzilla>
+  <supportedVersions>
+    <version name="3.0" label="3.0" default="true"/>
+  </supportedVersions>
+
+  <version value="3.0">
+    <urls>
+      <url name="initial" value="query.cgi?format=advanced"/>
+    </urls>
+
+    <variables>
+      <initial>
+	<variable name="classification" value="classification"/>
+	<variable name="product" value="product"/>
+	<variable name="component" value="component"/>
+	<variable name="version" value="version"/>
+	<variable name="target_milestone" value="target_milestone"/>
+	<variable name="bug_file_loc_type" value="bug_file_loc_type"/>
+	<variable name="status_whiteboard_type" value="status_whiteboard_type"/>
+	<variable name="keywords_type" value="keywords_type"/>
+	<variable name="bug_status" value="bug_status"/>
+	<variable name="resolution" value="resolution"/>
+	<variable name="bug_severity" value="bug_severity"/>
+	<variable name="priority" value="priority"/>
+	<variable name="rep_platform" value="rep_platform"/>
+	<variable name="op_sys" value="op_sys"/>
+      </initial>
+    </variables>
+  </version>
+</bugzilla>

@@ -81,6 +81,7 @@ AC_SUBST(CSHARP_FLAGS)
 
 dnl Intl
 GETTEXT_PACKAGE=Bugzz
+AC_SUBST(PKGPREFIX)
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [Gettext package])
 # ALL_LINGUAS="da es fr ca pt_BR"
@@ -107,6 +108,7 @@ po/Makefile.in
 library/Makefile
 3rdparty/Makefile
 3rdparty/HtmlAgilityPack/Makefile
+common/Constants.cs
 ])
 
 echo "---"
