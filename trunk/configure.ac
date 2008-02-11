@@ -105,6 +105,8 @@ AC_OUTPUT([
 Makefile
 po/Makefile.in
 library/Makefile
+3rdparty/Makefile
+3rdparty/HtmlAgilityPack/Makefile
 ])
 
 echo "---"

@@ -1,2 +1,2 @@
-SUBDIRS=po library
+SUBDIRS=po 3rdparty library
 
