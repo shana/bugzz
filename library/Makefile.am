@@ -21,7 +21,7 @@ EXTRA_DIST = $(sources) $(resources)
 # bugzz.in bugzz.mds bugzz.mdp
 
 packages = 
-assemblies = -r:System -r:System.Xml
+assemblies = -r:System -r:System.Xml -r:../3rdparty/HtmlAgilityPack/HtmlAgilityPack.dll
 ress =
 # ress= $(foreach res,$(resources), $(addprefix -resource:,$(res)),$(notdir $(res)))
 
