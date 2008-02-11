@@ -13,7 +13,7 @@ namespace Bugzz.Network
 		static WebIO ()
 		{
 			// TODO: construct something funnier later on
-			userAgent = "Buggz/0.0.1";
+			userAgent = Bugzz.Constants.Package + "/" + Bugzz.Constants.Version;
 		}
 		
 		public WebIO (string baseUrl)

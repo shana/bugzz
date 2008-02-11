@@ -1,5 +1,10 @@
 ../common/Locale.cs
+../common/Constants.cs
 AssemblyInfo.cs
+Bugzilla.cs
+BugzillaData.cs
+BugzillaVersionData.cs
+BugzzBugzillaException.cs
 BugzzException.cs
 BugzzWebIOException.cs
 WebIO.cs

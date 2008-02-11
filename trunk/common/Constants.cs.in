@@ -1,0 +1,17 @@
+using System;
+using System.IO;
+
+namespace Bugzz
+{
+	public class Constants 
+	{
+		public static readonly string DataDirectory;
+		public const string Version = "@VERSION@";
+		public const string Package = "@PACKAGE@";
+		
+		static Constants ()
+		{
+			DataDirectory = String.Format ("@prefix@{0}@DATADIRNAME@{0}@PACKAGE@", Path.DirectorySeparatorChar);
+		}
+	}
+}
