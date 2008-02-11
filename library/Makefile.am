@@ -30,3 +30,7 @@ ress =
 
 Bugzz.dll: $(resources) $(shell cat Bugzz.dll.sources)
 	$(GMCS) -noconfig -codepage:utf8 -warn:4 -optimize+ -debug -define:DEBUG -target:library -out:Bugzz.dll $(sources) $(ress) $(packages) $(assemblies)
+
+
+# build/rules.make
+# LIBRARY = Bugzz.dll
