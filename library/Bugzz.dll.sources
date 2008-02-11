@@ -1,1 +1,5 @@
+../common/Locale.cs
 AssemblyInfo.cs
+BugzzException.cs
+BugzzWebIOException.cs
+WebIO.cs
