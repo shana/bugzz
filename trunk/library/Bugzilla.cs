@@ -94,6 +94,14 @@ namespace Bugzz.Bugzilla
 			}
 
 			initialDataLoaded = true;
+
+			Console.WriteLine ("Classifications:");
+			foreach (BugzillaClassification bc in classifications)
+				Console.WriteLine (bc);
+
+			Console.WriteLine ("\nProducts:");
+			foreach (BugzillaProduct bc in products)
+				Console.WriteLine (bc);
 		}
 
 		void StoreSelectValues (HtmlNode selectNode, string canonicalName)
@@ -101,7 +109,7 @@ namespace Bugzz.Bugzilla
 			HtmlNodeCollection nodes = selectNode.SelectNodes ("./option");
 
 			switch (canonicalName) {
-				case "classifications":
+				case "classification":
 					StoreValues <BugzillaClassification> (classifications, nodes);
 					break;
 
@@ -137,7 +145,7 @@ namespace Bugzz.Bugzilla
 				else
 					value = null;
 
-				label = node.InnerText;
+				label = node.InnerText.Trim ();
 				newItem = new T ();
 				newItem.Set (label, value != null ? value.Value : label);
 				bag.Add (newItem);
