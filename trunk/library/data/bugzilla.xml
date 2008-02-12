@@ -7,7 +7,6 @@
   <version value="3.0">
     <urls>
       <url name="initial" value="query.cgi?format=advanced"/>
-      <url name="initial_classification" value="query.cgi?format=advanced&amp;classification={0}"/>
     </urls>
 
     <variables>
