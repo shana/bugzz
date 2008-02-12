@@ -1,3 +1,16 @@
+2008-02-12  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile.am (assemblies): added Mono.C5
+
+	* BugzillaVersionData.cs: added support for storing initial
+	variables.
+
+	* Bugzilla.cs: initial data gets loaded on Refresh () now.
+
+	* BugzillaInitialValue.cs, BugzillaComponent.cs,
+	BugzillaProduct.cs, BugzillaFoundInVersion.cs,
+	BugzillaFixedInMilestone.cs, BugzillaClassification.cs: added
+
 2008-02-11  Marek Habersack  <mhabersack@novell.com>
 
 	* BugzzException.cs, BugzzWebIOException.cs, WebIO.cs,

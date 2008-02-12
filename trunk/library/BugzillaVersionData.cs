@@ -47,5 +47,32 @@ namespace Bugzz.Bugzilla
 
 			return null;
 		}
+
+		// Looks up web variable name using canonical variable name
+		public string GetInitialVariable (string name)
+		{
+			string ret;
+
+			if (initialVariables.TryGetValue (name, out ret))
+				return ret;
+
+
+			return null;
+		}
+
+		// Checks if we're interested for a variable with a web name 'name' and returns the
+		// corresponding canonical name. It has to be implemented using a linear search
+		// since there might be cases when several canonical names will map to the same web
+		// name.
+		public string HasInitialVariable (string name)
+		{
+			foreach (KeyValuePair <string, string> kvp in initialVariables) {
+				if (kvp.Value == name)
+					return kvp.Key;
+			}
+
+			return null;
+		}
+		
 	}
 }

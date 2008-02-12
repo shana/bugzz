@@ -2,6 +2,8 @@ using System;
 using System.IO;
 using System.Xml;
 
+using C5;
+
 using Bugzz.Network;
 using HtmlAgilityPack;
 
@@ -10,12 +12,17 @@ namespace Bugzz.Bugzilla
 	public class Bugzilla
 	{
 		static object bugzillaDataLock = new object ();
+		static BugzillaData bugzillaData;
+
+		HashBag <BugzillaClassification> classifications = new HashBag <BugzillaClassification> ();
+		HashBag <BugzillaProduct> products = new HashBag <BugzillaProduct> ();
+		HashBag <BugzillaComponent> components = new HashBag <BugzillaComponent> ();
+		HashBag <BugzillaFoundInVersion> foundInVersion = new HashBag <BugzillaFoundInVersion> ();
+		HashBag <BugzillaFixedInMilestone> fixedInMilestone = new HashBag <BugzillaFixedInMilestone> ();
 		
 		WebIO webIO;
 		bool initialDataLoaded;
 		string targetVersion;
-
-		static BugzillaData bugzillaData;
 		
 		static Bugzilla ()
 		{
@@ -32,11 +39,11 @@ namespace Bugzz.Bugzilla
 			webIO = new WebIO (baseUrl);
 			this.targetVersion = targetVersion;
 		}
-		
+
 		public void Refresh ()
 		{
 			LoadInitialData ();
-		}
+		}		
 		
 		void LoadInitialData ()
 		{
@@ -68,15 +75,73 @@ namespace Bugzz.Bugzilla
 			try {
 				doc.LoadHtml (query);
 			} catch (Exception ex) {
-				throw new BugzzBugzillaException ("Failed to parse the response document.");
+				throw new BugzzBugzillaException ("Failed to parse the response document.", ex);
 			}
 
 			HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes ("//select[string-length (@id) > 0]");
 			if (nodes == null || nodes.Count == 0)
 				throw new BugzzBugzillaException ("No initial data found.");
+
+			// First load the "toplevel" values - that is, all possible values for all
+			// the 5 Product Information selects.
+			string canonicalName, id;
+			foreach (HtmlNode node in nodes) {
+				id = node.Attributes ["id"].Value;
+				canonicalName = bvd.HasInitialVariable (id);
+				if (canonicalName == null)
+					continue;
+				StoreSelectValues (node, canonicalName);
+			}
+
+			initialDataLoaded = true;
+		}
+
+		void StoreSelectValues (HtmlNode selectNode, string canonicalName)
+		{
+			HtmlNodeCollection nodes = selectNode.SelectNodes ("./option");
+
+			switch (canonicalName) {
+				case "classifications":
+					StoreValues <BugzillaClassification> (classifications, nodes);
+					break;
+
+				case "product":
+					StoreValues <BugzillaProduct> (products, nodes);
+					break;
+
+				case "component":
+					StoreValues <BugzillaComponent> (components, nodes);
+					break;
+
+				case "version":
+					StoreValues <BugzillaFoundInVersion> (foundInVersion, nodes);
+					break;
+
+				case "target_milestone":
+					StoreValues <BugzillaFixedInMilestone> (fixedInMilestone, nodes);
+					break;
+			}
+		}
+
+		void StoreValues <T> (HashBag <T> bag, HtmlNodeCollection nodes) where T:BugzillaInitialValue,new()
+		{
+			HtmlAttributeCollection attrs;
+			HtmlAttribute value;
+			string label;
+			T newItem;
 			
-			foreach (HtmlNode node in nodes)
-				Console.WriteLine (node.Id);
+			foreach (HtmlNode node in nodes) {
+				attrs = node.Attributes;
+				if (attrs != null)
+					value = attrs ["value"];
+				else
+					value = null;
+
+				label = node.InnerText;
+				newItem = new T ();
+				newItem.Set (label, value != null ? value.Value : label);
+				bag.Add (newItem);
+			}
 		}
 		
 		bool LogIn ()
@@ -136,7 +201,7 @@ namespace Bugzz.Bugzilla
 						StoreBugzillaVersion (node);
 				}
 				
-			} catch (BugzzException ex) {
+			} catch (BugzzException) {
 				throw;
 			} catch (Exception ex) {
 				throw new BugzzBugzillaException ("Failed to load data file.", ex);
