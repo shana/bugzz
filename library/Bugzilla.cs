@@ -23,6 +23,11 @@ namespace Bugzz.Bugzilla
 		WebIO webIO;
 		bool initialDataLoaded;
 		string targetVersion;
+
+		public WebIO WebIO {
+			get;
+			private set;
+		}
 		
 		static Bugzilla ()
 		{
@@ -36,7 +41,7 @@ namespace Bugzz.Bugzilla
 
 		public Bugzilla (string baseUrl, string targetVersion)
 		{
-			webIO = new WebIO (baseUrl);
+			WebIO = new WebIO (baseUrl);
 			this.targetVersion = targetVersion;
 		}
 
@@ -66,7 +71,7 @@ namespace Bugzz.Bugzilla
 			if (String.IsNullOrEmpty (queryUrl))
 				throw new BugzzBugzillaException ("Cannot retrieve initial data - no URL given.");
 			
-			string query = webIO.GetDocument (queryUrl);
+			string query = WebIO.GetDocument (queryUrl);
 			if (String.IsNullOrEmpty (query))
 				throw new BugzzBugzillaException ("No document returned by server for initial data.");
 			
@@ -82,7 +87,7 @@ namespace Bugzz.Bugzilla
 			if (nodes == null || nodes.Count == 0)
 				throw new BugzzBugzillaException ("No initial data found.");
 
-			// First load the "toplevel" values - that is, all possible values for all
+			// Load the "toplevel" values - that is, all possible values for all
 			// the 5 Product Information selects.
 			string canonicalName, id;
 			foreach (HtmlNode node in nodes) {
@@ -92,18 +97,10 @@ namespace Bugzz.Bugzilla
 					continue;
 				StoreSelectValues (node, canonicalName);
 			}
-
+			
 			initialDataLoaded = true;
-
-			Console.WriteLine ("Classifications:");
-			foreach (BugzillaClassification bc in classifications)
-				Console.WriteLine (bc);
-
-			Console.WriteLine ("\nProducts:");
-			foreach (BugzillaProduct bc in products)
-				Console.WriteLine (bc);
 		}
-
+		
 		void StoreSelectValues (HtmlNode selectNode, string canonicalName)
 		{
 			HtmlNodeCollection nodes = selectNode.SelectNodes ("./option");
