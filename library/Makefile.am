@@ -30,7 +30,7 @@ ress =
 # 	cp `pkg-config --variable=Libraries cecil` .
 
 Bugzz.dll: $(resources) $(shell cat Bugzz.dll.sources)
-	$(GMCS) -noconfig -codepage:utf8 -warn:4 -optimize+ -debug -define:DEBUG -define:NET_3_0 -target:library -out:$(PROGRAM) $(sources) $(ress) $(packages) $(assemblies)
+	$(GMCS) -noconfig -codepage:utf8 -warn:4 -optimize+ -debug -define:DEBUG -target:library -out:$(PROGRAM) $(sources) $(ress) $(packages) $(assemblies)
 
 
 # build/rules.make
