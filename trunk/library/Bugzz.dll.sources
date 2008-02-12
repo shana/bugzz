@@ -20,6 +20,7 @@ Bugzz.Bugzilla/Component.cs
 Bugzz.Bugzilla/Product.cs
 Bugzz.Bugzilla/InitialValue.cs
 Bugzz.Bugzilla/Data.cs
+Bugzz.Bugzilla/DataManager.cs
 Bugzz.Bugzilla/FoundInVersion.cs
 Bugzz/BugzzException.cs
 Bugzz/Bug.cs
