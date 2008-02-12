@@ -1,6 +1,7 @@
 bugzzdir=$(prefix)/library
 bin_SCRIPTS = 
 bugzz_DATA = Bugzz.dll
+PROGRAM = Bugzz.dll
 
 CLEANFILES = Bugzz.dll Bugzz.dll.mdb
 
@@ -29,8 +30,8 @@ ress =
 # 	cp `pkg-config --variable=Libraries cecil` .
 
 Bugzz.dll: $(resources) $(shell cat Bugzz.dll.sources)
-	$(GMCS) -noconfig -codepage:utf8 -warn:4 -optimize+ -debug -define:DEBUG -target:library -out:Bugzz.dll $(sources) $(ress) $(packages) $(assemblies)
+	$(GMCS) -noconfig -codepage:utf8 -warn:4 -optimize+ -debug -define:DEBUG -target:library -out:$(PROGRAM) $(sources) $(ress) $(packages) $(assemblies)
 
 
 # build/rules.make
-# LIBRARY = Bugzz.dll
+
