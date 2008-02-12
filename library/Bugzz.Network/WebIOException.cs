@@ -3,15 +3,15 @@ using Bugzz;
 
 namespace Bugzz.Network
 {
-	public class BugzzWebIOException : BugzzException
+	public class WebIOException : BugzzException
 	{
 		string fullUrl;
 		
-		public BugzzWebIOException () :
+		public WebIOException () :
 			base ("Bugzz Web IO exception occurred.")
 		{}
 
-		public BugzzWebIOException (string message, string fullUrl, Exception innerException)
+		public WebIOException (string message, string fullUrl, Exception innerException)
 			: base (message, innerException)
 		{
 			this.fullUrl = fullUrl;
