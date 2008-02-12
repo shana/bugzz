@@ -30,7 +30,7 @@ namespace Bugzz
 				query.Add ("emailinfoprovider1", "1");
 			}
 		}
-
+		
 		internal string GetQuery () {
 			System.Text.StringBuilder sb = new StringBuilder ();
 			foreach (KeyValuePair<string, string> fields in query) {
