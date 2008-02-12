@@ -64,13 +64,12 @@ class App
 		if (bugz == null)
 			return;
 
-		Dictionary <string, string> vars = new Dictionary <string, string> {
-			{"classification", "Mono"},
-			{"product", "Mono: Class Libraries"},
-			{"component", "Sys.Web"}
-		};
+		Bugzz.Query query = new Bugzz.Query ();
+		query.AddQueryData ("classification", "Mono");
+		query.AddQueryData ("product", "Mono: Class Libraries");
+		query.AddQueryData ("component", "Sys.Web");
 
-		bugz.GetBugList (vars);
+		bugz.GetBugList (query);
 		Console.WriteLine ("Request ended.");
 	}
 	
