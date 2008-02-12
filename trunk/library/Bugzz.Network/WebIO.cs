@@ -10,11 +10,15 @@ namespace Bugzz.Network
 		readonly static string userAgent;
 
 		public event DocumentRetrieveFailureEventHandler DocumentRetrieveFailure;
+		public event DownloadStartedEventHandler DownloadStarted;
 		public event DownloadEndedEventHandler DownloadEnded;
 		public event DownloadProgressEventHandler DownloadProgress;
 		
-		Uri baseUrl;
-
+		public Uri BaseUrl {
+			get;
+			private set;
+		}
+		
 		static WebIO ()
 		{
 			// TODO: construct something funnier later on
@@ -27,7 +31,7 @@ namespace Bugzz.Network
 				throw new ArgumentNullException ("Base request URL must be specified.", "baseUrl");
 			
 			try {
-				this.baseUrl = new Uri (baseUrl);
+				BaseUrl = new Uri (baseUrl);
 			} catch (Exception ex) {
 				throw new ArgumentException ("Invalid base URL.", "baseUrl", ex);
 			}
@@ -41,6 +45,14 @@ namespace Bugzz.Network
 			DocumentRetrieveFailure (this, new DocumentRetrieveFailureEventArgs (req));
 		}
 
+		void OnDownloadStarted (HttpWebResponse response)
+		{
+			if (DownloadStarted == null)
+				return;
+
+			DownloadStarted (this, new DownloadStartedEventArgs (response));
+		}
+		
 		void OnDownloadEnded (HttpWebResponse response)
 		{
 			if (DownloadEnded == null)
@@ -65,7 +77,7 @@ namespace Bugzz.Network
 			HttpWebRequest req;
 			
 			try {
-				UriBuilder ub = new UriBuilder (baseUrl);
+				UriBuilder ub = new UriBuilder (BaseUrl);
 				ub.Path = relativeUrl;
 				fullUrl = ub.ToString ();
 				req = WebRequest.Create (new Uri (fullUrl)) as HttpWebRequest;
@@ -93,14 +105,19 @@ namespace Bugzz.Network
 				
 				using (StreamReader reader = new StreamReader (data)) {
 					count = 0;
-
-					while (count < response.ContentLength) {
+					OnDownloadStarted (response);
+					long contentLength = response.ContentLength;
+					if (contentLength == -1)
+						contentLength = Int64.MaxValue; // potentially
+									       // dangerous
+					
+					while (count < contentLength) {
 						charsRead = reader.Read (buffer, 0, bufferLen);
 						if (charsRead == 0)
 							break;
 
 						count += charsRead;
-						OnDownloadProgress (response.ContentLength, count);
+						OnDownloadProgress (contentLength, count);
 						sb.Append (buffer, 0, charsRead);
 					}
 					OnDownloadEnded (response);

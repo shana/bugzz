@@ -1,5 +1,7 @@
 using System;
+using SGC=System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Xml;
 
 using C5;
@@ -48,25 +50,56 @@ namespace Bugzz.Bugzilla
 		public void Refresh ()
 		{
 			LoadInitialData ();
-		}		
+		}
+
+		public SGC.List <Bug> GetBugList (SGC.Dictionary <string, string> requestVariables)
+		{
+			LoadInitialData ();
+			VersionData bvd = GetVersionData ();
+			string queryUrl = bvd.GetUrl ("buglist");
+
+			if (String.IsNullOrEmpty (queryUrl))
+				throw new BugzillaException ("Cannot retrieve bug list - no URL given.");
+
+			StringBuilder requestUrl = new StringBuilder (queryUrl);
+			bool first = queryUrl.IndexOf ("?") == -1;
+			requestUrl.Append (first ? "?" : "&");
+			requestUrl.Append ("ctype=rdf");
+			BuildQuery (requestUrl, requestVariables);
+			
+			string query = WebIO.GetDocument (requestUrl.ToString ());
+
+			return null;
+		}
+
+		void BuildQuery (StringBuilder requestUrl, SGC.Dictionary <string, string> requestVariables)
+		{
+			if (requestVariables != null) {
+				foreach (SGC.KeyValuePair <string, string> kvp in requestVariables)
+					requestUrl.Append ("&" + kvp.Key + "=" + kvp.Value);
+			}
+		}
+		
+		VersionData GetVersionData ()
+		{
+			VersionData ret = null;
+
+			if (!String.IsNullOrEmpty (targetVersion))
+				ret = bugzillaData.GetVersionData (targetVersion);
+			if (ret == null)
+				ret = bugzillaData.DefaultVersion;
+			if (ret == null)
+				throw new BugzillaException ("Unable to determine bugzila version data to use.");
+
+			return ret;
+		}
 		
 		void LoadInitialData ()
 		{
 			if (initialDataLoaded)
 				return;
 
-			if (!LogIn ())
-				throw new BugzillaException ("Login failed.");
-
-			VersionData bvd = null;
-
-			if (!String.IsNullOrEmpty (targetVersion))
-				bvd = bugzillaData.GetVersionData (targetVersion);
-			if (bvd == null)
-				bvd = bugzillaData.DefaultVersion;
-			if (bvd == null)
-				throw new BugzillaException ("Unable to determine bugzila version data to use.");
-
+			VersionData bvd = GetVersionData ();
 			string queryUrl = bvd.GetUrl ("initial");
 			if (String.IsNullOrEmpty (queryUrl))
 				throw new BugzillaException ("Cannot retrieve initial data - no URL given.");
