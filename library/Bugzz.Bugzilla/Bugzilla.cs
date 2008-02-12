@@ -12,13 +12,13 @@ namespace Bugzz.Bugzilla
 	public class Bugzilla
 	{
 		static object bugzillaDataLock = new object ();
-		static BugzillaData bugzillaData;
+		static Data bugzillaData;
 
-		HashBag <BugzillaClassification> classifications = new HashBag <BugzillaClassification> ();
-		HashBag <BugzillaProduct> products = new HashBag <BugzillaProduct> ();
-		HashBag <BugzillaComponent> components = new HashBag <BugzillaComponent> ();
-		HashBag <BugzillaFoundInVersion> foundInVersion = new HashBag <BugzillaFoundInVersion> ();
-		HashBag <BugzillaFixedInMilestone> fixedInMilestone = new HashBag <BugzillaFixedInMilestone> ();
+		HashBag <Classification> classifications = new HashBag <Classification> ();
+		HashBag <Product> products = new HashBag <Product> ();
+		HashBag <Component> components = new HashBag <Component> ();
+		HashBag <FoundInVersion> foundInVersion = new HashBag <FoundInVersion> ();
+		HashBag <FixedInMilestone> fixedInMilestone = new HashBag <FixedInMilestone> ();
 		
 		WebIO webIO;
 		bool initialDataLoaded;
@@ -31,7 +31,7 @@ namespace Bugzz.Bugzilla
 		
 		static Bugzilla ()
 		{
-			LoadBugzillaData ();
+			LoadData ();
 		}
 		
 		public Bugzilla (string baseUrl)
@@ -56,36 +56,36 @@ namespace Bugzz.Bugzilla
 				return;
 
 			if (!LogIn ())
-				throw new BugzzBugzillaException ("Login failed.");
+				throw new BugzillaException ("Login failed.");
 
-			BugzillaVersionData bvd = null;
+			VersionData bvd = null;
 
 			if (!String.IsNullOrEmpty (targetVersion))
 				bvd = bugzillaData.GetVersionData (targetVersion);
 			if (bvd == null)
 				bvd = bugzillaData.DefaultVersion;
 			if (bvd == null)
-				throw new BugzzBugzillaException ("Unable to determine bugzila version data to use.");
+				throw new BugzillaException ("Unable to determine bugzila version data to use.");
 
 			string queryUrl = bvd.GetUrl ("initial");
 			if (String.IsNullOrEmpty (queryUrl))
-				throw new BugzzBugzillaException ("Cannot retrieve initial data - no URL given.");
+				throw new BugzillaException ("Cannot retrieve initial data - no URL given.");
 			
 			string query = WebIO.GetDocument (queryUrl);
 			if (String.IsNullOrEmpty (query))
-				throw new BugzzBugzillaException ("No document returned by server for initial data.");
+				throw new BugzillaException ("No document returned by server for initial data.");
 			
 			HtmlDocument doc = new HtmlDocument ();
 
 			try {
 				doc.LoadHtml (query);
 			} catch (Exception ex) {
-				throw new BugzzBugzillaException ("Failed to parse the response document.", ex);
+				throw new BugzillaException ("Failed to parse the response document.", ex);
 			}
 
 			HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes ("//select[string-length (@id) > 0]");
 			if (nodes == null || nodes.Count == 0)
-				throw new BugzzBugzillaException ("No initial data found.");
+				throw new BugzillaException ("No initial data found.");
 
 			// Load the "toplevel" values - that is, all possible values for all
 			// the 5 Product Information selects.
@@ -107,28 +107,28 @@ namespace Bugzz.Bugzilla
 
 			switch (canonicalName) {
 				case "classification":
-					StoreValues <BugzillaClassification> (classifications, nodes);
+					StoreValues <Classification> (classifications, nodes);
 					break;
 
 				case "product":
-					StoreValues <BugzillaProduct> (products, nodes);
+					StoreValues <Product> (products, nodes);
 					break;
 
 				case "component":
-					StoreValues <BugzillaComponent> (components, nodes);
+					StoreValues <Component> (components, nodes);
 					break;
 
 				case "version":
-					StoreValues <BugzillaFoundInVersion> (foundInVersion, nodes);
+					StoreValues <FoundInVersion> (foundInVersion, nodes);
 					break;
 
 				case "target_milestone":
-					StoreValues <BugzillaFixedInMilestone> (fixedInMilestone, nodes);
+					StoreValues <FixedInMilestone> (fixedInMilestone, nodes);
 					break;
 			}
 		}
 
-		void StoreValues <T> (HashBag <T> bag, HtmlNodeCollection nodes) where T:BugzillaInitialValue,new()
+		void StoreValues <T> (HashBag <T> bag, HtmlNodeCollection nodes) where T:InitialValue,new()
 		{
 			HtmlAttributeCollection attrs;
 			HtmlAttribute value;
@@ -154,7 +154,7 @@ namespace Bugzz.Bugzilla
 			return true;
 		}
 
-		static void LoadBugzillaData ()
+		static void LoadData ()
 		{
 			string datafile = Path.Combine (Bugzz.Constants.DataDirectory, "bugzilla.xml");
 
@@ -170,7 +170,7 @@ namespace Bugzz.Bugzilla
 				return;
 			}
 #endif
-			throw new BugzzBugzillaException ("Bugzilla data file not found.");
+			throw new BugzillaException ("Bugzilla data file not found.");
 		}
 
 		static void LoadDataFile (string dataFile)
@@ -183,13 +183,13 @@ namespace Bugzz.Bugzilla
 				
 				XmlNodeList nodes = doc.SelectNodes ("/bugzilla/supportedVersions/version[string-length (@name) > 0 and string-length (@label) > 0]");
 				if (nodes == null || nodes.Count == 0)
-					throw new BugzzBugzillaException ("Missing supported versions information in the data file.");
+					throw new BugzillaException ("Missing supported versions information in the data file.");
 
 				lock (bugzillaDataLock) {
 					XmlAttribute name, label;
 					XmlAttributeCollection attrs;
 					
-					bugzillaData = new BugzillaData ();
+					bugzillaData = new Data ();
 					foreach (XmlNode node in nodes) {
 						attrs = node.Attributes;
 						name = attrs ["name"];
@@ -200,7 +200,7 @@ namespace Bugzz.Bugzilla
 
 					nodes = doc.SelectNodes ("/bugzilla/version[string-length (@value) > 0]");
 					if (nodes == null || nodes.Count == 0)
-						throw new BugzzBugzillaException ("No bugzilla definitions found in the data file.");
+						throw new BugzillaException ("No bugzilla definitions found in the data file.");
 
 					foreach (XmlNode node in nodes)
 						StoreBugzillaVersion (node);
@@ -209,7 +209,7 @@ namespace Bugzz.Bugzilla
 			} catch (BugzzException) {
 				throw;
 			} catch (Exception ex) {
-				throw new BugzzBugzillaException ("Failed to load data file.", ex);
+				throw new BugzillaException ("Failed to load data file.", ex);
 			}
 		}
 
@@ -219,9 +219,9 @@ namespace Bugzz.Bugzilla
 			XmlNodeList nodes = versionNode.SelectNodes ("./urls/url[string-length (@name) > 0 and string-length (@value) > 0]");
 
 			if (nodes == null || nodes.Count == 0)
-				throw new BugzzBugzillaException ("No URLs defined for version.");
+				throw new BugzillaException ("No URLs defined for version.");
 
-			BugzillaVersionData bvd = new BugzillaVersionData (version);
+			VersionData bvd = new VersionData (version);
 			
 			XmlAttribute name, value;
 			XmlAttributeCollection attrs;
@@ -236,7 +236,7 @@ namespace Bugzz.Bugzilla
 
 			nodes = versionNode.SelectNodes ("./variables/initial/variable[string-length (@name) > 0 and string-length (@value) > 0]");
 			if (nodes == null || nodes.Count == 0)
-				throw new BugzzBugzillaException ("No initial variables defined for version.");
+				throw new BugzillaException ("No initial variables defined for version.");
 
 			foreach (XmlNode node in nodes) {
 				attrs = node.Attributes;

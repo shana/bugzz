@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace Bugzz.Bugzilla
 {
-	internal class BugzillaData
+	internal class Data
 	{
 		SortedDictionary <string, string> supportedVersions;
-		List <BugzillaVersionData> versionData;
-		BugzillaVersionData defaultVersion;
+		List <VersionData> versionData;
+		VersionData defaultVersion;
 
-		public BugzillaVersionData DefaultVersion {
+		public VersionData DefaultVersion {
 			get {
 				if (defaultVersion != null)
 					return defaultVersion;
@@ -21,10 +21,10 @@ namespace Bugzz.Bugzilla
 			}
 		}
 			
-		public BugzillaData ()
+		public Data ()
 		{
 			supportedVersions = new SortedDictionary <string, string> ();
-			versionData = new List <BugzillaVersionData> ();
+			versionData = new List <VersionData> ();
 		}
 
 		public void AddSupportedVersion (string version, string label)
@@ -41,19 +41,19 @@ namespace Bugzz.Bugzilla
 			supportedVersions.Add (version, label);
 		}
 
-		public void AddVersionData (string version, BugzillaVersionData data, bool isDefault)
+		public void AddVersionData (string version, VersionData data, bool isDefault)
 		{
 			versionData.Add (data);
 			if (isDefault)
 				defaultVersion = data;
 		}
 
-		public BugzillaVersionData GetVersionData (string version)
+		public VersionData GetVersionData (string version)
 		{
 			if (versionData.Count == 0)
 				return null;
 
-			foreach (BugzillaVersionData bvd in versionData)
+			foreach (VersionData bvd in versionData)
 				if (bvd.Version == version)
 					return bvd;
 
