@@ -22,7 +22,7 @@ namespace Bugzz.Network
 		static WebIO ()
 		{
 			// TODO: construct something funnier later on
-			userAgent = Bugzz.Constants.Package + "/" + Bugzz.Constants.Version;
+			userAgent = global::Bugzz.Constants.Package + "/" + global::Bugzz.Constants.Version;
 		}
 		
 		public WebIO (string baseUrl)

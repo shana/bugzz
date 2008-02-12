@@ -6,6 +6,7 @@ using System.Xml;
 
 using C5;
 
+using Bugzz;
 using Bugzz.Network;
 using HtmlAgilityPack;
 
@@ -22,13 +23,12 @@ namespace Bugzz.Bugzilla
 		HashBag <FoundInVersion> foundInVersion = new HashBag <FoundInVersion> ();
 		HashBag <FixedInMilestone> fixedInMilestone = new HashBag <FixedInMilestone> ();
 		
-		static WebIO webIO;
 		bool initialDataLoaded;
 		string targetVersion;
 
-		public static WebIO WebIO {
-			get { return webIO; }
-			private set { webIO = value; }
+		public WebIO WebIO {
+			get;
+			private set;
 		}
 		
 		static Bugzilla ()
@@ -52,7 +52,12 @@ namespace Bugzz.Bugzilla
 			LoadInitialData ();
 		}
 
-		public SGC.List <Bug> GetBugList (SGC.Dictionary <string, string> requestVariables)
+		public SGC.List <Bug> Search (Query q)
+		{
+			return null;
+		}
+		
+		public SGC.List <Bug> GetBugList (Query q)
 		{
 			LoadInitialData ();
 			VersionData bvd = GetVersionData ();
@@ -61,23 +66,12 @@ namespace Bugzz.Bugzilla
 			if (String.IsNullOrEmpty (queryUrl))
 				throw new BugzillaException ("Cannot retrieve bug list - no URL given.");
 
-			StringBuilder requestUrl = new StringBuilder (queryUrl);
-			bool first = queryUrl.IndexOf ("?") == -1;
-			requestUrl.Append (first ? "?" : "&");
-			requestUrl.Append ("ctype=rdf");
-			BuildQuery (requestUrl, requestVariables);
+			q.SetUrl (queryUrl);
+			q.AddQueryData ("ctype", "rdf");
 			
-			string query = WebIO.GetDocument (requestUrl.ToString ());
+			string query = WebIO.GetDocument (q.ToString ());
 
 			return null;
-		}
-
-		void BuildQuery (StringBuilder requestUrl, SGC.Dictionary <string, string> requestVariables)
-		{
-			if (requestVariables != null) {
-				foreach (SGC.KeyValuePair <string, string> kvp in requestVariables)
-					requestUrl.Append ("&" + kvp.Key + "=" + kvp.Value);
-			}
 		}
 		
 		VersionData GetVersionData ()

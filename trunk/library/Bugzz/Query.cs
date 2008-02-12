@@ -6,37 +6,93 @@ namespace Bugzz
 {
 	public class Query
 	{
-		private Dictionary<string, string> query;
-
+		readonly char[] QUERY_SPLIT_CHARS = {'&', ';'};
+		
+		string queryPath;
+		
+		public Dictionary<string, string> QueryData {
+			get;
+			private set;
+		}
+		
 		public Query ()
 		{
-			query = new Dictionary<string, string> ();
+			QueryData = new Dictionary<string, string> ();
 		}
 
 		public string Email
 		{
-			get { return query["email1"]; }
+			get { return QueryData ["email1"]; }
 			set {
-				if (!query.ContainsKey ("email1"))
-					query.Add ("email1", value);
-				else
-					query["email1"] = value;
+				var data = QueryData;
 
-				if (query.ContainsKey ("emailtype1")) query.Remove ("emailtype1");
-				if (query.ContainsKey ("emailassigned_to1")) query.Remove ("emailassigned_to1");
-				if (query.ContainsKey ("emailtype1")) query.Remove ("emailinfoprovider1");
-				query.Add ("emailtype1", "exact");
-				query.Add ("emailassigned_to1", "1");
-				query.Add ("emailinfoprovider1", "1");
+				AddQueryData ("email1", value);
+				if (data.ContainsKey ("emailtype1"))
+					data.Remove ("emailtype1");
+				
+				if (data.ContainsKey ("emailassigned_to1"))
+					data.Remove ("emailassigned_to1");
+				
+				if (data.ContainsKey ("emailtype1"))
+					data.Remove ("emailinfoprovider1");
+				
+				data.Add ("emailtype1", "exact");
+				data.Add ("emailassigned_to1", "1");
+				data.Add ("emailinfoprovider1", "1");
+			}
+		}
+
+		public void AddQueryData (string fieldName, string fieldValue)
+		{
+			var data = QueryData;
+
+			if (data.ContainsKey (fieldName))
+				data [fieldName] = fieldValue;
+			else
+				data.Add (fieldName, fieldValue);
+		}
+
+		internal void SetUrl (string url)
+		{
+			if (String.IsNullOrEmpty (url))
+				return;
+
+			int pos = url.IndexOf ("?");
+			if (pos == -1)
+				queryPath = url;
+			else {
+				queryPath = url.Substring (0, pos);
+				string[] item;
+				
+				foreach (string p in url.Substring (pos + 1).Split (QUERY_SPLIT_CHARS)) {
+					item = p.Split ('=');
+					if (item.Length == 2)
+						AddQueryData (item [0], item [1]);
+					else
+						AddQueryData (item [0], String.Empty);
+				}
 			}
 		}
 		
-		internal string GetQuery () {
-			System.Text.StringBuilder sb = new StringBuilder ();
-			foreach (KeyValuePair<string, string> fields in query) {
-				sb.Append ("&" + fields.Key + "=" + fields.Value);
+		public override string ToString ()
+		{
+			var data = QueryData;
+			StringBuilder ret = new StringBuilder ((queryPath ?? String.Empty) + "?");
+			
+			if (data != null) {
+				bool first = true;
+				
+				foreach (KeyValuePair <string, string> kvp in data) {
+					if (!first)
+						ret.Append ("&");
+					else
+						first = false;
+					
+					ret.Append (kvp.Key + "=" + kvp.Value);
+				}
 			}
-			return sb.ToString ();
+
+			return ret.ToString ();
 		}
 	}
 }

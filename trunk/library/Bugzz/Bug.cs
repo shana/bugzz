@@ -1,6 +1,6 @@
 using System;
 
-namespace Bugzz.Bugzilla
+namespace Bugzz
 {
 	public class Bug
 	{
