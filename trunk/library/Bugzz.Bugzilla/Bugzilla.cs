@@ -65,7 +65,7 @@ namespace Bugzz.Bugzilla
 			q.AddQueryData ("ctype", "rdf");
 			
 			string query = WebIO.GetDocument (q.ToString ());
-
+			/*
 			XmlDocument xmldoc = new XmlDocument ();
 			xmldoc.LoadXml (query);
 			XmlNamespaceManager ns = new XmlNamespaceManager (xmldoc.NameTable);
@@ -80,6 +80,8 @@ namespace Bugzz.Bugzilla
 
 
 			return bugs;
+			 */
+			return null;
 		}
 		
 		void LoadInitialData ()
