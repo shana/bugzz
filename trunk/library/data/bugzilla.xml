@@ -7,26 +7,35 @@
   <version value="3.0">
     <urls>
       <url name="initial" value="query.cgi?format=advanced"/>
-      <url name="buglist" value="buglist.cgi"/>
+      <url name="buglist" value="buglist.cgi?ctype=rdf" />
     </urls>
 
     <variables>
       <initial>
-	<variable name="classification" value="classification"/>
-	<variable name="product" value="product"/>
-	<variable name="component" value="component"/>
-	<variable name="version" value="version"/>
-	<variable name="target_milestone" value="target_milestone"/>
-	<variable name="bug_file_loc_type" value="bug_file_loc_type"/>
-	<variable name="status_whiteboard_type" value="status_whiteboard_type"/>
-	<variable name="keywords_type" value="keywords_type"/>
-	<variable name="bug_status" value="bug_status"/>
-	<variable name="resolution" value="resolution"/>
-	<variable name="bug_severity" value="bug_severity"/>
-	<variable name="priority" value="priority"/>
-	<variable name="rep_platform" value="rep_platform"/>
-	<variable name="op_sys" value="op_sys"/>
+	      <variable name="classification" value="classification"/>
+	      <variable name="product" value="product"/>
+	      <variable name="component" value="component"/>
+	      <variable name="version" value="version"/>
+	      <variable name="target_milestone" value="target_milestone"/>
+	      <variable name="bug_file_loc_type" value="bug_file_loc_type"/>
+	      <variable name="status_whiteboard_type" value="status_whiteboard_type"/>
+	      <variable name="keywords_type" value="keywords_type"/>
+	      <variable name="bug_status" value="bug_status"/>
+	      <variable name="resolution" value="resolution"/>
+	      <variable name="bug_severity" value="bug_severity"/>
+	      <variable name="priority" value="priority"/>
+	      <variable name="rep_platform" value="rep_platform"/>
+	      <variable name="op_sys" value="op_sys"/>
       </initial>
+
+      <search>
+        <variable name="bug_status" value="bug_status"/>
+        <variable name="email1" value="email1"/>
+        <variable name="emailtype1" value="emailtype1"/>
+        <variable name="emailassigned_to1" value="emailassigned_to1"/>
+        <variable name="emailinfoprovider1" value="emailinfoprovider1"/>
+        
+      </search>
     </variables>
   </version>
 </bugzilla>
