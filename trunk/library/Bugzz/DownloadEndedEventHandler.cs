@@ -1,6 +1,6 @@
 using System;
 
-namespace Bugzz.Network
+namespace Bugzz
 {
 	public delegate void DownloadEndedEventHandler (object sender, DownloadEndedEventArgs a);
 }
