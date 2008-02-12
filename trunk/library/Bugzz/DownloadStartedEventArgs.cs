@@ -5,10 +5,11 @@ namespace Bugzz
 {
 	public class DownloadStartedEventArgs : EventArgs
 	{
-		public HttpWebResponse Response {
+		public HttpWebResponse Response /*{
 			get;
 			private set;
-		}
+		}*/
+		   ;
 
 		internal DownloadStartedEventArgs (HttpWebResponse response)
 		{

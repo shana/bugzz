@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml;
+using System.Xml.XPath;
 
 namespace Bugzz
 {
@@ -35,7 +37,7 @@ namespace Bugzz
 		
 		public List<Bug> Search (Query query)
 		{
-			return null;
+			return bugzilla.GetBugList (query);
 		}
 
 		public List <Bug> GetBugList (Query query)
