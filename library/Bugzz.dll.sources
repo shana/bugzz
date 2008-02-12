@@ -2,6 +2,12 @@
 ../common/Constants.cs
 AssemblyInfo.cs
 Bugzilla.cs
+BugzillaClassification.cs
+BugzillaComponent.cs
+BugzillaFixedInMilestone.cs
+BugzillaFoundInVersion.cs
+BugzillaInitialValue.cs
+BugzillaProduct.cs
 BugzillaData.cs
 BugzillaVersionData.cs
 BugzzBugzillaException.cs
