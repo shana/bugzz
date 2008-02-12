@@ -1,9 +1,14 @@
 using System;
+using System.Collections.Generic;
+
+using C5;
 
 namespace Bugzz.Bugzilla
 {
-	internal class BugzillaClassification : BugzillaInitialValue
+	internal sealed class BugzillaClassification : BugzillaInitialValue
 	{
+		HashBag <BugzillaProduct> products = new HashBag <BugzillaProduct> ();
+		
 		public BugzillaClassification ()
 			: base ()
 		{
@@ -11,6 +16,10 @@ namespace Bugzz.Bugzilla
 		
 		public BugzillaClassification (string label, string value)
 			: base (label, value)
+		{
+		}
+
+		public void Add (BugzillaProduct product)
 		{
 		}
 	}
