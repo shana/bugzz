@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Bugzz.Bugzilla
 {
-	internal class BugzillaVersionData
+	internal class VersionData
 	{
 		Dictionary <string, string> urls;
 		Dictionary <string, string> initialVariables;
@@ -12,7 +12,7 @@ namespace Bugzz.Bugzilla
 			get; private set;
 		}
 		
-		public BugzillaVersionData (string version)
+		public VersionData (string version)
 		{
 			urls = new Dictionary <string, string> ();
 			initialVariables = new Dictionary <string, string> ();

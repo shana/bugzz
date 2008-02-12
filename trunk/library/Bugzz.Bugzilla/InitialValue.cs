@@ -2,7 +2,7 @@ using System;
 
 namespace Bugzz.Bugzilla
 {
-	internal class BugzillaInitialValue
+	internal class InitialValue
 	{
 		public string Value {
 			get;
@@ -14,12 +14,12 @@ namespace Bugzz.Bugzilla
 			private set;
 		}
 
-		public BugzillaInitialValue ()
+		public InitialValue ()
 		: this (null, null)
 		{
 		}
 		
-		public BugzillaInitialValue (string label, string value)
+		public InitialValue (string label, string value)
 		{
 			Set (label, value);
 		}
@@ -42,7 +42,7 @@ namespace Bugzz.Bugzilla
 
 		public override bool Equals (object that)
 		{			
-			BugzillaInitialValue biv = that as BugzillaInitialValue;
+			InitialValue biv = that as InitialValue;
 
 			if (biv == null)
 				return false;
