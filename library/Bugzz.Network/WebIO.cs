@@ -14,10 +14,10 @@ namespace Bugzz.Network
 		public event Bugzz.DownloadEndedEventHandler DownloadEnded;
 		public event Bugzz.DownloadProgressEventHandler DownloadProgress;
 		
-		public Uri BaseUrl {
+		public Uri BaseUrl/* {
 			get;
 			private set;
-		}
+		}*/;
 		
 		static WebIO ()
 		{
@@ -100,7 +100,7 @@ namespace Bugzz.Network
 				Stream data = response.GetResponseStream ();
 				char[] buffer = new char [4096];
 				int bufferLen = buffer.Length;
-				int charsRead;
+				int charsRead = -1;
 				long count;
 				
 				using (StreamReader reader = new StreamReader (data)) {

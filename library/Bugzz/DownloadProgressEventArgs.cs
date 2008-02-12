@@ -4,15 +4,17 @@ namespace Bugzz
 {
 	public class DownloadProgressEventArgs : EventArgs
 	{
-		public long MaxCount {
+		public long MaxCount  /*{
 			get;
 			private set;
-		}
+		}*/
+		   ;
 
-		public long CurrentCount {
+		public long CurrentCount /*{
 			get;
 			private set;
-		}
+		}*/
+		   ;
 		
 		internal DownloadProgressEventArgs (long maxCount, long currentCount)
 		{

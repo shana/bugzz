@@ -9,11 +9,11 @@ namespace Bugzz
 		readonly char[] QUERY_SPLIT_CHARS = {'&', ';'};
 		
 		string queryPath;
-		
-		public Dictionary<string, string> QueryData {
+
+		public Dictionary<string, string> QueryData /*{
 			get;
 			private set;
-		}
+		}*/;
 		
 		public Query ()
 		{
@@ -24,7 +24,7 @@ namespace Bugzz
 		{
 			get { return QueryData ["email1"]; }
 			set {
-				var data = QueryData;
+				Dictionary<string, string> data = QueryData;
 
 				AddQueryData ("email1", value);
 				if (data.ContainsKey ("emailtype1"))
@@ -44,7 +44,7 @@ namespace Bugzz
 
 		public void AddQueryData (string fieldName, string fieldValue)
 		{
-			var data = QueryData;
+			Dictionary<string, string> data = QueryData;
 
 			if (data.ContainsKey (fieldName))
 				data [fieldName] = fieldValue;
@@ -76,7 +76,7 @@ namespace Bugzz
 		
 		public override string ToString ()
 		{
-			var data = QueryData;
+			Dictionary<string, string> data = QueryData;
 			StringBuilder ret = new StringBuilder ((queryPath ?? String.Empty) + "?");
 			
 			if (data != null) {

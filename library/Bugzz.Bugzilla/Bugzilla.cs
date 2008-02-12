@@ -12,11 +12,8 @@ using HtmlAgilityPack;
 
 namespace Bugzz.Bugzilla
 {
-	public class Bugzilla
+	internal class Bugzilla
 	{
-		static object bugzillaDataLock = new object ();
-		internal static Data bugzillaData;
-
 		HashBag <Classification> classifications = new HashBag <Classification> ();
 		HashBag <Product> products = new HashBag <Product> ();
 		HashBag <Component> components = new HashBag <Component> ();
@@ -26,16 +23,13 @@ namespace Bugzz.Bugzilla
 		bool initialDataLoaded;
 		string targetVersion;
 
-		public WebIO WebIO {
+		public WebIO WebIO /*{
 			get;
 			private set;
-		}
-		
-		static Bugzilla ()
-		{
-			LoadData ();
-		}
-		
+		}*/;
+
+
+		private DataManager dataManager;		
 		public Bugzilla (string baseUrl)
 		: this (baseUrl, null)
 		{
@@ -45,6 +39,7 @@ namespace Bugzz.Bugzilla
 		{
 			WebIO = new WebIO (baseUrl);
 			this.targetVersion = targetVersion;
+			this.dataManager = new DataManager (targetVersion);
 		}
 
 		public void Refresh ()
@@ -60,7 +55,7 @@ namespace Bugzz.Bugzilla
 		public SGC.List <Bug> GetBugList (Query q)
 		{
 			LoadInitialData ();
-			VersionData bvd = GetVersionData ();
+			VersionData bvd = dataManager.VersionData;
 			string queryUrl = bvd.GetUrl ("buglist");
 
 			if (String.IsNullOrEmpty (queryUrl))
@@ -71,21 +66,20 @@ namespace Bugzz.Bugzilla
 			
 			string query = WebIO.GetDocument (q.ToString ());
 
-			return null;
-		}
-		
-		VersionData GetVersionData ()
-		{
-			VersionData ret = null;
+			XmlDocument xmldoc = new XmlDocument ();
+			xmldoc.LoadXml (query);
+			XmlNamespaceManager ns = new XmlNamespaceManager (xmldoc.NameTable);
+			ns.AddNamespace ("bz", "http://www.bugzilla.org/rdf#");
+			XmlNodeList nodes = xmldoc.SelectNodes ("//bz:bug", ns);
+			SGC.List<Bug> bugs = new SGC.List<Bug> ();
+			foreach (XmlNode node in nodes) {
+				XmlNode n = node.SelectSingleNode ("bz:id", ns);
+				if (n == null) continue;
+				bugs.Add (new Bug (node, ns));
+			}
 
-			if (!String.IsNullOrEmpty (targetVersion))
-				ret = bugzillaData.GetVersionData (targetVersion);
-			if (ret == null)
-				ret = bugzillaData.DefaultVersion;
-			if (ret == null)
-				throw new BugzillaException ("Unable to determine bugzila version data to use.");
 
-			return ret;
+			return bugs;
 		}
 		
 		void LoadInitialData ()
@@ -93,7 +87,7 @@ namespace Bugzz.Bugzilla
 			if (initialDataLoaded)
 				return;
 
-			VersionData bvd = GetVersionData ();
+			VersionData bvd = dataManager.VersionData;
 			string queryUrl = bvd.GetUrl ("initial");
 			if (String.IsNullOrEmpty (queryUrl))
 				throw new BugzillaException ("Cannot retrieve initial data - no URL given.");
@@ -179,116 +173,6 @@ namespace Bugzz.Bugzilla
 		bool LogIn ()
 		{
 			return true;
-		}
-
-		static void LoadData ()
-		{
-			string datafile = Path.Combine (global::Bugzz.Constants.DataDirectory, "bugzilla.xml");
-
-			if (File.Exists (datafile)) {
-				LoadDataFile (datafile);
-				return;
-			}
-			
-#if DEBUG
-			datafile = String.Format (".{0}data{0}bugzilla.xml", Path.DirectorySeparatorChar);
-			if (File.Exists (datafile)) {
-				LoadDataFile (datafile);
-				return;
-			}
-#endif
-			throw new BugzillaException ("Bugzilla data file not found.");
-		}
-
-		static void LoadDataFile (string dataFile)
-		{
-			XmlDocument doc;
-
-			try {
-				doc = new XmlDocument ();
-				doc.Load (dataFile);
-				
-				XmlNodeList nodes = doc.SelectNodes ("/bugzilla/supportedVersions/version[string-length (@name) > 0 and string-length (@label) > 0]");
-				if (nodes == null || nodes.Count == 0)
-					throw new BugzillaException ("Missing supported versions information in the data file.");
-
-				lock (bugzillaDataLock) {
-					XmlAttribute name, label;
-					XmlAttributeCollection attrs;
-					
-					bugzillaData = new Data ();
-					foreach (XmlNode node in nodes) {
-						attrs = node.Attributes;
-						name = attrs ["name"];
-						label = attrs ["label"];
-						
-						bugzillaData.AddSupportedVersion (name.Value, label.Value);
-					}
-
-					nodes = doc.SelectNodes ("/bugzilla/version[string-length (@value) > 0]");
-					if (nodes == null || nodes.Count == 0)
-						throw new BugzillaException ("No bugzilla definitions found in the data file.");
-
-					foreach (XmlNode node in nodes)
-						StoreBugzillaVersion (node);
-				}
-				
-			} catch (BugzzException) {
-				throw;
-			} catch (Exception ex) {
-				throw new BugzillaException ("Failed to load data file.", ex);
-			}
-		}
-
-		static void StoreBugzillaVersion (XmlNode versionNode)
-		{
-			string version = versionNode.Attributes ["value"].Value;
-			XmlNodeList nodes = versionNode.SelectNodes ("./urls/url[string-length (@name) > 0 and string-length (@value) > 0]");
-
-			if (nodes == null || nodes.Count == 0)
-				throw new BugzillaException ("No URLs defined for version.");
-
-			VersionData bvd = new VersionData (version);
-			
-			XmlAttribute name, value;
-			XmlAttributeCollection attrs;
-			
-			foreach (XmlNode node in nodes) {
-				attrs = node.Attributes;
-				name = attrs ["name"];
-				value = attrs ["value"];
-
-				bvd.AddUrl (name.Value, value.Value);
-			}
-
-			nodes = versionNode.SelectNodes ("./variables/initial/variable[string-length (@name) > 0 and string-length (@value) > 0]");
-			if (nodes == null || nodes.Count == 0)
-				throw new BugzillaException ("No initial variables defined for version.");
-
-			foreach (XmlNode node in nodes) {
-				attrs = node.Attributes;
-				name = attrs ["name"];
-				value = attrs ["value"];
-
-				bvd.AddInitialVariable (name.Value, value.Value);
-			}
-
-			nodes = versionNode.SelectNodes ("./variables/search/variable[string-length (@name) > 0 and string-length (@value) > 0]");
-			if (nodes == null || nodes.Count == 0)
-				throw new BugzillaException ("No search variables defined for version.");
-
-			foreach (XmlNode node in nodes) {
-				attrs = node.Attributes;
-				name = attrs ["name"];
-				value = attrs ["value"];
-
-				bvd.AddSearchVariable (name.Value, value.Value);
-			}
-			
-
-			name = versionNode.Attributes ["default"];
-			bool isDefault = name != null ? name.Value == "true" : false;
-			bugzillaData.AddVersionData (version, bvd, isDefault);
 		}
 	}
 }

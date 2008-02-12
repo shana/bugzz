@@ -4,14 +4,18 @@ namespace Bugzz.Bugzilla
 {
 	internal class InitialValue
 	{
+
+		private string value;
 		public string Value {
-			get;
-			private set;
+			get {return value;}
+			private set { this.value = value; }
 		}
 
-		public string Label {
-			get;
-			private set;
+		private string label;
+		public string Label
+		{
+			get {return label;}
+			private set { label = value; }
 		}
 
 		public InitialValue ()
