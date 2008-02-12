@@ -70,7 +70,7 @@ namespace Bugzz.Network
 				fullUrl = ub.ToString ();
 				req = WebRequest.Create (new Uri (fullUrl)) as HttpWebRequest;
 			} catch (Exception ex) {
-				throw new BugzzWebIOException ("Malformed relative URL.", relativeUrl, ex);
+				throw new WebIOException ("Malformed relative URL.", relativeUrl, ex);
 			}
 			
 			HttpWebResponse response;
@@ -116,7 +116,7 @@ namespace Bugzz.Network
 				
 				return null;
 			} catch (Exception ex) {
-				throw new BugzzWebIOException ("Error downloading document.", fullUrl, ex);
+				throw new WebIOException ("Error downloading document.", fullUrl, ex);
 			}
 		}
 	}

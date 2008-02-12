@@ -2,13 +2,13 @@
 ../common/Constants.cs
 AssemblyInfo.cs
 Bugzz.Network/DocumentRetrieveFailureEventHandler.cs
-Bugzz.Network/BugzzWebIOException.cs
 Bugzz.Network/DocumentRetrieveFailureEventArgs.cs
 Bugzz.Network/DownloadProgressEventHandler.cs
 Bugzz.Network/DownloadEndedEventHandler.cs
 Bugzz.Network/DownloadProgressEventArgs.cs
 Bugzz.Network/DownloadEndedEventArgs.cs
 Bugzz.Network/WebIO.cs
+Bugzz.Network/WebIOException.cs
 Bugzz.Bugzilla/FixedInMilestone.cs
 Bugzz.Bugzilla/VersionData.cs
 Bugzz.Bugzilla/Bugzilla.cs
