@@ -25,4 +25,4 @@ Bugzz.Bugzilla/FoundInVersion.cs
 Bugzz/BugzzException.cs
 Bugzz/Bug.cs
 Bugzz/Query.cs
-Bugzz/Bugzz.cs
+Bugzz/BugzzManager.cs
