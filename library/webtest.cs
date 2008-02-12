@@ -10,11 +10,11 @@ class App
 {
 	static void Main (string[] args)
 	{
-		Bugzilla bugz = new Bugzilla (args [0]);
-		bugz.WebIO.DownloadProgress += new DownloadProgressEventHandler (OnDownloadProgress);
-		bugz.WebIO.DownloadEnded += new DownloadEndedEventHandler (OnDownloadEnded);
-		bugz.WebIO.DownloadStarted += new DownloadStartedEventHandler (OnDownloadStarted);
-		bugz.WebIO.DocumentRetrieveFailure += new DocumentRetrieveFailureEventHandler (OnDocumentRetrieveFailure);
+		Bugzz.BugzzManager bugz = new Bugzz.BugzzManager (args [0]);
+		bugz.AddCallback (new Bugzz.DownloadProgressEventHandler (OnDownloadProgress));
+		bugz.AddCallback (new Bugzz.DownloadEndedEventHandler (OnDownloadEnded));
+		bugz.AddCallback (new Bugzz.DownloadStartedEventHandler (OnDownloadStarted));
+		bugz.AddCallback (new Bugzz.DocumentRetrieveFailureEventHandler (OnDocumentRetrieveFailure));
 		
 		Thread t = new Thread (App.StartRequest);
 		Console.WriteLine ("Starting thread.");
@@ -29,17 +29,17 @@ class App
 		Console.Write ("\rCompleted: {0:F2}%", ((double)start / (double)end) * 100);
 	}
 	
-	static void OnDownloadProgress (object sender, DownloadProgressEventArgs args)
+	static void OnDownloadProgress (object sender, Bugzz.DownloadProgressEventArgs args)
 	{
 		ShowProgress (args.CurrentCount, args.MaxCount);
 	}
 
-	static void OnDownloadStarted (object sender, DownloadStartedEventArgs args)
+	static void OnDownloadStarted (object sender, Bugzz.DownloadStartedEventArgs args)
 	{
 		ShowProgress (0, args.Response.ContentLength);
 	}
 	
-	static void OnDownloadEnded (object sender, DownloadEndedEventArgs args)
+	static void OnDownloadEnded (object sender, Bugzz.DownloadEndedEventArgs args)
 	{
 		long end = args.Response.ContentLength;
 		ShowProgress (end, end);
@@ -48,7 +48,7 @@ class App
 		Console.WriteLine ("Download ended. Status: {0}", args.Response.StatusCode);
 	}
 
-	static void OnDocumentRetrieveFailure (object sender, DocumentRetrieveFailureEventArgs args)
+	static void OnDocumentRetrieveFailure (object sender, Bugzz.DocumentRetrieveFailureEventArgs args)
 	{
 		Console.WriteLine ();
 		HttpWebResponse response = args.Request.GetResponse () as HttpWebResponse;
@@ -59,7 +59,7 @@ class App
 	static void StartRequest (object data)
 	{
 		Console.WriteLine ("Starting request.");
-		Bugzilla bugz = data as Bugzilla;
+		Bugzz.BugzzManager bugz = data as Bugzz.BugzzManager;
 
 		if (bugz == null)
 			return;

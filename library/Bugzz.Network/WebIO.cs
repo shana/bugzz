@@ -9,10 +9,10 @@ namespace Bugzz.Network
 	{
 		readonly static string userAgent;
 
-		public event DocumentRetrieveFailureEventHandler DocumentRetrieveFailure;
-		public event DownloadStartedEventHandler DownloadStarted;
-		public event DownloadEndedEventHandler DownloadEnded;
-		public event DownloadProgressEventHandler DownloadProgress;
+		public event Bugzz.DocumentRetrieveFailureEventHandler DocumentRetrieveFailure;
+		public event Bugzz.DownloadStartedEventHandler DownloadStarted;
+		public event Bugzz.DownloadEndedEventHandler DownloadEnded;
+		public event Bugzz.DownloadProgressEventHandler DownloadProgress;
 		
 		public Uri BaseUrl {
 			get;

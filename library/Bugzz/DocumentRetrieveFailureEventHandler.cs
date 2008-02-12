@@ -1,6 +1,6 @@
 using System;
 
-namespace Bugzz.Network
+namespace Bugzz
 {
 	public delegate void DocumentRetrieveFailureEventHandler (object sender, DocumentRetrieveFailureEventArgs a);
 }

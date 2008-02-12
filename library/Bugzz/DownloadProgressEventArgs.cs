@@ -1,6 +1,6 @@
 using System;
 
-namespace Bugzz.Network
+namespace Bugzz
 {
 	public class DownloadProgressEventArgs : EventArgs
 	{

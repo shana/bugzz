@@ -4,17 +4,43 @@ using System.Text;
 
 namespace Bugzz
 {
-	public class Bugzz
+	public class BugzzManager
 	{
 		Bugzilla.Bugzilla bugzilla;
-		public Bugzz ()
+
+		public BugzzManager (string bugsiteBase)
 		{
-			bugzilla = new Bugzilla.Bugzilla ("https://bugzilla.novell.com");
+			bugzilla = new Bugzilla.Bugzilla (bugsiteBase);
+		}
+
+		public void AddCallback (DocumentRetrieveFailureEventHandler cb)
+		{
+			bugzilla.WebIO.DocumentRetrieveFailure += cb;
+		}
+		
+		public void AddCallback (DownloadStartedEventHandler cb)
+		{
+			bugzilla.WebIO.DownloadStarted += cb;
+		}
+		
+		public void AddCallback (DownloadEndedEventHandler cb)
+		{
+			bugzilla.WebIO.DownloadEnded += cb;
+		}
+		
+		public void AddCallback (DownloadProgressEventHandler cb)
+		{
+			bugzilla.WebIO.DownloadProgress += cb;
 		}
 		
 		public List<Bug> Search (Query query)
 		{
 			return null;
+		}
+
+		public List <Bug> GetBugList (Query query)
+		{
+			return bugzilla.GetBugList (query);
 		}
 	}
 }
