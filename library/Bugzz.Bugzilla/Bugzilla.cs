@@ -14,7 +14,7 @@ namespace Bugzz.Bugzilla
 	public class Bugzilla
 	{
 		static object bugzillaDataLock = new object ();
-		static Data bugzillaData;
+		internal static Data bugzillaData;
 
 		HashBag <Classification> classifications = new HashBag <Classification> ();
 		HashBag <Product> products = new HashBag <Product> ();
@@ -22,13 +22,13 @@ namespace Bugzz.Bugzilla
 		HashBag <FoundInVersion> foundInVersion = new HashBag <FoundInVersion> ();
 		HashBag <FixedInMilestone> fixedInMilestone = new HashBag <FixedInMilestone> ();
 		
-		WebIO webIO;
+		static WebIO webIO;
 		bool initialDataLoaded;
 		string targetVersion;
 
-		public WebIO WebIO {
-			get;
-			private set;
+		public static WebIO WebIO {
+			get { return webIO; }
+			private set { webIO = value; }
 		}
 		
 		static Bugzilla ()
@@ -189,7 +189,7 @@ namespace Bugzz.Bugzilla
 
 		static void LoadData ()
 		{
-			string datafile = Path.Combine (Bugzz.Constants.DataDirectory, "bugzilla.xml");
+			string datafile = Path.Combine (global::Bugzz.Constants.DataDirectory, "bugzilla.xml");
 
 			if (File.Exists (datafile)) {
 				LoadDataFile (datafile);
@@ -278,7 +278,20 @@ namespace Bugzz.Bugzilla
 
 				bvd.AddInitialVariable (name.Value, value.Value);
 			}
+
+			nodes = versionNode.SelectNodes ("./variables/search/variable[string-length (@name) > 0 and string-length (@value) > 0]");
+			if (nodes == null || nodes.Count == 0)
+				throw new BugzillaException ("No search variables defined for version.");
+
+			foreach (XmlNode node in nodes) {
+				attrs = node.Attributes;
+				name = attrs ["name"];
+				value = attrs ["value"];
+
+				bvd.AddSearchVariable (name.Value, value.Value);
+			}
 			
+
 			name = versionNode.Attributes ["default"];
 			bool isDefault = name != null ? name.Value == "true" : false;
 			bugzillaData.AddVersionData (version, bvd, isDefault);
