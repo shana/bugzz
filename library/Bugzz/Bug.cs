@@ -1,20 +1,46 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Bugzz
+namespace Bugzz.Bugzilla
 {
 	public class Bug
 	{
-		public string AssignedTo;
-		public string Status;
-		public string Description;
+		public int ID {
+			get;
+			set;
+		}
 
-		public Bug (string assignedto, string status, string description)
+		public string Severity {
+			get;
+			set;
+		}
+
+		public string Priority {
+			get;
+			set;
+		}
+
+		public string OpSys {
+			get;
+			set;
+		}
+
+		public string Resolution {
+			get;
+			set;
+		}
+
+		public string ShortDesc {
+			get;
+			set;
+		}
+
+		public string URL {
+			get;
+			set;
+		}
+
+		public Bug ()
 		{
-			AssignedTo = assignedto;
-			Status = status;
-			Description = description;
 		}
 	}
 }

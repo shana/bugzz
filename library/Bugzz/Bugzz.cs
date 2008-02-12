@@ -11,7 +11,7 @@ namespace Bugzz
 		{
 			bugzilla = new Bugzilla.Bugzilla ("https://bugzilla.novell.com");
 		}
-
+		
 		public List<Bug> Search (Query query)
 		{
 			string s = query.GetQuery ();
