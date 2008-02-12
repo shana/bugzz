@@ -13,4 +13,10 @@ BugzillaVersionData.cs
 BugzzBugzillaException.cs
 BugzzException.cs
 BugzzWebIOException.cs
+DocumentRetrieveFailureEventArgs.cs
+DocumentRetrieveFailureEventHandler.cs
+DownloadEndedEventArgs.cs
+DownloadEndedEventHandler.cs
+DownloadProgressEventArgs.cs
+DownloadProgressEventHandler.cs
 WebIO.cs
