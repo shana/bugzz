@@ -108,6 +108,7 @@ po/Makefile.in
 library/Makefile
 3rdparty/Makefile
 3rdparty/HtmlAgilityPack/Makefile
+tools/html2xml/Makefile
 common/Constants.cs
 ])
 

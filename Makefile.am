@@ -1,2 +1,2 @@
-SUBDIRS=po 3rdparty library
+SUBDIRS=po 3rdparty library tools/html2xml
 
