@@ -18,12 +18,6 @@ namespace mockup
 		{
 			this.Build();
 
-			
-			Bugzz.Bugzz bugzz = new Bugzz.Bugzz ();
-			Bugzz.Query query = new Bugzz.Query();
-			query.Email = "avidigal@novell.com";
-			List<Bugzz.Bug> bugszz =  bugzz.Search (query);
-
 			store = CreateModel ();
 			
 			TreeView treeView = new TreeView (store);
@@ -41,25 +35,31 @@ namespace mockup
 		private void AddColumns (TreeView treeView)
 		{
 			// column for fixed toggles
-			CellRendererToggle rendererToggle = new CellRendererToggle ();
-			rendererToggle.Toggled += new ToggledHandler (FixedToggled);
-			TreeViewColumn column =  new TreeViewColumn ("Fixed?", rendererToggle, "active", Column.Fixed);
+			//CellRendererToggle rendererToggle = new CellRendererToggle ();
+			//rendererToggle.Toggled += new ToggledHandler (FixedToggled);
+			//TreeViewColumn column =  new TreeViewColumn ("Fixed?", rendererToggle, "active", Column.Fixed);
 
 			// set this column to a fixed sizing (of 50 pixels)
-			column.Sizing = TreeViewColumnSizing.Fixed;
-			column.FixedWidth = 50;
+			//column.Sizing = TreeViewColumnSizing.Fixed;
+			//column.FixedWidth = 50;
+			//treeView.AppendColumn (column);
+
+
+			CellRendererText rendererText = new CellRendererText ();
+			TreeViewColumn column = new TreeViewColumn ("Bug number", rendererText, "text", Column.Number);
+			column.SortColumnId = (int) Column.Number;
 			treeView.AppendColumn (column);
 
 			// column for bug numbers
-			CellRendererText rendererText = new CellRendererText ();
-			column = new TreeViewColumn ("Bug number", rendererText, "text", Column.Number);
-			column.SortColumnId = (int) Column.Number;
+			rendererText = new CellRendererText ();
+			column = new TreeViewColumn ("Assigned To", rendererText, "text", Column.AssignedTo);
+			column.SortColumnId = (int) Column.AssignedTo;
 			treeView.AppendColumn (column);
 
 			// column for severities
 			rendererText = new CellRendererText ();
-			column = new TreeViewColumn ("Severity", rendererText, "text", Column.Severity);
-			column.SortColumnId = (int) Column.Severity;
+			column = new TreeViewColumn ("Status", rendererText, "text", Column.Status);
+			column.SortColumnId = (int) Column.Status;
 			treeView.AppendColumn(column);
 
 			// column for description
@@ -71,16 +71,22 @@ namespace mockup
 		
 		private ListStore CreateModel ()
 		{
-			ListStore store = new ListStore (typeof(bool),
-							 typeof(int),
+			ListStore store = new ListStore (typeof(int),
+							 typeof(string),
 							 typeof(string),
 							 typeof(string));
 
-			foreach (Bug bug in bugs) {
-				store.AppendValues (bug.Fixed,
-						    bug.Number,
-						    bug.Severity,
-						    bug.Description);
+			Bugzz.BugzzManager bugzz = new Bugzz.BugzzManager ("https://bugzilla.novell.com");
+			Bugzz.Query query = new Bugzz.Query ();
+			query.Email = "avidigal@novell.com";
+			Dictionary<string, Bugzz.Bug> bugszz = bugzz.Search (query);
+
+
+			foreach (KeyValuePair<string, Bugzz.Bug> bug in bugszz) {
+				store.AppendValues (int.Parse (bug.Value.ID),
+							bug.Value.AssignedTo,
+							bug.Value.Status,
+							bug.Value.ShortDesc);
 			}
 
 			return store;
@@ -98,9 +104,9 @@ namespace mockup
 		
 		private enum Column
 		{
-			Fixed,
 			Number,
-			Severity,
+			AssignedTo,
+			Status,
 			Description
 		}		
 		
