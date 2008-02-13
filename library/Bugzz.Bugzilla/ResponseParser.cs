@@ -125,10 +125,14 @@ namespace Bugzz.Bugzilla
 			XmlNodeList nodes = top.SelectNodes ("//bugzilla/bug");
 			Bugzz.Bug bug;
 			string innerText;
-
+			XmlAttribute attr;
+			
 			foreach (XmlNode node in nodes) {
 				bug = new Bugzz.Bug ();
-
+				attr = node.Attributes ["error"];
+				if (attr != null)
+					bug.Error = attr.Value;
+				
 				if (node.HasChildNodes) {
 					foreach (XmlNode tmp in node.ChildNodes) {
 						innerText = tmp.InnerText.Trim ();
