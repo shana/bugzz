@@ -70,27 +70,34 @@ class App
 		query.AddQueryData ("component", "Sys.Web");
 
 		var results = bugz.GetBugList (query);
-		Bugzz.Bug bug1 = null;
+		Bugzz.Bug bug1 = null, bug2 = null;
 		
 		Console.WriteLine ("List of retrieved bugs:");
 		foreach (Bugzz.Bug bug in results.Values) {
 			if (bug1 == null)
 				bug1 = bug;
+			else if (bug2 == null)
+				bug2 = bug;
 			
 			Console.WriteLine (bug);
 		}
 
+		if (bug1 == null)
+			return;
+		
 		Console.WriteLine ("Sample bugs:");
 		query = new Bugzz.Query ();
 		query.AddQueryData ("id", bug1.ID);
+
+		if (bug2 != null)
+			query.AddQueryData ("id", bug2.ID);
+		
 		var results2 = bugz.GetBugs (query);
 
 		foreach (Bugzz.Bug bug in results2.Values) {
 			Console.WriteLine (bug.ToString (true));
 			Console.WriteLine ();
 		}
-		
-		Console.WriteLine ("Request ended.");
 	}
 	
 }
