@@ -6,15 +6,17 @@ namespace Bugzz
 {
 	public class Bug
 	{
-		public string ID { get; set; }
-		public string Status { get; set; }
-		public string Severity { get; set; }
-		public string Priority { get; set; }
-		public string OpSys { get; set; }
-		public string Resolution { get; set; }
-		public string ShortDesc { get; set; }
-		public string URL { get; set; } 
-		public Dictionary <string, string> Items { get; private set; }
+		public string ID /*{ get; set; }*/;
+		public string Status /*{ get; set; }*/;
+		public string Severity /*{ get; set; }*/;
+		public string Priority /*{ get; set; }*/;
+		public string OpSys /*{ get; set; }*/;
+		public string Resolution /*{ get; set; }*/;
+		public string ShortDesc /*{ get; set; }*/;
+		public string URL /*{ get; set; }*/;
+		public string AssignedTo /*{ get; set; }*/;
+
+		public Dictionary<string, string> Items/* { get; private set; }*/;
 		
 		public Bug ()
 		{
@@ -22,7 +24,7 @@ namespace Bugzz
 
 		internal void AddItem (string itemName, string itemValue)
 		{
-			var items = Items;
+			Dictionary<string, string> items = Items;
 
 			if (items.ContainsKey (itemName))
 				items [itemName] = itemValue;
