@@ -143,12 +143,108 @@ namespace Bugzz.Bugzilla
 								break;
 
 							case "creation_ts":
-								bug.CreationTimeStamp = DateTime.Parse (innerText);
+								try {
+									bug.CreationTimeStamp = DateTime.Parse (innerText);
+								} catch {
+									bug.CreationTimeStamp = DateTime.MinValue;
+								}
+								break;
+
+							case "short_desc":
+								bug.ShortDesc = innerText;
+								break;
+
+							case "delta_ts":
+								try {
+									bug.DeltaTimeStamp = DateTime.Parse (innerText);
+								} catch {
+									bug.DeltaTimeStamp = DateTime.MinValue;
+								}
+								break;
+
+							case "classification":
+								bug.Classification = innerText;
+								break;
+
+							case "product":
+								bug.Product = innerText;
+								break;
+
+							case "component":
+								bug.Component = innerText;
+								break;
+
+							case "version":
+								bug.Version = innerText;
+								break;
+
+							case "rep_platform":
+								bug.Platform = innerText;
+								break;
+
+							case "op_sys":
+								bug.OpSys = innerText;
+								break;
+
+							case "bug_status":
+								bug.Status = innerText;
+								break;
+
+							case "resolution":
+								bug.Resolution = innerText;
+								break;
+								
+							case "priority":
+								bug.Priority = innerText;
+								break;
+
+							case "bug_severity":
+								bug.Severity = innerText;
+								break;
+
+							case "long_desc":
+								AppendLongDesc (node, bug);
+								break;
+
+							default:
+								bug.AddItem (node.Name, innerText);
 								break;
 						}
 					}
 				}
+				string bugId = bug.ID;
+				
+				if (String.IsNullOrEmpty (bugId))
+					continue;
+				
+				if (bugs.ContainsKey (bugId))
+					continue;
+
+				bugs.Add (bugId, bug);
 			}
 		}
+
+		void AppendLongDesc (XmlNode node, Bugzz.Bug bug)
+		{
+			Bugzz.BugLongDescription desc = new Bugzz.BugLongDescription ();
+			XmlAttribute attr = node.Attributes ["isprivate"];
+			
+			desc.IsPrivate = attr != null ? attr.Value != "0" : false;
+
+			XmlNode tmp = node.SelectSingleNode ("//bug_when");
+			if (tmp != null && !String.IsNullOrEmpty (tmp.InnerText))
+				try {
+					desc.When = DateTime.Parse (tmp.InnerText);
+				} catch {
+					desc.When = DateTime.MinValue;
+				}
+
+			tmp = node.SelectSingleNode ("//thetext");
+			if (tmp != null)
+				desc.Text = tmp.InnerText;
+
+			bug.Comments.Add (desc);
+		}
+		
 	}
 }

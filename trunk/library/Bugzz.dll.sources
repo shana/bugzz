@@ -28,3 +28,4 @@ Bugzz/BugzzException.cs
 Bugzz/Bug.cs
 Bugzz/Query.cs
 Bugzz/BugzzManager.cs
+Bugzz/BugLongDescription.cs
