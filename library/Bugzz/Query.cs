@@ -10,6 +10,7 @@ namespace Bugzz
 		
 		string queryPath;
 
+		//TODO: it must be a container which allows dupes
 		public Dictionary<string, string> QueryData /*{
 			get;
 			private set;
