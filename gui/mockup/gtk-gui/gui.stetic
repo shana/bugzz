@@ -47,7 +47,7 @@
             <property name="MemberName" />
             <property name="ShowArrow">False</property>
             <property name="ButtonStyle">Icons</property>
-            <node name="toolbar1" type="Menubar">
+            <node name="toolbar1" type="Toolbar">
               <node type="Toolitem" action="yes" />
             </node>
           </widget>
