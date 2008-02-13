@@ -6,6 +6,7 @@ namespace Bugzz
 {
 	public class Bug
 	{
+		public string Error /*{ get; set; }*/;
 		public string ID /*{ get; set; }*/;
 		public string Status /*{ get; set; }*/;
 		public string Severity /*{ get; set; }*/;
