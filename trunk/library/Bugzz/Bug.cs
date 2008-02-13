@@ -15,7 +15,8 @@ namespace Bugzz
 		public string ShortDesc /*{ get; set; }*/;
 		public string URL /*{ get; set; }*/;
 		public string AssignedTo /*{ get; set; }*/;
-		public string Alias /*{ get; set; }*/
+		public string Alias /*{ get; set; }*/;
+		public DateTime CreationTimeStamp  /*{ get; set; }*/;
 		
 		public Dictionary<string, string> Items/* { get; private set; }*/;
 		

@@ -141,6 +141,10 @@ namespace Bugzz.Bugzilla
 							case "alias":
 								bug.Alias = innerText;
 								break;
+
+							case "creation_ts":
+								bug.CreationTimeStamp = DateTime.Parse (innerText);
+								break;
 						}
 					}
 				}
