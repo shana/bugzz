@@ -65,6 +65,8 @@ namespace Bugzz.Bugzilla
 			q.AddQueryData ("ctype", "rdf");
 			
 			string query = WebIO.GetDocument (q.ToString ());
+			ResponseParser rp = new ResponseParser (query);
+			
 			/*
 			XmlDocument xmldoc = new XmlDocument ();
 			xmldoc.LoadXml (query);
@@ -77,8 +79,6 @@ namespace Bugzz.Bugzilla
 				if (n == null) continue;
 				bugs.Add (new Bug (node, ns));
 			}
-
-
 			return bugs;
 			 */
 			return null;
