@@ -35,8 +35,12 @@
         <variable name="emailtype1" value="emailtype1"/>
         <variable name="emailassigned_to1" value="emailassigned_to1"/>
         <variable name="emailinfoprovider1" value="emailinfoprovider1"/>
-        
       </search>
+
+      <login>
+	<variable name="bugzilla_password" value="Bugzilla_password"/>
+	<variable name="bugzilla_login" value="Bugzilla_login"/>
+      </login>
     </variables>
   </version>
 </bugzilla>
