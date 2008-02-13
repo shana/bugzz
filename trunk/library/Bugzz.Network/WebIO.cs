@@ -9,6 +9,8 @@ namespace Bugzz.Network
 	{
 		readonly static string userAgent;
 
+		CookieManager cookieJar;
+
 		public event Bugzz.DocumentRetrieveFailureEventHandler DocumentRetrieveFailure;
 		public event Bugzz.DownloadStartedEventHandler DownloadStarted;
 		public event Bugzz.DownloadEndedEventHandler DownloadEnded;
@@ -35,6 +37,8 @@ namespace Bugzz.Network
 			} catch (Exception ex) {
 				throw new ArgumentException ("Invalid base URL.", "baseUrl", ex);
 			}
+
+			cookieJar = new CookieManager ();
 		}
 
 		void OnDocumentRetrieveFailure (HttpWebRequest req)
@@ -81,6 +85,8 @@ namespace Bugzz.Network
 				ub.Path = relativeUrl;
 				fullUrl = ub.ToString ();
 				req = WebRequest.Create (new Uri (fullUrl)) as HttpWebRequest;
+				cookieJar.AddUri (new Uri (fullUrl));
+				req.CookieContainer = cookieJar;
 			} catch (Exception ex) {
 				throw new WebIOException ("Malformed relative URL.", relativeUrl, ex);
 			}
@@ -95,6 +101,8 @@ namespace Bugzz.Network
 					OnDocumentRetrieveFailure (req);
 					return null;
 				}
+
+				cookieJar.Save ();
 				
 				StringBuilder sb = new StringBuilder ();
 				Stream data = response.GetResponseStream ();
@@ -122,7 +130,7 @@ namespace Bugzz.Network
 					}
 					OnDownloadEnded (response);
 				}
-
+				
 				return sb.ToString ();
 			} catch (WebException ex) {
 				HttpWebResponse exResponse = ex.Response as HttpWebResponse;
