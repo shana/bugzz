@@ -52,7 +52,7 @@ namespace Bugzz.Bugzilla
 			return null;
 		}
 		
-		public SGC.List <Bug> GetBugList (Query q)
+		public SGC.Dictionary <string, Bug> GetBugList (Query q)
 		{
 			LoadInitialData ();
 			VersionData bvd = dataManager.VersionData;
@@ -81,7 +81,7 @@ namespace Bugzz.Bugzilla
 			}
 			return bugs;
 			 */
-			return null;
+			return rp.Bugs;
 		}
 		
 		void LoadInitialData ()

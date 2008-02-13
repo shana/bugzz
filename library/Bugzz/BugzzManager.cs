@@ -35,12 +35,12 @@ namespace Bugzz
 			bugzilla.WebIO.DownloadProgress += cb;
 		}
 		
-		public List<Bug> Search (Query query)
+		public Dictionary <string, Bug> Search (Query query)
 		{
 			return bugzilla.GetBugList (query);
 		}
 
-		public List <Bug> GetBugList (Query query)
+		public Dictionary <string, Bug> GetBugList (Query query)
 		{
 			return bugzilla.GetBugList (query);
 		}

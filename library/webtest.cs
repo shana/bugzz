@@ -69,7 +69,11 @@ class App
 		query.AddQueryData ("product", "Mono: Class Libraries");
 		query.AddQueryData ("component", "Sys.Web");
 
-		bugz.GetBugList (query);
+		var results = bugz.GetBugList (query);
+
+		foreach (Bugzz.Bug bug in results.Values)
+			Console.WriteLine (bug);
+		
 		Console.WriteLine ("Request ended.");
 	}
 	
