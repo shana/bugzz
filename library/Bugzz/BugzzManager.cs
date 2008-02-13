@@ -44,5 +44,10 @@ namespace Bugzz
 		{
 			return bugzilla.GetBugList (query);
 		}
+
+		public Dictionary <string, Bug> GetBugs (Query query)
+		{
+			return bugzilla.GetBugs (query);
+		}
 	}
 }

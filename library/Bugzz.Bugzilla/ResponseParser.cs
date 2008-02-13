@@ -47,6 +47,8 @@ namespace Bugzz.Bugzilla
 		void ParseRDF (XmlNode top)
 		{
 			Dictionary<string, Bugzz.Bug> bugs = Bugs;
+			bugs.Clear ();
+			
 			XmlNamespaceManager ns = new XmlNamespaceManager (new NameTable ());
 
 			ns.AddNamespace ("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
@@ -117,6 +119,32 @@ namespace Bugzz.Bugzilla
 
 		void ParseXML (XmlNode top)
 		{
+			var bugs = Bugs;
+			bugs.Clear ();
+			
+			XmlNodeList nodes = top.SelectNodes ("//bugzilla/bug");
+			Bugzz.Bug bug;
+			string innerText;
+
+			foreach (XmlNode node in nodes) {
+				bug = new Bugzz.Bug ();
+
+				if (node.HasChildNodes) {
+					foreach (XmlNode tmp in node.ChildNodes) {
+						innerText = tmp.InnerText.Trim ();
+
+						switch (tmp.Name) {
+							case "bug_id":
+								bug.ID = innerText;
+								break;
+
+							case "alias":
+								bug.Alias = innerText;
+								break;
+						}
+					}
+				}
+			}
 		}
 	}
 }

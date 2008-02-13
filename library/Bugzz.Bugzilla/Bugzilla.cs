@@ -83,6 +83,24 @@ namespace Bugzz.Bugzilla
 			 */
 			return rp.Bugs;
 		}
+
+		public SGC.Dictionary <string, Bug> GetBugs (Query q)
+		{
+			LoadInitialData ();
+			VersionData bvd = dataManager.VersionData;
+			string queryUrl = bvd.GetUrl ("show_bug");
+
+			if (String.IsNullOrEmpty (queryUrl))
+				throw new BugzillaException ("Cannot show bugs - no URL given.");
+
+			q.SetUrl (queryUrl);
+			q.AddQueryData ("ctype", "xml");
+
+			string query = WebIO.GetDocument (q.ToString ());
+			ResponseParser rp = new ResponseParser (query);
+
+			return rp.Bugs;
+		}
 		
 		void LoadInitialData ()
 		{
