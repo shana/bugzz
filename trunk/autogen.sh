@@ -7,3 +7,5 @@
 #autoconf
 autoreconf -f -i
 ./configure --enable-maintainer-mode $*
+cd gui/mockup
+./autogen.sh $*
