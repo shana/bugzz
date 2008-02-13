@@ -6,7 +6,7 @@ namespace Bugzz.Bugzilla
 {
 	internal class ResponseParser
 	{
-		public Dictionary <string, Bugzz.Bug> Bugs { get; private set; }
+		public Dictionary<string, Bugzz.Bug> Bugs/* { get; private set; }*/;
 		
 		public ResponseParser (string input)
 		{
@@ -46,7 +46,7 @@ namespace Bugzz.Bugzilla
 
 		void ParseRDF (XmlNode top)
 		{
-			var bugs = Bugs;
+			Dictionary<string, Bugzz.Bug> bugs = Bugs;
 			XmlNamespaceManager ns = new XmlNamespaceManager (new NameTable ());
 
 			ns.AddNamespace ("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
