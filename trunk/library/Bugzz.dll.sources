@@ -22,6 +22,7 @@ Bugzz.Bugzilla/InitialValue.cs
 Bugzz.Bugzilla/Data.cs
 Bugzz.Bugzilla/DataManager.cs
 Bugzz.Bugzilla/FoundInVersion.cs
+Bugzz.Bugzilla/ResponseParser.cs
 Bugzz/BugzzException.cs
 Bugzz/Bug.cs
 Bugzz/Query.cs
