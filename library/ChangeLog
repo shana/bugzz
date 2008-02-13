@@ -1,5 +1,9 @@
 2008-02-12  Andreia Gaita <avidigal@novell.com>
 
+	* CookieManager: the manager of the cookie jar
+
+2008-02-12  Andreia Gaita <avidigal@novell.com>
+
 	* Makefile.am: fix to get the MD makefile import to think our makefiles 
 	are nice
 
