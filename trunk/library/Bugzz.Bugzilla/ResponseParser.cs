@@ -6,10 +6,11 @@ namespace Bugzz.Bugzilla
 {
 	internal class ResponseParser
 	{
-		Dictionary <string, Bugzz.Bug> bugs;
+		public Dictionary <string, Bugzz.Bug> Bugs { get; private set; }
 		
 		public ResponseParser (string input)
 		{
+			Bugs = new Dictionary <string, Bugzz.Bug> ();
 			Parse (input);
 		}
 
@@ -35,9 +36,8 @@ namespace Bugzz.Bugzilla
 
 					default:
 						throw new BugzillaException ("Unknown response document kind '" + docElement.Name + "'.");
-						break;
 				}
-			} catch (BugzillaException ex) {
+			} catch (BugzillaException) {
 				throw;
 			} catch (Exception ex) {
 				throw new BugzillaException ("Error parsing the response.", ex);
@@ -46,7 +46,7 @@ namespace Bugzz.Bugzilla
 
 		void ParseRDF (XmlNode top)
 		{
-			bugs = new Dictionary <string, Bugzz.Bug> ();
+			var bugs = Bugs;
 			XmlNamespaceManager ns = new XmlNamespaceManager (new NameTable ());
 
 			ns.AddNamespace ("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
@@ -55,10 +55,63 @@ namespace Bugzz.Bugzilla
 			
 			XmlNodeList nodes = top.SelectNodes ("//bz:bug[string-length (@rdf:about) > 0]", ns);
 			XmlAttributeCollection attrs;
+			Bugzz.Bug bug;
+			string innerText;
 			
 			foreach (XmlNode node in nodes) {
+				bug = new Bugzz.Bug ();
 				attrs = node.Attributes;
+
+				bug.URL = attrs ["rdf:about"].Value;
+				if (node.HasChildNodes) {
+					foreach (XmlNode tmp in node.ChildNodes) {
+						innerText = tmp.InnerText.Trim ();
+						
+						switch (tmp.Name) {
+							case "bz:id":
+								bug.ID = innerText;
+								break;
+
+							case "bz:bug_severity":
+								bug.Severity = innerText;
+								break;
+
+							case "bz:priority":
+								bug.Priority = innerText;
+								break;
+
+							case "bz:op_sys":
+								bug.OpSys = innerText;
+								break;
+
+							case "bz:bug_status":
+								bug.Status = innerText;
+								break;
+
+							case "bz:resolution":
+								bug.Resolution = innerText;
+								break;
+
+							case "bz:short_desc":
+								bug.ShortDesc = innerText;
+								break;
+
+							default:
+								bug.AddItem (tmp.Name, innerText);
+								break;
+						}
+					}
+				}
+
+				string bugId = bug.ID;
 				
+				if (String.IsNullOrEmpty (bugId))
+					continue;
+				
+				if (bugs.ContainsKey (bugId))
+					continue;
+
+				bugs.Add (bugId, bug);
 			}
 		}
 
