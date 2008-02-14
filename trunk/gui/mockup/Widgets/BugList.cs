@@ -110,7 +110,7 @@ namespace mockup.Widgets
 		}
 		
 		public void Refresh () {
-			if (this.query != null)
+			if (this.query == null)
 				return;
 				
 			Dictionary<string, Bugzz.Bug> bugszz = bugzz.Search (query);

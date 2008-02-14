@@ -98,17 +98,27 @@
       <HintPath>..\..\..\..\..\soft\dev\Mono-1.2.5.1\lib\mono\2.0\Mono.Posix.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs&#xD;&#xA;" />
-    <Compile Include="BugList.cs&#xD;&#xA;" />
     <Compile Include="gtk-gui\generated.cs" />
-    <Compile Include="gtk-gui\MainWindow.cs" />
-    <Compile Include="gtk-gui\mockup.BugList.cs" />
+    <Compile Include="gtk-gui\mockup.MainWindow.cs" />
+    <Compile Include="gtk-gui\mockup.Widgets.BugList.cs" />
+    <Compile Include="gtk-gui\mockup.Widgets.Detail.cs" />
+    <Compile Include="gtk-gui\mockup.Widgets.Search.cs" />
+    <Compile Include="gtk-gui\mockup.Widgets.Settings.cs" />
     <Compile Include="Main.cs&#xD;&#xA;" />
     <Compile Include="MainWindow.cs&#xD;&#xA;" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="Utils\Loader.cs" />
+    <Compile Include="Widgets\BugList.cs" />
+    <Compile Include="Widgets\Detail.cs" />
+    <Compile Include="Widgets\Search.cs" />
+    <Compile Include="Widgets\Settings.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ChangeLog" />
     <None Include="gtk-gui\gui.stetic" />
   </ItemGroup>
   <ItemGroup>

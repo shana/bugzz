@@ -27,6 +27,7 @@ using System;
 using System.Xml;
 using System.IO;
 using System.Reflection;
+using System.Collections.Generic;
 
 namespace mockup
 {
@@ -52,7 +53,7 @@ namespace mockup
 				
 				if (xmldoc.SelectSingleNode ("//root") == null) {
 					XmlElement elem = xmldoc.CreateElement ("root");
-					xmldoc.DocumentElement.AppendChild (elem);
+					xmldoc.AppendChild (elem);
 				}
 			}
 		}
@@ -73,8 +74,64 @@ namespace mockup
 				string name = child.LocalName;
 				string val = child.InnerText;
 				PropertyInfo prop = t.GetProperty (name, BindingFlags.Instance | BindingFlags.Public);
+				object obj = val;
 				if (prop != null) {
-					prop.SetValue (instance, val, null);
+					if (prop.PropertyType == typeof(bool)) {
+						obj = bool.Parse (val);
+					} else 
+					if (prop.PropertyType == typeof(short)) {
+						obj = short.Parse (val);
+					} else 
+					if (prop.PropertyType == typeof(ushort)) {
+						obj = ushort.Parse (val);
+					} else 
+					if (prop.PropertyType == typeof(int)) {
+						obj = int.Parse (val);
+					} else 
+					if (prop.PropertyType == typeof(uint)) {
+						obj = uint.Parse (val);
+					} else 
+					if (prop.PropertyType == typeof(byte)) {
+						obj = byte.Parse (val);
+					} else 
+					if (prop.PropertyType == typeof(long)) {
+						obj = long.Parse (val);
+					} else 
+					if (prop.PropertyType == typeof(ulong)) {
+						obj = ulong.Parse (val);
+					} else 
+					if (prop.PropertyType == typeof(double)) {
+						obj = double.Parse (val);
+					} else 
+					if (prop.PropertyType == typeof(float)) {
+						obj = float.Parse (val);
+					} else 
+					if (prop.PropertyType == typeof(Enum)) {
+						obj = Enum.Parse (prop.PropertyType, val);
+					} else
+					if (prop.PropertyType == typeof (Uri)) {
+						obj = new Uri(val);
+					} else
+					if (prop.PropertyType == typeof (Dictionary<string, string>)) {
+						obj = new Dictionary<string, string> ();
+						foreach (string pair in val.Split ('&')) {
+							string[] s = pair.Split ('=');
+							if (s.Length < 2)
+								continue;
+							if (s.Length > 2) {
+								for (int i = 2; i < s.Length; i++) {
+									s[1] += "=" + s[i];
+								}
+							}
+							((Dictionary<string, string>) obj).Add (s[0], s[1]);
+						}
+					} 
+					try {
+						prop.SetValue (instance, obj, null);
+					}
+					catch {
+					}
+					
 				}
 			}
 		}
@@ -89,7 +146,7 @@ namespace mockup
 						
 			if (node == null) {
 				XmlElement elem = xmldoc.CreateElement (type);
-				node = xmldoc.DocumentElement.FirstChild.AppendChild (elem);
+				node = xmldoc.DocumentElement.AppendChild (elem);
 			} else {
 				node.RemoveAll ();
 			}
@@ -97,10 +154,17 @@ namespace mockup
 			Type t = typeof(T);
 			foreach (PropertyInfo prop  in t.GetProperties (BindingFlags.Instance | BindingFlags.Public)) {
 				string name = prop.Name;
-				string val = prop.GetValue (instance, null).ToString ();
-				XmlElement elem = xmldoc.CreateElement (name);
-				elem.InnerText = val;
-				node.AppendChild (elem);
+				object val = prop.GetValue (instance, null);
+				if (val != null) {
+					XmlElement elem = xmldoc.CreateElement (name);
+					if (val is Dictionary<string, string>) {
+						foreach (KeyValuePair<string, string> vals in val as Dictionary<string, string>) {
+							elem.InnerText += vals.Key + "=" + vals.Value + "&amp;";
+						}
+					} else
+						elem.InnerText = val.ToString ();
+					node.AppendChild (elem);
+				}
 			}
 			
 			xmldoc.Save (dataPath);

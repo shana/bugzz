@@ -1,4 +1,3 @@
 2008-02-14  Andreia Gaita <avidigal@novell.com> 
 
-	
-
+* Load settings, login data from config.xml with a generic loader
