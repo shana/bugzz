@@ -127,7 +127,7 @@ namespace Bugzz.Network
 					    loginAddress.AbsolutePath == address.AbsolutePath) {
 						req.Abort ();
 						if (LogIn (req.Address))
-							return GetDocument (relativeUrl);
+							return GetDocument (relativeUrl.Replace ("&GoAheadAndLogIn=1", ""));
 						else
 							throw new WebIOException ("Login failure.", address.ToString ());
 					}
