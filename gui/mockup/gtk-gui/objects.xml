@@ -1,5 +1,21 @@
 <objects>
-  <object type="mockup.BugList" palette-category="mockup" allow-children="false" base-type="Gtk.Bin">
+  <object type="mockup.Widgets.Settings" palette-category="mockup" allow-children="false" base-type="Gtk.Bin">
+    <itemgroups />
+    <signals />
+  </object>
+  <object type="mockup.Widgets.Search" palette-category="mockup" allow-children="false" base-type="Gtk.Bin">
+    <itemgroups />
+    <signals />
+  </object>
+  <object type="mockup.Widgets.Detail" palette-category="mockup" allow-children="false" base-type="Gtk.Bin">
+    <itemgroups />
+    <signals />
+  </object>
+  <object type="mockup.Widgets.BugList" palette-category="mockup" allow-children="false" base-type="Gtk.Bin">
+    <itemgroups />
+    <signals />
+  </object>
+  <object type="mockup.Progress" palette-category="mockup" allow-children="false" base-type="Gtk.Widget">
     <itemgroups />
     <signals />
   </object>

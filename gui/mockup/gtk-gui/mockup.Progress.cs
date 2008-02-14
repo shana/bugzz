@@ -11,21 +11,13 @@
 namespace mockup {
     
     
-    public partial class BugList {
-        
-        private Gtk.ScrolledWindow scrolledwindow3;
+    public partial class Progress {
         
         protected virtual void Build() {
             Stetic.Gui.Initialize(this);
-            // Widget mockup.BugList
+            // Widget mockup.Progress
             Stetic.BinContainer.Attach(this);
-            this.Name = "mockup.BugList";
-            // Container child mockup.BugList.Gtk.Container+ContainerChild
-            this.scrolledwindow3 = new Gtk.ScrolledWindow();
-            this.scrolledwindow3.CanFocus = true;
-            this.scrolledwindow3.Name = "scrolledwindow3";
-            this.scrolledwindow3.ShadowType = ((Gtk.ShadowType)(1));
-            this.Add(this.scrolledwindow3);
+            this.Name = "mockup.Progress";
             if ((this.Child != null)) {
                 this.Child.ShowAll();
             }

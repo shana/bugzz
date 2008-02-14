@@ -1,21 +1,44 @@
-// BugList.cs created with MonoDevelop
-// User: shana at 22:31 11/02/2008
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// To change standard headers go to Edit->Preferences->Coding->Standard Headers
+// Copyright (c) 2008 Novell, Inc.
 //
+// Authors:
+//	Andreia Gaita (avidigal@novell.com)
+//
+
 
 using System;
 using System.Collections.Generic;
 using Gtk;
 
-namespace mockup
+namespace mockup.Widgets
 {
 	public partial class BugList : Gtk.Bin
 	{
-		
+		Bugzz.Query query;
 		ListStore store;
-		public BugList()
+		Bugzz.BugzzManager bugzz;
+		
+		public BugList (Bugzz.BugzzManager bugzz)
 		{
+			this.bugzz = bugzz;
 			this.Build();
 
 			store = CreateModel ();
@@ -76,22 +99,29 @@ namespace mockup
 							 typeof(string),
 							 typeof(string));
 
-			Bugzz.BugzzManager bugzz = new Bugzz.BugzzManager ("https://bugzilla.novell.com");
-			Bugzz.Query query = new Bugzz.Query ();
-			query.Email = "avidigal@novell.com";
+
+			return store;
+		}		
+		
+
+		public void Load (Bugzz.Query query) {
+			this.query = query;
+			this.Refresh ();
+		}
+		
+		public void Refresh () {
+			if (this.query != null)
+				return;
+				
 			Dictionary<string, Bugzz.Bug> bugszz = bugzz.Search (query);
-
-
+		
 			foreach (KeyValuePair<string, Bugzz.Bug> bug in bugszz) {
 				store.AppendValues (int.Parse (bug.Value.ID),
 							bug.Value.AssignedTo,
 							bug.Value.Status,
 							bug.Value.ShortDesc);
 			}
-
-			return store;
-		}		
-		
+		}
 		
 		private void FixedToggled (object o, ToggledArgs args)
 		{
@@ -101,6 +131,11 @@ namespace mockup
 				store.SetValue (iter, 0, !val);
 			}
 		}
+
+		protected virtual void OnClicked (object sender, System.EventArgs e)
+		{
+			this.Refresh ();		
+		}
 		
 		private enum Column
 		{
@@ -108,41 +143,6 @@ namespace mockup
 			AssignedTo,
 			Status,
 			Description
-		}		
-		
-		private static Bug[] bugs =
-		{
-			new Bug ( false, 60482, "Normal",     "scrollable notebooks and hidden tabs"),
-			new Bug ( false, 60620, "Critical",   "gdk_window_clear_area (gdkwindow-win32.c) is not thread-safe" ),
-			new Bug ( false, 50214, "Major",      "Xft support does not clean up correctly" ),
-			new Bug ( true,  52877, "Major",      "GtkFileSelection needs a refresh method. " ),
-			new Bug ( false, 56070, "Normal",     "Can't click button after setting in sensitive" ),
-			new Bug ( true,  56355, "Normal",     "GtkLabel - Not all changes propagate correctly" ),
-			new Bug ( false, 50055, "Normal",     "Rework width/height computations for TreeView" ),
-			new Bug ( false, 58278, "Normal",     "gtk_dialog_set_response_sensitive () doesn't work" ),
-			new Bug ( false, 55767, "Normal",     "Getters for all setters" ),
-			new Bug ( false, 56925, "Normal",     "Gtkcalender size" ),
-			new Bug ( false, 56221, "Normal",     "Selectable label needs right-click copy menu" ),
-			new Bug ( true,  50939, "Normal",     "Add shift clicking to GtkTextView" ),
-			new Bug ( false, 6112,  "Enhancement","netscape-like collapsable toolbars" ),
-			new Bug ( false, 1,     "Normal",     "First bug :=)" )
-		};		
-	}
-	
-	public class Bug
-	{
-		public bool Fixed;
-		public int Number;
-		public string Severity;
-		public string Description;
-
-		public Bug (bool status, int number, string severity,
-			    string description)
-		{
-			Fixed = status;
-			Number = number;
-			Severity = severity;
-			Description = description;
-		}
+		}			
 	}	
 }
