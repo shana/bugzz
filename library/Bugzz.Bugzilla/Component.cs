@@ -2,7 +2,7 @@ using System;
 
 namespace Bugzz.Bugzilla
 {
-	internal class Component : InitialValue
+	internal sealed class Component : InitialValue
 	{
 		public Component ()
 			: base ()

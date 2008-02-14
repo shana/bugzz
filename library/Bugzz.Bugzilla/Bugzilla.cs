@@ -14,16 +14,16 @@ namespace Bugzz.Bugzilla
 {
 	internal class Bugzilla
 	{
-		HashBag <Classification> classifications = new HashBag <Classification> ();
-		HashBag <Product> products = new HashBag <Product> ();
-		HashBag <Component> components = new HashBag <Component> ();
-		HashBag <FoundInVersion> foundInVersion = new HashBag <FoundInVersion> ();
-		HashBag <FixedInMilestone> fixedInMilestone = new HashBag <FixedInMilestone> ();
+		public HashBag <IInitialValue> Classifications { get; private set; }
+		public HashBag <IInitialValue> Products {get; private set; }
+		public HashBag <IInitialValue> Components {get; private set; }
+		public HashBag <IInitialValue> FoundInVersion {get; private set; }
+		public HashBag <IInitialValue> FixedInMilestone { get; private set; }
 		
 		bool initialDataLoaded;
 		string targetVersion;
 		LoginData loginData;
-
+		
 		string baseUrl;
 		public string BaseUrl
 		{
@@ -64,6 +64,12 @@ namespace Bugzz.Bugzilla
 			this.baseUrl = baseUrl;
 			this.dataManager = new DataManager (targetVersion);
 			WebIO = new WebIO (baseUrl, loginData, dataManager);
+			
+			Classifications = new HashBag <IInitialValue> ();
+			Products = new HashBag <IInitialValue> ();
+			Components = new HashBag <IInitialValue> ();
+			FoundInVersion = new HashBag <IInitialValue> ();
+			FixedInMilestone = new HashBag <IInitialValue> ();
 		}
 
 		public void Refresh ()
@@ -162,28 +168,28 @@ namespace Bugzz.Bugzilla
 
 			switch (canonicalName) {
 				case "classification":
-					StoreValues <Classification> (classifications, nodes);
+					StoreValues <Classification> (Classifications, nodes);
 					break;
 
 				case "product":
-					StoreValues <Product> (products, nodes);
+					StoreValues <Product> (Products, nodes);
 					break;
 
 				case "component":
-					StoreValues <Component> (components, nodes);
+					StoreValues <Component> (Components, nodes);
 					break;
 
 				case "version":
-					StoreValues <FoundInVersion> (foundInVersion, nodes);
+					StoreValues <FoundInVersion> (FoundInVersion, nodes);
 					break;
 
 				case "target_milestone":
-					StoreValues <FixedInMilestone> (fixedInMilestone, nodes);
+					StoreValues <FixedInMilestone> (FixedInMilestone, nodes);
 					break;
 			}
 		}
 
-		void StoreValues <T> (HashBag <T> bag, HtmlNodeCollection nodes) where T:InitialValue,new()
+		void StoreValues <T> (HashBag <IInitialValue> bag, HtmlNodeCollection nodes) where T:InitialValue,new()
 		{
 			HtmlAttributeCollection attrs;
 			HtmlAttribute value;

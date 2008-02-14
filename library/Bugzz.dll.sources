@@ -30,3 +30,4 @@ Bugzz/Query.cs
 Bugzz/BugzzManager.cs
 Bugzz/BugLongDescription.cs
 Bugzz/LoginData.cs
+Bugzz/IInitialValue.cs
