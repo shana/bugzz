@@ -27,7 +27,8 @@ class App
 		loginData.UsernameField="username";
 		loginData.PasswordField="password";
 		loginData.FormActionUrl="auth-up";
-		loginData.AddExtraData ("nlogin_submit_btn", "Log in");
+		loginData.AddExtraData ("url", "https://bugzilla.novell.com/ichainlogin.cgi?target=query.cgi?format%3Dadvanced%26field0-0-0%3Dxyzzy%26GoAheadAndLogIn%3D1");
+		//loginData.AddExtraData ("nlogin_submit_btn", "Log in");
 		
 		Bugzz.BugzzManager bugz = new Bugzz.BugzzManager (args [0], loginData);
 		bugz.AddCallback (new Bugzz.DownloadProgressEventHandler (OnDownloadProgress));
@@ -84,12 +85,13 @@ class App
 			return;
 
 		Bugzz.Query query = new Bugzz.Query ();
-		query.AddQueryData ("classification", "Mono");
-		query.AddQueryData ("product", "Mono: Class Libraries");
-		query.AddQueryData ("component", "Sys.Web");
+		query.Email = "avidigal@novell.com";
+		//query.AddQueryData ("classification", "Mono");
+		//query.AddQueryData ("product", "Mono: Class Libraries");
+		//query.AddQueryData ("component", "Sys.Web");
 		query.AddQueryData ("GoAheadAndLogIn", "1");
 
-		var results = bugz.GetBugList (query);
+		Dictionary<string, Bug> results = bugz.GetBugList (query);
 		if (results == null)
 			return;
 		
@@ -114,8 +116,8 @@ class App
 
 		if (bug2 != null)
 			query.AddQueryData ("id", bug2.ID);
-		
-		var results2 = bugz.GetBugs (query);
+
+		Dictionary<string, Bug> results2 = bugz.GetBugs (query);
 
 		foreach (Bugzz.Bug bug in results2.Values) {
 			Console.WriteLine (bug.ToString (true));

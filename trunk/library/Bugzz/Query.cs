@@ -66,7 +66,7 @@ namespace Bugzz
 			}
 			
 			set {
-				var data = QueryData;
+				Dictionary<string, QueryDataItem> data = QueryData;
 
 				AddQueryData ("email1", value);
 				
