@@ -24,12 +24,14 @@ namespace Bugzz.Network
 		public event Bugzz.DownloadProgressEventHandler DownloadProgress;
 
 		private Uri baseUrl;
-		public Uri BaseUrl
-		{
+		public Uri BaseUrl {
 			get { return baseUrl; }
 			set { baseUrl = value; }
 		}
-		
+
+		public long MaxRequestAttempts { get; set; }
+		public long MaxLoginAttempts { get; set; }
+			
 		static WebIO ()
 		{
 			// TODO: construct something funnier later on
@@ -38,6 +40,9 @@ namespace Bugzz.Network
 		
 		public WebIO (string baseUrl, LoginData loginData, DataManager dataManager)
 		{
+			MaxRequestAttempts = 3;
+			MaxLoginAttempts = 3;
+			
 			this.loginData = loginData;
 			this.dataManager = dataManager;
 			
@@ -102,43 +107,59 @@ namespace Bugzz.Network
 			string response;
 			Uri redirect;
 			bool addressesMatch;
-
+			long attempts = MaxRequestAttempts;
+			long loginAttempts = MaxLoginAttempts;
+			HttpStatusCode status = HttpStatusCode.BadRequest;
+			bool loggedIn = false;
+			
 			Console.WriteLine ("Requesting URL: {0}", fullUrl);
 
-			HttpStatusCode status = Get (fullUrl, out response, out addressesMatch, out redirect, false);
+			while (attempts > 0) {
+				try {
+					status = Get (fullUrl, out response, out addressesMatch, out redirect, false);
 
-			if (status != HttpStatusCode.OK) {
-				OnDocumentRetrieveFailure (fullUrl, status);
-				return null;
-			}
-
-			try {
-				if (!addressesMatch) {
-					Uri loginAddress = loginData.Url;
-
-					if (loginAddress.Scheme == redirect.Scheme &&
-					    loginAddress.Host == redirect.Host &&
-					    loginAddress.AbsolutePath == redirect.AbsolutePath) {
-
-						UriBuilder uri = new UriBuilder ();
-						uri.Scheme = redirect.Scheme;
-						uri.Host = redirect.Host;
-						uri.Path = redirect.AbsolutePath + loginData.FormActionUrl;
-
-						if (LogIn (uri)) {
-							return GetDocument (relativeUrl);
-						} else {
-							throw new WebIOException ("Login failure.", redirect.ToString ());
-						}
+					if (status != HttpStatusCode.OK) {
+						attempts--;
+						continue;
 					}
-				}
+				
+					if (!addressesMatch) {
+						loggedIn = false;
+						Uri loginAddress = loginData.Url;
 
-				return response;
-			} catch (BugzzException) {
-				throw;
-			} catch (Exception ex) {
-				throw new WebIOException ("Error downloading document.", fullUrl.ToString (), ex);
-			}
+						if (loginAddress.Scheme == redirect.Scheme &&
+						    loginAddress.Host == redirect.Host &&
+						    loginAddress.AbsolutePath == redirect.AbsolutePath) {
+							UriBuilder uri = new UriBuilder ();
+							uri.Scheme = redirect.Scheme;
+							uri.Host = redirect.Host;
+							uri.Path = redirect.AbsolutePath + loginData.FormActionUrl;
+							Console.WriteLine ("Login attempts left: {0}", loginAttempts);
+							LogIn (uri);
+							loginAttempts--;
+							continue;
+						}
+					} else
+						loggedIn = true;
+					
+					if (!loggedIn)
+						if (loginAttempts == 0)
+							throw new WebIOException ("Login failure.", redirect.ToString ());
+						else
+							continue;
+					
+					return response;
+				} catch (BugzzException) {
+					throw;
+				} catch (Exception ex) {
+					throw new WebIOException ("Error downloading document.", fullUrl.ToString (), ex);
+				} finally {
+					if (status != HttpStatusCode.OK)
+						OnDocumentRetrieveFailure (fullUrl, status);
+				}
+			};
+			
+			return null;
 		}
 
 		bool LogIn (UriBuilder formPostUri)
@@ -199,7 +220,7 @@ namespace Bugzz.Network
 				resp = request.GetResponse () as HttpWebResponse;
 				statusCode = resp.StatusCode;
 
-				addressesMatch = (request.RequestUri == request.Address);
+				addressesMatch = (request.Address == uri);
 				Console.WriteLine ("GET:addressesMatch = " + addressesMatch); 
 				redirectAddress = request.Address;
 
@@ -338,7 +359,6 @@ namespace Bugzz.Network
 				}
 				
 				response = sb.ToString ();
-				Console.WriteLine (8);
 			} catch (Exception ex) {
 				Console.WriteLine ("POST Exception");
 				Exception e = ex;
