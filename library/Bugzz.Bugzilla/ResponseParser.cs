@@ -119,7 +119,7 @@ namespace Bugzz.Bugzilla
 
 		void ParseXML (XmlNode top)
 		{
-			var bugs = Bugs;
+			/*var*/ Dictionary<string, Bug> bugs = Bugs;
 			bugs.Clear ();
 			
 			XmlNodeList nodes = top.SelectNodes ("//bugzilla/bug");

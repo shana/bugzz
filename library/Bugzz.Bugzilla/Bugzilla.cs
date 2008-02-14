@@ -54,7 +54,6 @@ namespace Bugzz.Bugzilla
 		
 		public SGC.Dictionary <string, Bug> GetBugList (Query q)
 		{
-			LoadInitialData ();
 			VersionData bvd = dataManager.VersionData;
 			string queryUrl = bvd.GetUrl ("buglist");
 
@@ -70,26 +69,11 @@ namespace Bugzz.Bugzilla
 			
 			ResponseParser rp = new ResponseParser (query);
 			
-			/*
-			XmlDocument xmldoc = new XmlDocument ();
-			xmldoc.LoadXml (query);
-			XmlNamespaceManager ns = new XmlNamespaceManager (xmldoc.NameTable);
-			ns.AddNamespace ("bz", "http://www.bugzilla.org/rdf#");
-			XmlNodeList nodes = xmldoc.SelectNodes ("//bz:bug", ns);
-			SGC.List<Bug> bugs = new SGC.List<Bug> ();
-			foreach (XmlNode node in nodes) {
-				XmlNode n = node.SelectSingleNode ("bz:id", ns);
-				if (n == null) continue;
-				bugs.Add (new Bug (node, ns));
-			}
-			return bugs;
-			 */
 			return rp.Bugs;
 		}
 
 		public SGC.Dictionary <string, Bug> GetBugs (Query q)
 		{
-			LoadInitialData ();
 			VersionData bvd = dataManager.VersionData;
 			string queryUrl = bvd.GetUrl ("show_bug");
 

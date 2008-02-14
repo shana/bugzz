@@ -87,98 +87,73 @@ namespace Bugzz.Network
 		// times before returning an error.
 		public string GetDocument (string relativeUrl)
 		{
-			string fullUrl;
-			HttpWebRequest req;
+			Uri fullUrl;
 			
+			UriBuilder ub = new UriBuilder (BaseUrl);
 			try {
-				UriBuilder ub = new UriBuilder (BaseUrl);
 				ub.Path = relativeUrl;
-				fullUrl = ub.ToString ();
-				req = WebRequest.Create (new Uri (fullUrl)) as HttpWebRequest;
-				cookieJar.AddUri (new Uri (fullUrl));
-				req.CookieContainer = cookieJar;
-			} catch (Exception ex) {
+				fullUrl = new Uri (ub.ToString ());
+
+			}
+			catch (Exception ex) {
 				throw new WebIOException ("Malformed relative URL.", relativeUrl, ex);
 			}
-			
-			HttpWebResponse response;
-			try {
-				Console.WriteLine ("Requesting URL: {0}", fullUrl);
-				
-				req.UserAgent = userAgent;
-				response = req.GetResponse () as HttpWebResponse;
-				
-				if (response.StatusCode != HttpStatusCode.OK) {
-					OnDocumentRetrieveFailure (req);
-					return null;
-				}
 
-				cookieJar.Save ();
+			string response;
+			Uri redirect;
+			bool addressesMatch;
 
-				// Check for redirects to the login page
-				Console.WriteLine (req.RequestUri != req.Address);
-				Console.WriteLine ("LoginData: " + loginData);
-				if (loginData != null && loginData.Url != null && req.RequestUri != req.Address) {
-					var address = req.Address;
-					var loginAddress = loginData.Url;
-					
-					if (loginAddress.Scheme == address.Scheme &&
-					    loginAddress.Host == address.Host &&
-					    loginAddress.AbsolutePath == address.AbsolutePath) {
-						//req.Abort ();
-						if (LogIn (req.Address))
-							return GetDocument (relativeUrl.Replace ("&GoAheadAndLogIn=1", ""));
-						else
-							throw new WebIOException ("Login failure.", address.ToString ());
-					}
-				}
-				
-				StringBuilder sb = new StringBuilder ();
-				Stream data = response.GetResponseStream ();
-				char[] buffer = new char [4096];
-				int bufferLen = buffer.Length;
-				int charsRead = -1;
-				long count;
-				
-				using (StreamReader reader = new StreamReader (data)) {
-					count = 0;
-					OnDownloadStarted (response);
-					long contentLength = response.ContentLength;
-					if (contentLength == -1)
-						contentLength = Int64.MaxValue; // potentially
-									       // dangerous
-					
-					while (count < contentLength) {
-						charsRead = reader.Read (buffer, 0, bufferLen);
-						if (charsRead == 0)
-							break;
+			Console.WriteLine ("Requesting URL: {0}", fullUrl);
 
-						count += charsRead;
-						OnDownloadProgress (contentLength, count);
-						sb.Append (buffer, 0, charsRead);
-					}
-					OnDownloadEnded (response);
-				}
-				
-				return sb.ToString ();
-			} catch (BugzzException) {
-				throw;
-			} catch (WebException ex) {
-				Console.WriteLine (ex);
-				HttpWebResponse exResponse = ex.Response as HttpWebResponse;
-				if (exResponse != null && exResponse.StatusCode == HttpStatusCode.NotModified)
-					OnDownloadEnded (exResponse);
-				else
-					OnDocumentRetrieveFailure (req);
-				
+			HttpStatusCode status = Get (fullUrl, out response, out addressesMatch, out redirect, false);
+
+			if (status != HttpStatusCode.OK) {
+//				OnDocumentRetrieveFailure (req);
 				return null;
-			} catch (Exception ex) {
-				Console.WriteLine (ex);
-				throw new WebIOException ("Error downloading document.", fullUrl, ex);
 			}
+
+			if (!addressesMatch) {
+
+				Uri loginAddress = loginData.Url;
+
+				if (loginAddress.Scheme == redirect.Scheme &&
+					loginAddress.Host == redirect.Host &&
+					loginAddress.AbsolutePath == redirect.AbsolutePath) {
+
+					UriBuilder uri = new UriBuilder ();
+					uri.Scheme = redirect.Scheme;
+					uri.Host = redirect.Host;
+					uri.Path = redirect.AbsolutePath + loginData.FormActionUrl;
+
+
+					if (LogIn (uri))
+						return GetDocument (relativeUrl);
+					else
+						throw new WebIOException ("Login failure.", redirect.ToString ());
+				}
+			}
+
+			return response;
+
+
+			//} catch (BugzzException) {
+			//    throw;
+			//} catch (WebException ex) {
+			//    Console.WriteLine (ex);
+			//    //HttpWebResponse exResponse = ex.Response as HttpWebResponse;
+			//    //if (exResponse != null && exResponse.StatusCode == HttpStatusCode.NotModified)
+			//    //    OnDownloadEnded (exResponse);
+			//    //else
+			//    //    OnDocumentRetrieveFailure (req);
+				
+			//    return null;
+			//} catch (Exception ex) {
+			//    Console.WriteLine (ex);
+			//    throw new WebIOException ("Error downloading document.", fullUrl, ex);
+			//}
 		}
 
-		bool LogIn (Uri address)
+		bool LogIn (UriBuilder formPostUri)
 		{
 			if (String.IsNullOrEmpty (loginData.Username) || String.IsNullOrEmpty (loginData.Password))
 				return false;
@@ -200,72 +175,152 @@ namespace Bugzz.Network
 				if (String.IsNullOrEmpty (passwordField))
 					throw new BugzillaException ("Missing bugzilla login form field name 'bugzilla_password'.");
 			}
-			
-			Console.WriteLine ("Attempting to log in at '" + address.ToString () + "'.");
-			ASCIIEncoding ascii = new ASCIIEncoding ();
+
+			Console.WriteLine ("Attempting to log in ");//at '" + req.Address.ToString () + "'.");
+
+
 			string postData = usernameField + "=" + loginData.Username + "&" + passwordField + "=" + loginData.Password;
+			
 			foreach (KeyValuePair <string, string> kvp in loginData.ExtraData)
 				postData += ("&" + kvp.Key + "=" + kvp.Value);
 
+			Console.WriteLine ("Login POST url: {0}", formPostUri.ToString ());
 			Console.WriteLine ("Post data: {0}", postData);
+
+			string response;
+			HttpStatusCode status = Post (new Uri (formPostUri.ToString ()), postData, out response, true);
+			if (status == HttpStatusCode.OK)
+				return true;
 			
+			
+			return false;
+		}
+
+
+		private HttpStatusCode Get (Uri uri, out string response, out bool addressesMatch, out Uri redirectAddress, bool ignoreResponse)
+		{
+			HttpStatusCode statusCode = HttpStatusCode.NotFound;
+			cookieJar.AddUri (uri);
+			HttpWebRequest request = WebRequest.Create (uri) as HttpWebRequest;
+			request.Method = "GET";
+			request.UserAgent = userAgent;
+			request.CookieContainer = cookieJar;
+
+			try {
+				HttpWebResponse resp = request.GetResponse () as HttpWebResponse;
+				statusCode = resp.StatusCode;
+
+				addressesMatch = (request.RequestUri == request.Address);
+				redirectAddress = request.Address;
+
+				StringBuilder sb = new StringBuilder ();
+
+				if (!ignoreResponse) {
+					Stream d = resp.GetResponseStream ();
+					char[] buffer = new char[4096];
+					int bufferLen = buffer.Length;
+					int charsRead = -1;
+					long count;
+
+					using (StreamReader reader = new StreamReader (d)) {
+						count = 0;
+//						OnDownloadStarted (response);
+						long contentLength = resp.ContentLength;
+						if (contentLength == -1)
+							contentLength = Int64.MaxValue; // potentially
+						// dangerous
+
+						while (count < contentLength) {
+							charsRead = reader.Read (buffer, 0, bufferLen);
+							if (charsRead == 0)
+								break;
+
+							count += charsRead;
+							OnDownloadProgress (contentLength, count);
+							sb.Append (buffer, 0, charsRead);
+						}
+//						OnDownloadEnded (response);
+					}
+				}
+
+				cookieJar.Save ();
+				resp.Close ();
+
+				Console.WriteLine (sb.ToString ());
+
+				response = sb.ToString ();
+
+			}
+			catch (HttpListenerException ex) {
+				response = String.Empty;
+				redirectAddress = null;
+				addressesMatch = false;
+			}
+			return statusCode;
+		}
+
+		private HttpStatusCode Post (Uri uri, string postData, out string response, bool ignoreResponse)
+		{
+			HttpStatusCode statusCode = HttpStatusCode.NotFound;
+			ASCIIEncoding ascii = new ASCIIEncoding ();
 			byte[] data = ascii.GetBytes (postData);
 
-			UriBuilder formPostUri = new UriBuilder ();
-			formPostUri.Scheme = address.Scheme;
-			formPostUri.Host = address.Host;
-			formPostUri.Path = address.AbsolutePath + loginData.FormActionUrl;
-			formPostUri.Query = address.Query.Substring (1);
-			
-			Console.WriteLine ("Login POST url: {0}", formPostUri.ToString ());
-			
-			HttpWebRequest request = WebRequest.Create (new Uri (formPostUri.ToString ())) as HttpWebRequest;
+			cookieJar.AddUri (uri);
+			HttpWebRequest request = WebRequest.Create (uri) as HttpWebRequest;
 			request.Method = "POST";
-			request.ContentType="application/x-www-form-urlencoded";
+			request.ContentType = "application/x-www-form-urlencoded";
 			request.ContentLength = data.Length;
-			cookieJar.AddUri (new Uri (request.RequestUri.ToString ()));
+			request.UserAgent = userAgent;
 			request.CookieContainer = cookieJar;
-			
+
 			Stream s = request.GetRequestStream ();
 			s.Write (data, 0, data.Length);
 			s.Close ();
-			
-			Console.WriteLine ("Data sent.");
-			
-			HttpWebResponse response = request.GetResponse () as HttpWebResponse;
-			Console.WriteLine ("Response: {0}", response.StatusCode);
-			
-			if (response.StatusCode != HttpStatusCode.OK)
-				return false;
 
-			StringBuilder sb = new StringBuilder ();
-			Stream d = response.GetResponseStream ();
-			char[] buffer = new char [4096];
-			int bufferLen = buffer.Length;
-			int charsRead = -1;
-			long count;
+			try {
+				HttpWebResponse resp = request.GetResponse () as HttpWebResponse;
+				statusCode = resp.StatusCode;
+
 				
-			using (StreamReader reader = new StreamReader (d)) {
-				count = 0;
-				long contentLength = response.ContentLength;
-				if (contentLength == -1)
-					contentLength = Int64.MaxValue; // potentially
-				// dangerous
-					
-				while (count < contentLength) {
-					charsRead = reader.Read (buffer, 0, bufferLen);
-					if (charsRead == 0)
-						break;
+				StringBuilder sb = new StringBuilder ();
 
-					count += charsRead;
-					sb.Append (buffer, 0, charsRead);
+				if (!ignoreResponse) {
+					Stream d = resp.GetResponseStream ();
+					char[] buffer = new char[4096];
+					int bufferLen = buffer.Length;
+					int charsRead = -1;
+					long count;
+
+					using (StreamReader reader = new StreamReader (d)) {
+						count = 0;
+						long contentLength = resp.ContentLength;
+						if (contentLength == -1)
+							contentLength = Int64.MaxValue; // potentially
+						// dangerous
+
+						while (count < contentLength) {
+							charsRead = reader.Read (buffer, 0, bufferLen);
+							if (charsRead == 0)
+								break;
+
+							count += charsRead;
+							sb.Append (buffer, 0, charsRead);
+						}
+					}
 				}
-			}
 
-			Console.WriteLine (sb.ToString ());
-			
-			cookieJar.Save ();
-			return true;
+				cookieJar.Save ();
+				resp.Close ();
+
+				Console.WriteLine (sb.ToString ());
+
+				response = sb.ToString ();
+
+			}
+			catch (HttpListenerException ex) {
+				response = String.Empty;
+			}
+			return statusCode;
 		}
 	}
 }
