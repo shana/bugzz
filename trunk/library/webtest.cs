@@ -71,10 +71,10 @@ class App
 			return;
 
 		Bugzz.Query query = new Bugzz.Query ();
-		query.Email = "avidigal@novell.com";
-		//query.AddQueryData ("classification", "Mono");
-		//query.AddQueryData ("product", "Mono: Class Libraries");
-		//query.AddQueryData ("component", "Sys.Web");
+		//query.Email = "avidigal@novell.com";
+		query.AddQueryData ("classification", "Mono");
+		query.AddQueryData ("product", "Mono: Class Libraries");
+		query.AddQueryData ("component", "Sys.Web");
 		query.AddQueryData ("GoAheadAndLogIn", "1");
 
 		Dictionary<string, Bug> results = bugz.GetBugList (query);
