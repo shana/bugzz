@@ -6,14 +6,21 @@ namespace Bugzz
 	public class DocumentRetrieveFailureEventArgs : EventArgs
 	{
 
-		public HttpWebRequest Request/* {
-			get;
-			private set;
-		}*/;
-		 		
-		internal DocumentRetrieveFailureEventArgs (HttpWebRequest req)
+		private Uri uri;
+		public Uri Uri {
+			get { return uri; }
+		}
+
+		HttpStatusCode status;
+		public HttpStatusCode Status
 		{
-			Request = req;
+			get { return status; }
+		}
+
+		internal DocumentRetrieveFailureEventArgs (Uri uri, HttpStatusCode status)
+		{
+			this.uri = uri;
+			this.status = status;
 		}
 		
 	}

@@ -2,5 +2,5 @@ using System;
 
 namespace Bugzz
 {
-	public delegate void DocumentRetrieveFailureEventHandler (object sender, DocumentRetrieveFailureEventArgs a);
+	public delegate void DocumentRetrieveFailureEventHandler (DocumentRetrieveFailureEventArgs a);
 }

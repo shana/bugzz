@@ -2,5 +2,5 @@ using System;
 
 namespace Bugzz
 {
-	public delegate void DownloadEndedEventHandler (object sender, DownloadEndedEventArgs a);
+	public delegate void DownloadEndedEventHandler (DownloadEndedEventArgs a);
 }

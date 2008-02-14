@@ -22,12 +22,14 @@ namespace Bugzz.Network
 		public event Bugzz.DownloadStartedEventHandler DownloadStarted;
 		public event Bugzz.DownloadEndedEventHandler DownloadEnded;
 		public event Bugzz.DownloadProgressEventHandler DownloadProgress;
-		
-		public Uri BaseUrl/* {
-			get;
-			private set;
-		}*/;
 
+		private Uri baseUrl;
+		public Uri BaseUrl
+		{
+			get { return baseUrl; }
+			set { baseUrl = value; }
+		}
+		
 		static WebIO ()
 		{
 			// TODO: construct something funnier later on
@@ -43,7 +45,7 @@ namespace Bugzz.Network
 				throw new ArgumentNullException ("Base request URL must be specified.", "baseUrl");
 			
 			try {
-				BaseUrl = new Uri (baseUrl);
+				this.baseUrl = new Uri (baseUrl);
 			} catch (Exception ex) {
 				throw new ArgumentException ("Invalid base URL.", "baseUrl", ex);
 			}
@@ -51,28 +53,28 @@ namespace Bugzz.Network
 			cookieJar = new CookieManager ();
 		}
 
-		void OnDocumentRetrieveFailure (HttpWebRequest req)
+		void OnDocumentRetrieveFailure (Uri uri, HttpStatusCode status)
 		{
 			if (DocumentRetrieveFailure == null)
 				return;
 
-			DocumentRetrieveFailure (this, new DocumentRetrieveFailureEventArgs (req));
+			DocumentRetrieveFailure (new DocumentRetrieveFailureEventArgs (uri, status));
 		}
 
-		void OnDownloadStarted (HttpWebResponse response)
+		void OnDownloadStarted (Uri uri, long contentLength)
 		{
 			if (DownloadStarted == null)
 				return;
 
-			DownloadStarted (this, new DownloadStartedEventArgs (response));
+			DownloadStarted (new DownloadStartedEventArgs (uri, contentLength));
 		}
 		
-		void OnDownloadEnded (HttpWebResponse response)
+		void OnDownloadEnded (Uri uri, long contentLength, HttpStatusCode status)
 		{
 			if (DownloadEnded == null)
 				return;
 
-			DownloadEnded (this, new DownloadEndedEventArgs (response));
+			DownloadEnded (new DownloadEndedEventArgs (uri, contentLength, status));
 		}
 
 		void OnDownloadProgress (long maxCount, long curCount)
@@ -80,7 +82,7 @@ namespace Bugzz.Network
 			if (DownloadProgress == null)
 				return;
 
-			DownloadProgress (this, new DownloadProgressEventArgs (maxCount, curCount));
+			DownloadProgress (new DownloadProgressEventArgs (maxCount, curCount));
 		}
 		
 		// TODO: this method should retry to retrieve the document a configurable amount of
@@ -199,6 +201,9 @@ namespace Bugzz.Network
 
 		private HttpStatusCode Get (Uri uri, out string response, out bool addressesMatch, out Uri redirectAddress, bool ignoreResponse)
 		{
+
+			long contentLength = -1;
+
 			HttpStatusCode statusCode = HttpStatusCode.NotFound;
 			cookieJar.AddUri (uri);
 			HttpWebRequest request = WebRequest.Create (uri) as HttpWebRequest;
@@ -224,8 +229,9 @@ namespace Bugzz.Network
 
 					using (StreamReader reader = new StreamReader (d)) {
 						count = 0;
-//						OnDownloadStarted (response);
-						long contentLength = resp.ContentLength;
+						
+						contentLength = resp.ContentLength;
+						OnDownloadStarted (uri, contentLength);
 						if (contentLength == -1)
 							contentLength = Int64.MaxValue; // potentially
 						// dangerous
@@ -239,7 +245,7 @@ namespace Bugzz.Network
 							OnDownloadProgress (contentLength, count);
 							sb.Append (buffer, 0, charsRead);
 						}
-//						OnDownloadEnded (response);
+						OnDownloadEnded (uri, contentLength, statusCode);
 					}
 				}
 
@@ -251,10 +257,23 @@ namespace Bugzz.Network
 				response = sb.ToString ();
 
 			}
-			catch (HttpListenerException ex) {
+			catch (WebException ex) {
 				response = String.Empty;
 				redirectAddress = null;
 				addressesMatch = false;
+				if (ex.Response != null) {
+					try {
+						HttpWebResponse exResponse = ex.Response as HttpWebResponse;
+						statusCode = exResponse.StatusCode;
+					}
+					catch {
+						statusCode = HttpStatusCode.BadRequest;
+					}
+				}
+				if (statusCode == HttpStatusCode.NotModified)
+					OnDownloadEnded (uri, contentLength, statusCode);
+				else
+					OnDocumentRetrieveFailure (uri, statusCode);
 			}
 			return statusCode;
 		}
@@ -317,7 +336,7 @@ namespace Bugzz.Network
 				response = sb.ToString ();
 
 			}
-			catch (HttpListenerException ex) {
+			catch (WebException ex) {
 				response = String.Empty;
 			}
 			return statusCode;

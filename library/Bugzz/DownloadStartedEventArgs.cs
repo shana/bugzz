@@ -5,15 +5,23 @@ namespace Bugzz
 {
 	public class DownloadStartedEventArgs : EventArgs
 	{
-		public HttpWebResponse Response /*{
-			get;
-			private set;
-		}*/
-		   ;
+		private Uri uri;
+		public Uri Uri {
+			get { return uri; }
+		}
 
-		internal DownloadStartedEventArgs (HttpWebResponse response)
+
+		long contentLength;
+		public long ContentLength
 		{
-			Response = response;
+			get { return contentLength; }
+		}
+
+
+		internal DownloadStartedEventArgs (Uri uri, long contentLength)
+		{
+			this.uri = uri;
+			this.contentLength = contentLength;
 		}
 	}
 }

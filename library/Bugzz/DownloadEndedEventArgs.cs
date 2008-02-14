@@ -5,15 +5,26 @@ namespace Bugzz
 {
 	public class DownloadEndedEventArgs : EventArgs
 	{
-		public HttpWebResponse Response  /*{
-			get;
-			private set;
-		}*/
-		   ;
+		private Uri uri;
+		public Uri Uri {
+			get { return uri; }
+		}
 
-		internal DownloadEndedEventArgs (HttpWebResponse response)
+		long contentLength;
+		public long ContentLength {
+			get { return contentLength; }
+		}
+
+		HttpStatusCode status;
+		public HttpStatusCode Status {
+			get { return status; }
+		}
+
+		internal DownloadEndedEventArgs (Uri uri, long contentLength, HttpStatusCode status)
 		{
-			Response = response;
+			this.uri = uri;
+			this.status = status;
+			this.contentLength = contentLength;
 		}
 	}
 }
