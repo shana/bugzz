@@ -50,6 +50,7 @@ namespace mockup.Widgets
 		protected virtual void OnSearch (object sender, System.EventArgs e)
 		{
 			query.Email = txtEmail.Text;
+			Loader.Load (query);
 			main.ToggleList (query);
 		}
 	}

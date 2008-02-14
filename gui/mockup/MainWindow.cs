@@ -47,10 +47,10 @@ namespace mockup {
 		
 			settings = new Settings ();
 			Loader.Load (settings);
-			Loader.Save (settings);
 			Bugzz.LoginData loginData = new LoginData();
+			Loader.Load (loginData);
 			if (settings.Online)
-				bugzzManager = new BugzzManager (settings.Url);
+				bugzzManager = new BugzzManager (settings.Url, loginData);
 			else
 				bugzzManager = new BugzzManager (loginData);
 
