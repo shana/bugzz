@@ -1,6 +1,6 @@
 bugzzdir=$(prefix)/lib
 bin_SCRIPTS = 
-bugzz_DATA = Bugzz.dll
+bugzz_DATA = Bugzz.dll ../3rdparty/HtmlAgilityPack/HtmlAgilityPack.dll
 PROGRAM = Bugzz.dll
 sharedir=$(prefix)/share/bugzz
 share_DATA = data/bugzilla.xml
@@ -20,7 +20,7 @@ resources =
 # bugzz: bugzz.in
 # 	$(REWRITE) < $(srcdir)/bugzz.in > bugzz
 
-EXTRA_DIST = $(sources) $(resources) data/bugzilla.xml 
+EXTRA_DIST = $(sources) $(resources) data/bugzilla.xml ../3rdparty/HtmlAgilityPack/HtmlAgilityPack.dll
 # bugzz.in bugzz.mds bugzz.mdp
 
 packages = 

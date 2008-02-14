@@ -110,7 +110,7 @@ namespace Bugzz.Network
 			HttpStatusCode status = Get (fullUrl, out response, out addressesMatch, out redirect, false);
 
 			if (status != HttpStatusCode.OK) {
-//				OnDocumentRetrieveFailure (req);
+				OnDocumentRetrieveFailure (fullUrl, status);
 				return null;
 			}
 
@@ -118,21 +118,22 @@ namespace Bugzz.Network
 
 				Uri loginAddress = loginData.Url;
 
-				if (loginAddress.Scheme == redirect.Scheme &&
-					loginAddress.Host == redirect.Host &&
-					loginAddress.AbsolutePath == redirect.AbsolutePath) {
+//				if (loginAddress.Scheme == redirect.Scheme &&
+//					loginAddress.Host == redirect.Host &&
+//					loginAddress.AbsolutePath == redirect.AbsolutePath) {
 
 					UriBuilder uri = new UriBuilder ();
 					uri.Scheme = redirect.Scheme;
 					uri.Host = redirect.Host;
 					uri.Path = redirect.AbsolutePath + loginData.FormActionUrl;
 
-
-					if (LogIn (uri))
+					if (LogIn (uri)) {
 						return GetDocument (relativeUrl);
-					else
+						}
+					else {
 						throw new WebIOException ("Login failure.", redirect.ToString ());
-				}
+					}
+//				}
 			}
 
 			return response;
@@ -190,7 +191,7 @@ namespace Bugzz.Network
 			Console.WriteLine ("Post data: {0}", postData);
 
 			string response;
-			HttpStatusCode status = Post (new Uri (formPostUri.ToString ()), postData, out response, true);
+			HttpStatusCode status = Post (new Uri (formPostUri.ToString ()), postData, out response, false);
 			if (status == HttpStatusCode.OK)
 				return true;
 			
@@ -216,6 +217,7 @@ namespace Bugzz.Network
 				statusCode = resp.StatusCode;
 
 				addressesMatch = (request.RequestUri == request.Address);
+				Console.WriteLine ("GET:addressesMatch = " + addressesMatch); 
 				redirectAddress = request.Address;
 
 				StringBuilder sb = new StringBuilder ();
@@ -252,15 +254,26 @@ namespace Bugzz.Network
 				cookieJar.Save ();
 				resp.Close ();
 
+				Console.WriteLine ("----GET----");
 				Console.WriteLine (sb.ToString ());
+				Console.WriteLine ("----END OF GET----");
 
 				response = sb.ToString ();
 
 			}
 			catch (WebException ex) {
+
+				Console.WriteLine ("GET WebException");
+				Exception e = ex;
+				while (e != null) {
+					Console.WriteLine (e.Message);
+					Console.WriteLine (e.StackTrace);
+					e = e.InnerException;
+				}
+
 				response = String.Empty;
 				redirectAddress = null;
-				addressesMatch = false;
+				addressesMatch = true;
 				if (ex.Response != null) {
 					try {
 						HttpWebResponse exResponse = ex.Response as HttpWebResponse;
@@ -274,6 +287,20 @@ namespace Bugzz.Network
 					OnDownloadEnded (uri, contentLength, statusCode);
 				else
 					OnDocumentRetrieveFailure (uri, statusCode);
+			}
+			catch (Exception ex) {
+				Console.WriteLine ("GET Exception");
+				Exception e = ex;
+				while (e != null) {
+					Console.WriteLine (e.Message);
+					Console.WriteLine (e.StackTrace);
+					e = e.InnerException;
+				}
+				
+				response = String.Empty;
+				redirectAddress = null;
+				addressesMatch = false;
+				
 			}
 			return statusCode;
 		}
@@ -295,15 +322,17 @@ namespace Bugzz.Network
 			Stream s = request.GetRequestStream ();
 			s.Write (data, 0, data.Length);
 			s.Close ();
-
+Console.WriteLine (1);
 			try {
 				HttpWebResponse resp = request.GetResponse () as HttpWebResponse;
+Console.WriteLine (2);
 				statusCode = resp.StatusCode;
-
+Console.WriteLine (3);
 				
 				StringBuilder sb = new StringBuilder ();
 
 				if (!ignoreResponse) {
+Console.WriteLine (4);				
 					Stream d = resp.GetResponseStream ();
 					char[] buffer = new char[4096];
 					int bufferLen = buffer.Length;
@@ -327,16 +356,26 @@ namespace Bugzz.Network
 						}
 					}
 				}
-
+Console.WriteLine (5);
 				cookieJar.Save ();
+Console.WriteLine (6);
 				resp.Close ();
-
+Console.WriteLine (7);
+				Console.WriteLine ("----POST----");
 				Console.WriteLine (sb.ToString ());
+				Console.WriteLine ("----END OF POST----");
 
 				response = sb.ToString ();
-
+Console.WriteLine (8);
 			}
-			catch (WebException ex) {
+			catch (Exception ex) {
+				Console.WriteLine ("POST Exception");
+				Exception e = ex;
+				while (e != null) {
+					Console.WriteLine (e.Message);
+					Console.WriteLine (e.StackTrace);
+					e = e.InnerException;
+				}
 				response = String.Empty;
 			}
 			return statusCode;
