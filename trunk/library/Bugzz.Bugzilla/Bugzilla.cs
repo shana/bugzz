@@ -2,6 +2,7 @@ using System;
 using SGC=System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 
 using C5;
@@ -14,15 +15,18 @@ namespace Bugzz.Bugzilla
 {
 	internal class Bugzilla
 	{
+		bool initialDataLoaded;
+		string targetVersion;
+		LoginData loginData;
+		Regex rdfRegexp = new Regex ("^\\s*<\\?xml.*\\?>\\s*(.|\\n)*<RDF", RegexOptions.Compiled);
+		Regex xmlRegexp = new Regex ("<\\?xml.*\\?>", RegexOptions.Compiled);
+		Regex htmlRegexp = new Regex ("<html(.|\\n)*>", RegexOptions.Compiled);
+		
 		public HashBag <IInitialValue> Classifications { get; private set; }
 		public HashBag <IInitialValue> Products {get; private set; }
 		public HashBag <IInitialValue> Components {get; private set; }
 		public HashBag <IInitialValue> FoundInVersion {get; private set; }
-		public HashBag <IInitialValue> FixedInMilestone { get; private set; }
-		
-		bool initialDataLoaded;
-		string targetVersion;
-		LoginData loginData;
+		public HashBag <IInitialValue> FixedInMilestone { get; private set; }		
 		
 		string baseUrl;
 		public string BaseUrl
@@ -93,9 +97,9 @@ namespace Bugzz.Bugzilla
 			q.SetUrl (queryUrl);
 			q.AddQueryData ("ctype", "rdf");
 			
-			string query = WebIO.GetDocument (q.ToString ());
+			string query = WebIO.GetDocument (q.ToString (), "application/rdf+xml", rdfRegexp);
 			if (String.IsNullOrEmpty (query))
-				return null;
+				throw new BugzillaException ("No valid response retrieved.");
 			
 			ResponseParser rp = new ResponseParser (query);
 			
@@ -113,9 +117,9 @@ namespace Bugzz.Bugzilla
 			q.SetUrl (queryUrl);
 			q.AddQueryData ("ctype", "xml");
 
-			string query = WebIO.GetDocument (q.ToString ());
+			string query = WebIO.GetDocument (q.ToString (), "application/xml", xmlRegexp);
 			if (String.IsNullOrEmpty (query))
-				return null;
+				throw new BugzillaException ("No valid response retrieved.");
 			
 			ResponseParser rp = new ResponseParser (query);
 
@@ -132,7 +136,7 @@ namespace Bugzz.Bugzilla
 			if (String.IsNullOrEmpty (queryUrl))
 				throw new BugzillaException ("Cannot retrieve initial data - no URL given.");
 			
-			string query = WebIO.GetDocument (queryUrl);
+			string query = WebIO.GetDocument (queryUrl, "text/html", htmlRegexp);
 			if (String.IsNullOrEmpty (query))
 				throw new BugzillaException ("No document returned by server for initial data.");
 			
