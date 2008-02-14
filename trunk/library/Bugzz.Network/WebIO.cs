@@ -126,7 +126,7 @@ namespace Bugzz.Network
 					    loginAddress.Host == address.Host &&
 					    loginAddress.AbsolutePath == address.AbsolutePath) {
 						req.Abort ();
-						if (LogIn (req))
+						if (LogIn (req.Address))
 							return GetDocument (relativeUrl);
 						else
 							throw new WebIOException ("Login failure.", address.ToString ());
@@ -176,7 +176,7 @@ namespace Bugzz.Network
 			}
 		}
 
-		bool LogIn (HttpWebRequest req)
+		bool LogIn (Uri address)
 		{
 			if (String.IsNullOrEmpty (loginData.Username) || String.IsNullOrEmpty (loginData.Password))
 				return false;
@@ -199,7 +199,7 @@ namespace Bugzz.Network
 					throw new BugzillaException ("Missing bugzilla login form field name 'bugzilla_password'.");
 			}
 			
-			Console.WriteLine ("Attempting to log in at '" + req.Address.ToString () + "'.");
+			Console.WriteLine ("Attempting to log in at '" + address.ToString () + "'.");
 			ASCIIEncoding ascii = new ASCIIEncoding ();
 			string postData = usernameField + "=" + loginData.Username + "&" + passwordField + "=" + loginData.Password;
 			foreach (KeyValuePair <string, string> kvp in loginData.ExtraData)
@@ -209,12 +209,10 @@ namespace Bugzz.Network
 			
 			byte[] data = ascii.GetBytes (postData);
 
-			Uri address = req.Address;
 			UriBuilder formPostUri = new UriBuilder ();
 			formPostUri.Scheme = address.Scheme;
 			formPostUri.Host = address.Host;
 			formPostUri.Path = address.AbsolutePath + loginData.FormActionUrl;
-			formPostUri.Query = address.Query.Substring (1);
 			
 			Console.WriteLine ("Login POST url: {0}", formPostUri.ToString ());
 			
