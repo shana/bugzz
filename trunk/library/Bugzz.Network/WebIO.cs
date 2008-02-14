@@ -227,7 +227,6 @@ namespace Bugzz.Network
 			
 			using (Stream s = request.GetRequestStream ()) {
 				s.Write (data, 0, data.Length);
-				s.Close ();
 			}
 			Console.WriteLine ("Data sent.");
 			
