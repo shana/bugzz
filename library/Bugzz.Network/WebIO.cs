@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 
 using Bugzz;
 using Bugzz.Bugzilla;
@@ -92,7 +93,7 @@ namespace Bugzz.Network
 		
 		// TODO: this method should retry to retrieve the document a configurable amount of
 		// times before returning an error.
-		public string GetDocument (string relativeUrl)
+		public string GetDocument (string relativeUrl, string expectedContentType, Regex fallbackTypeRegex)
 		{
 			Uri fullUrl;
 			
@@ -116,7 +117,7 @@ namespace Bugzz.Network
 
 			while (attempts > 0) {
 				try {
-					status = Get (fullUrl, out response, out addressesMatch, out redirect, false);
+					status = Get (fullUrl, expectedContentType, fallbackTypeRegex, out response, out addressesMatch, out redirect, false);
 
 					if (status != HttpStatusCode.OK) {
 						attempts--;
@@ -124,10 +125,13 @@ namespace Bugzz.Network
 					}
 				
 					if (!addressesMatch) {
+						if (loginAttempts <= 0)
+							throw new WebIOException ("Login failure.", redirect.ToString ());
+						
 						loggedIn = false;
 						Uri loginAddress = loginData.Url;
+
 						loginAttempts--;
-						
 						if (loginAddress.Scheme == redirect.Scheme &&
 						    loginAddress.Host == redirect.Host &&
 						    loginAddress.AbsolutePath == redirect.AbsolutePath) {
@@ -143,10 +147,12 @@ namespace Bugzz.Network
 						loggedIn = true;
 					
 					if (!loggedIn)
-						if (loginAttempts == 0)
+						if (loginAttempts <= 0)
 							throw new WebIOException ("Login failure.", redirect.ToString ());
-						else
+						else {
+							loginAttempts--;
 							continue;
+						}
 					
 					return response;
 				} catch (BugzzException) {
@@ -204,7 +210,26 @@ namespace Bugzz.Network
 			return false;
 		}
 
-		private HttpStatusCode Get (Uri uri, out string response, out bool addressesMatch, out Uri redirectAddress, bool ignoreResponse)
+		bool MatchingContentType (string contentType, string response, string expectedContentType, Regex fallbackTypeRegex)
+		{
+			Console.WriteLine ("{0}.MatchingContentType ()", this);
+			Console.WriteLine ("\tcontent type: {0}", contentType);
+			Console.WriteLine ("\texpected: {0}", expectedContentType);
+			
+			if (String.IsNullOrEmpty (contentType) && !String.IsNullOrEmpty (expectedContentType)) {
+				if (fallbackTypeRegex == null || response == null)
+					return false;
+				return fallbackTypeRegex.IsMatch (response);
+			}
+
+			if (contentType.StartsWith (expectedContentType))
+				return true;
+			
+			return false;
+		}
+		
+		private HttpStatusCode Get (Uri uri, string expectedContentType, Regex fallbackTypeRegex,
+					    out string response, out bool addressesMatch, out Uri redirectAddress, bool ignoreResponse)
 		{
 			long contentLength = -1;
 
@@ -216,10 +241,13 @@ namespace Bugzz.Network
 			request.UserAgent = userAgent;
 			request.CookieContainer = cookieJar;
 
+			response = null;
+			
 			try {
 				resp = request.GetResponse () as HttpWebResponse;
 				statusCode = resp.StatusCode;
 
+				Console.WriteLine ("GET: content type == '" + resp.ContentType + "'");
 				addressesMatch = (request.Address == uri);
 				Console.WriteLine ("GET:addressesMatch = " + addressesMatch); 
 				redirectAddress = request.Address;
@@ -269,7 +297,7 @@ namespace Bugzz.Network
 					e = e.InnerException;
 				}
 
-				response = String.Empty;
+				response = null;
 				redirectAddress = null;
 				addressesMatch = true;
 				if (ex.Response != null) {
@@ -280,9 +308,10 @@ namespace Bugzz.Network
 						statusCode = HttpStatusCode.BadRequest;
 					}
 				}
-				if (statusCode == HttpStatusCode.NotModified)
+				if (statusCode == HttpStatusCode.NotModified) {
+					statusCode = HttpStatusCode.OK;
 					OnDownloadEnded (uri, contentLength, statusCode);
-				else {
+				} else {
 					OnDocumentRetrieveFailure (uri, statusCode);
 					throw new WebIOException ("Request failed.", uri.ToString (), ex);
 				}
@@ -295,17 +324,21 @@ namespace Bugzz.Network
 					e = e.InnerException;
 				}
 				
-				response = String.Empty;
+				response = null;
 				redirectAddress = null;
 				addressesMatch = false;
 
 				throw new WebIOException ("Request failed.", uri.ToString (), ex);
 			} finally {
 				cookieJar.Save ();
-				if (resp != null)
+				if (resp != null) {
+					if (!MatchingContentType (resp.ContentType, response, expectedContentType, fallbackTypeRegex))
+						response = null;
+					
 					resp.Close ();
+				}
 			}
-			
+
 			return statusCode;
 		}
 
