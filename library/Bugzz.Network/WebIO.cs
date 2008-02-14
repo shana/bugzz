@@ -126,7 +126,8 @@ namespace Bugzz.Network
 					if (!addressesMatch) {
 						loggedIn = false;
 						Uri loginAddress = loginData.Url;
-
+						loginAttempts--;
+						
 						if (loginAddress.Scheme == redirect.Scheme &&
 						    loginAddress.Host == redirect.Host &&
 						    loginAddress.AbsolutePath == redirect.AbsolutePath) {
@@ -136,7 +137,6 @@ namespace Bugzz.Network
 							uri.Path = redirect.AbsolutePath + loginData.FormActionUrl;
 							Console.WriteLine ("Login attempts left: {0}", loginAttempts);
 							LogIn (uri);
-							loginAttempts--;
 							continue;
 						}
 					} else
