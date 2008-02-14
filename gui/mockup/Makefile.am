@@ -49,6 +49,7 @@ FILES =  \
 	AssemblyInfo.cs \
 	gtk-gui/generated.cs \
 	gtk-gui/mockup.MainWindow.cs \
+	gtk-gui/mockup.Progress.cs \
 	gtk-gui/mockup.Widgets.BugList.cs \
 	gtk-gui/mockup.Widgets.Detail.cs \
 	gtk-gui/mockup.Widgets.Search.cs \
@@ -56,6 +57,7 @@ FILES =  \
 	Main.cs \
 	MainWindow.cs \
 	Settings.cs \
+	Utils/Loader.cs \
 	Widgets/BugList.cs \
 	Widgets/Detail.cs \
 	Widgets/Search.cs \
@@ -77,7 +79,8 @@ REFERENCES =  \
 	-pkg:glade-sharp-2.0 \
 	-pkg:glib-sharp-2.0 \
 	-pkg:gtk-sharp-2.0 \
-	System
+	System \
+	System.Xml
 
 DLL_REFERENCES = 
 

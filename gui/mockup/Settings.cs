@@ -41,5 +41,13 @@ namespace mockup
 			get { return online;}
 			set { online = value;}
 		}
+		
+		public void Load () 
+		{
+		}
+		
+		public void Save ()
+		{
+		}
 	}
 }
