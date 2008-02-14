@@ -118,18 +118,19 @@ namespace Bugzz.Network
 				// Check for redirects to the login page
 				Console.WriteLine (req.RequestUri != req.Address);
 				Console.WriteLine ("LoginData: " + loginData);
-				
 				if (loginData != null && loginData.Url != null && req.RequestUri != req.Address) {
 					var address = req.Address;
 					var loginAddress = loginData.Url;
 					
 					if (loginAddress.Scheme == address.Scheme &&
 					    loginAddress.Host == address.Host &&
-					    loginAddress.AbsolutePath == address.AbsolutePath)
+					    loginAddress.AbsolutePath == address.AbsolutePath) {
+						req.Abort ();
 						if (LogIn (req))
 							return GetDocument (relativeUrl);
 						else
 							throw new WebIOException ("Login failure.", address.ToString ());
+					}
 				}
 				
 				StringBuilder sb = new StringBuilder ();
@@ -197,8 +198,7 @@ namespace Bugzz.Network
 				if (String.IsNullOrEmpty (passwordField))
 					throw new BugzillaException ("Missing bugzilla login form field name 'bugzilla_password'.");
 			}
-
-			req.Abort ();
+			
 			Console.WriteLine ("Attempting to log in at '" + req.Address.ToString () + "'.");
 			ASCIIEncoding ascii = new ASCIIEncoding ();
 			string postData = usernameField + "=" + loginData.Username + "&" + passwordField + "=" + loginData.Password;
@@ -214,7 +214,7 @@ namespace Bugzz.Network
 			formPostUri.Scheme = address.Scheme;
 			formPostUri.Host = address.Host;
 			formPostUri.Path = address.AbsolutePath + loginData.FormActionUrl;
-			formPostUri.Query = address.Query;
+			formPostUri.Query = address.Query.Substring (1);
 			
 			Console.WriteLine ("Login POST url: {0}", formPostUri.ToString ());
 			
@@ -225,17 +225,45 @@ namespace Bugzz.Network
 			cookieJar.AddUri (new Uri (request.RequestUri.ToString ()));
 			request.CookieContainer = cookieJar;
 			
-			using (Stream s = request.GetRequestStream ()) {
-				s.Write (data, 0, data.Length);
-			}
+			Stream s = request.GetRequestStream ();
+			s.Write (data, 0, data.Length);
+			s.Close ();
+			
 			Console.WriteLine ("Data sent.");
 			
-			HttpWebResponse response = req.GetResponse () as HttpWebResponse;
+			HttpWebResponse response = request.GetResponse () as HttpWebResponse;
 			Console.WriteLine ("Response: {0}", response.StatusCode);
 			
 			if (response.StatusCode != HttpStatusCode.OK)
 				return false;
 
+			StringBuilder sb = new StringBuilder ();
+			Stream d = response.GetResponseStream ();
+			char[] buffer = new char [4096];
+			int bufferLen = buffer.Length;
+			int charsRead = -1;
+			long count;
+				
+			using (StreamReader reader = new StreamReader (d)) {
+				count = 0;
+				long contentLength = response.ContentLength;
+				if (contentLength == -1)
+					contentLength = Int64.MaxValue; // potentially
+				// dangerous
+					
+				while (count < contentLength) {
+					charsRead = reader.Read (buffer, 0, bufferLen);
+					if (charsRead == 0)
+						break;
+
+					count += charsRead;
+					sb.Append (buffer, 0, charsRead);
+				}
+			}
+
+			Console.WriteLine (sb.ToString ());
+			
+			cookieJar.Save ();
 			return true;
 		}
 	}
