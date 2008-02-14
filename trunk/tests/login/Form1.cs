@@ -69,10 +69,10 @@ namespace WindowsApplication1
 			
 			HttpWebResponse response = myRequest.GetResponse () as HttpWebResponse;
 			c.Save ();
-			response.Close ();
 			
-			return response.StatusCode == HttpStatusCode.OK;
-
+			bool loggedIn = response.StatusCode == HttpStatusCode.OK;
+			response.Close ();
+		       return loggedIn;
 		}
 
 		private void get ()
