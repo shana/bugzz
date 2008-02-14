@@ -31,12 +31,25 @@ class App
 		//loginData.AddExtraData ("nlogin_submit_btn", "Log in");
 		
 		Bugzz.BugzzManager bugz = new Bugzz.BugzzManager (args [0], loginData);
-		bugz.AddCallback (new Bugzz.DownloadProgressEventHandler (OnDownloadProgress));
-		bugz.AddCallback (new Bugzz.DownloadEndedEventHandler (OnDownloadEnded));
-		bugz.AddCallback (new Bugzz.DownloadStartedEventHandler (OnDownloadStarted));
-		bugz.AddCallback (new Bugzz.DocumentRetrieveFailureEventHandler (OnDocumentRetrieveFailure));
+		bugz.DownloadProgress += delegate (Bugzz.DownloadProgressEventArgs e) {
+			ShowProgress (e.CurrentCount, e.MaxCount);
+		};
+
+		bugz.DownloadEnded += delegate (Bugzz.DownloadEndedEventArgs e) {
+			ShowProgress (e.ContentLength, e.ContentLength);
+
+			Console.WriteLine ();
+			Console.WriteLine ("Download ended. Status: {0}", e.Status);
+		};
+		bugz.DownloadStarted += delegate (Bugzz.DownloadStartedEventArgs e) {
+			ShowProgress (0, e.ContentLength);
+		};
+		bugz.DocumentRetrieveFailure += delegate (Bugzz.DocumentRetrieveFailureEventArgs e) {
+			Console.WriteLine ();
+			Console.WriteLine ("Failed to download document. Status: {0}", e.Status.ToString ());
+		};
 		
-		Thread t = new Thread (App.StartRequest);
+		Thread t = new Thread (StartRequest);
 		Console.WriteLine ("Starting thread.");
 		t.Start (bugz);
 		Console.WriteLine ("Waiting for thread.");
@@ -48,34 +61,7 @@ class App
 	{
 		Console.Write ("\rCompleted: {0:F2}%", ((double)start / (double)end) * 100);
 	}
-	
-	static void OnDownloadProgress (object sender, Bugzz.DownloadProgressEventArgs args)
-	{
-		ShowProgress (args.CurrentCount, args.MaxCount);
-	}
 
-	static void OnDownloadStarted (object sender, Bugzz.DownloadStartedEventArgs args)
-	{
-		ShowProgress (0, args.Response.ContentLength);
-	}
-	
-	static void OnDownloadEnded (object sender, Bugzz.DownloadEndedEventArgs args)
-	{
-		long end = args.Response.ContentLength;
-		ShowProgress (end, end);
-		
-		Console.WriteLine ();
-		Console.WriteLine ("Download ended. Status: {0}", args.Response.StatusCode);
-	}
-
-	static void OnDocumentRetrieveFailure (object sender, Bugzz.DocumentRetrieveFailureEventArgs args)
-	{
-		Console.WriteLine ();
-		HttpWebResponse response = args.Request.GetResponse () as HttpWebResponse;
-		
-		Console.WriteLine ("Failed to download document. Status: {0}", response != null ? response.StatusCode.ToString () : "unknown");
-	}
-	
 	static void StartRequest (object data)
 	{
 		Console.WriteLine ("Starting request.");

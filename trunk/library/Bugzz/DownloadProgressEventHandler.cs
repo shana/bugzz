@@ -2,5 +2,5 @@ using System;
 
 namespace Bugzz
 {
-	public delegate void DownloadProgressEventHandler (object sender, DownloadProgressEventArgs a);
+	public delegate void DownloadProgressEventHandler (DownloadProgressEventArgs a);
 }

@@ -22,22 +22,46 @@ namespace Bugzz.Bugzilla
 		
 		bool initialDataLoaded;
 		string targetVersion;
-		
+		LoginData loginData;
+
+		string baseUrl;
+		public string BaseUrl
+		{
+			get { return baseUrl; }
+			set
+			{
+				baseUrl = value;
+				if (WebIO == null) {					
+					if (dataManager == null)
+						dataManager = new DataManager (targetVersion);
+					WebIO = new WebIO (baseUrl, loginData, dataManager);
+				} else
+					WebIO.BaseUrl = new Uri (baseUrl);
+			}
+		}
+
 		public WebIO WebIO /*{
 			get;
 			private set;
 		}*/;
 
 
-		private DataManager dataManager;		
+		private DataManager dataManager;
+
+		public Bugzilla (LoginData loginData)
+		{
+			this.loginData = loginData;
+		}
+
 		public Bugzilla (string baseUrl, LoginData loginData)
 		: this (baseUrl, loginData, null)
 		{
 		}
 
-		public Bugzilla (string baseUrl, LoginData loginData, string targetVersion)
+		public Bugzilla (string baseUrl, LoginData loginData, string targetVersion) : this (loginData)
 		{
 			this.targetVersion = targetVersion;
+			this.baseUrl = baseUrl;
 			this.dataManager = new DataManager (targetVersion);
 			WebIO = new WebIO (baseUrl, loginData, dataManager);
 		}
