@@ -27,6 +27,7 @@ class App
 		loginData.UsernameField="username";
 		loginData.PasswordField="password";
 		loginData.FormActionUrl="auth-up";
+		loginData.AddExtraData ("nlogin_submit_btn", "Log in");
 		
 		Bugzz.BugzzManager bugz = new Bugzz.BugzzManager (args [0], loginData);
 		bugz.AddCallback (new Bugzz.DownloadProgressEventHandler (OnDownloadProgress));

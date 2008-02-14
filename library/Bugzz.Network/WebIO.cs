@@ -125,7 +125,7 @@ namespace Bugzz.Network
 					if (loginAddress.Scheme == address.Scheme &&
 					    loginAddress.Host == address.Host &&
 					    loginAddress.AbsolutePath == address.AbsolutePath) {
-						req.Abort ();
+						//req.Abort ();
 						if (LogIn (req.Address))
 							return GetDocument (relativeUrl.Replace ("&GoAheadAndLogIn=1", ""));
 						else
@@ -164,6 +164,7 @@ namespace Bugzz.Network
 			} catch (BugzzException) {
 				throw;
 			} catch (WebException ex) {
+				Console.WriteLine (ex);
 				HttpWebResponse exResponse = ex.Response as HttpWebResponse;
 				if (exResponse != null && exResponse.StatusCode == HttpStatusCode.NotModified)
 					OnDownloadEnded (exResponse);
@@ -172,6 +173,7 @@ namespace Bugzz.Network
 				
 				return null;
 			} catch (Exception ex) {
+				Console.WriteLine (ex);
 				throw new WebIOException ("Error downloading document.", fullUrl, ex);
 			}
 		}
@@ -213,6 +215,7 @@ namespace Bugzz.Network
 			formPostUri.Scheme = address.Scheme;
 			formPostUri.Host = address.Host;
 			formPostUri.Path = address.AbsolutePath + loginData.FormActionUrl;
+			formPostUri.Query = address.Query.Substring (1);
 			
 			Console.WriteLine ("Login POST url: {0}", formPostUri.ToString ());
 			
