@@ -22,7 +22,7 @@ namespace Bugzz.Bugzilla
 		
 		bool initialDataLoaded;
 		string targetVersion;
-
+		
 		public WebIO WebIO /*{
 			get;
 			private set;
@@ -30,16 +30,16 @@ namespace Bugzz.Bugzilla
 
 
 		private DataManager dataManager;		
-		public Bugzilla (string baseUrl)
-		: this (baseUrl, null)
+		public Bugzilla (string baseUrl, LoginData loginData)
+		: this (baseUrl, loginData, null)
 		{
 		}
 
-		public Bugzilla (string baseUrl, string targetVersion)
+		public Bugzilla (string baseUrl, LoginData loginData, string targetVersion)
 		{
-			WebIO = new WebIO (baseUrl);
 			this.targetVersion = targetVersion;
 			this.dataManager = new DataManager (targetVersion);
+			WebIO = new WebIO (baseUrl, loginData, dataManager);
 		}
 
 		public void Refresh ()
@@ -188,11 +188,6 @@ namespace Bugzz.Bugzilla
 				newItem.Set (label, value != null ? value.Value : label);
 				bag.Add (newItem);
 			}
-		}
-		
-		bool LogIn ()
-		{
-			return true;
 		}
 	}
 }

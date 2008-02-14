@@ -11,8 +11,13 @@ namespace Bugzz
 		Bugzilla.Bugzilla bugzilla;
 
 		public BugzzManager (string bugsiteBase)
+		: this (bugsiteBase, null)
 		{
-			bugzilla = new Bugzilla.Bugzilla (bugsiteBase);
+		}
+		
+		public BugzzManager (string bugsiteBase, LoginData loginData)
+		{
+			bugzilla = new Bugzilla.Bugzilla (bugsiteBase, loginData);
 		}
 
 		public void AddCallback (DocumentRetrieveFailureEventHandler cb)

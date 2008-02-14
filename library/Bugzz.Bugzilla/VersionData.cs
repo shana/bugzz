@@ -7,8 +7,9 @@ namespace Bugzz.Bugzilla
 	{
 		Dictionary <string, string> urls;
 		Dictionary <string, string> initialVariables;
-		Dictionary<string, string> searchVariables;
-
+		Dictionary <string, string> searchVariables;
+		Dictionary <string, string> loginVariables;
+		
 		private string version;
 		public string Version {
 			get { return version; }
@@ -19,7 +20,9 @@ namespace Bugzz.Bugzilla
 		{
 			urls = new Dictionary <string, string> ();
 			initialVariables = new Dictionary <string, string> ();
-			searchVariables = new Dictionary<string, string> ();
+			searchVariables = new Dictionary <string, string> ();
+			loginVariables = new Dictionary <string, string> ();
+			
 			Version = version;
 		}
 
@@ -53,6 +56,11 @@ namespace Bugzz.Bugzilla
 			AddVariable (searchVariables, name, value);
 		}
 
+		public void AddLoginVariable (string name, string value)
+		{
+			AddVariable (loginVariables, name, value);
+		}
+		
 		public string GetUrl (string name)
 		{
 			string ret;
@@ -84,6 +92,12 @@ namespace Bugzz.Bugzilla
 		{
 			return GetVariable (searchVariables, name);
 		}
+
+		public string GetLoginVariable (string name) 
+		{
+			return GetVariable (loginVariables, name);
+		}
+		
 		// Checks if we're interested for a variable with a web name 'name' and returns the
 		// corresponding canonical name. It has to be implemented using a linear search
 		// since there might be cases when several canonical names will map to the same web
