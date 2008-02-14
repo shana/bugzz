@@ -38,12 +38,16 @@ namespace mockup {
 		Widgets.Search searchWidget;
 		Widgets.Settings settingsWidget;
 		
+		
 		Settings settings;
 		BugzzManager bugzzManager;
 		
 		public MainWindow (): base (Gtk.WindowType.Toplevel)
 		{
+		
 			settings = new Settings ();
+			Loader.Load (settings);
+			Loader.Save (settings);
 			Bugzz.LoginData loginData = new LoginData();
 			if (settings.Online)
 				bugzzManager = new BugzzManager (settings.Url);
