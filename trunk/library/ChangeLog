@@ -1,3 +1,11 @@
+2008-02-14  Andreia Gaita <avidigal@novell.com> 
+
+	* Bugzilla.cs: Add non-3.0 stuff so vs2k5 is happy
+	* ResponseParser.cs: Add assigned_to field
+	* WebIO.cs: ignore post response
+	* LoginData.cs: non-3.0 stuff
+	* Query.cs: Add ExtraData field to store mandatory fields that are always sent (coming from a config) 
+
 2008-02-12  Andreia Gaita <avidigal@novell.com>
 	
 	* CookieManager: save and load
