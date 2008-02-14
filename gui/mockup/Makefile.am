@@ -49,7 +49,6 @@ FILES =  \
 	AssemblyInfo.cs \
 	gtk-gui/generated.cs \
 	gtk-gui/mockup.MainWindow.cs \
-	gtk-gui/mockup.Progress.cs \
 	gtk-gui/mockup.Widgets.BugList.cs \
 	gtk-gui/mockup.Widgets.Detail.cs \
 	gtk-gui/mockup.Widgets.Search.cs \
