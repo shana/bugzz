@@ -28,10 +28,6 @@ class App
 		loginData.PasswordField="password";
 		loginData.FormActionUrl="auth-up";
 		
-		loginData.AddExtraData ("context", "default");
-		loginData.AddExtraData ("proxypath", "reverse");
-		loginData.AddExtraData ("url", args [0]);
-		
 		Bugzz.BugzzManager bugz = new Bugzz.BugzzManager (args [0], loginData);
 		bugz.AddCallback (new Bugzz.DownloadProgressEventHandler (OnDownloadProgress));
 		bugz.AddCallback (new Bugzz.DownloadEndedEventHandler (OnDownloadEnded));
