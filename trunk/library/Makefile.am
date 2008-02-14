@@ -1,13 +1,15 @@
-bugzzdir=$(prefix)/library
+bugzzdir=$(prefix)/lib
 bin_SCRIPTS = 
 bugzz_DATA = Bugzz.dll
 PROGRAM = Bugzz.dll
+sharedir=$(prefix)/share/bugzz
+share_DATA = data/bugzilla.xml
 
 CLEANFILES = Bugzz.dll Bugzz.dll.mdb
 
 sources = @Bugzz.dll.sources
 
-resources =
+resources = 
 
 # REWRITE = sed \
 # 	-e 's,@''prefix@,$(prefix),g'	\
@@ -18,13 +20,16 @@ resources =
 # bugzz: bugzz.in
 # 	$(REWRITE) < $(srcdir)/bugzz.in > bugzz
 
-EXTRA_DIST = $(sources) $(resources) 
+EXTRA_DIST = $(sources) $(resources) data/bugzilla.xml 
 # bugzz.in bugzz.mds bugzz.mdp
 
 packages = 
-assemblies = -r:System -r:System.Xml -r:Mono.C5 -r:../3rdparty/HtmlAgilityPack/HtmlAgilityPack.dll
-ress =
-# ress= $(foreach res,$(resources), $(addprefix -resource:,$(res)),$(notdir $(res)))
+assemblies =  \
+	-r:../3rdparty/HtmlAgilityPack/HtmlAgilityPack.dll \
+	-r:Mono.C5 \
+	-r:System \
+	-r:System.Xml
+ress = $(foreach res,$(resources), $(addprefix -resource:,$(res)),$(notdir $(res)))
 
 # Mono.Cecil.dll: 
 # 	cp `pkg-config --variable=Libraries cecil` .
