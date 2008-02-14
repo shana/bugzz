@@ -23,19 +23,32 @@
 //	Andreia Gaita (avidigal@novell.com)
 //
 
-using System;
-using Gtk;
 
-namespace mockup
+using System;
+
+namespace mockup.Widgets
 {
-	class MainClass
+	
+	
+	public partial class Settings : Gtk.Bin
 	{
-		public static void Main (string[] args)
+		
+		public Settings(global::mockup.Settings settings)
 		{
-			Application.Init ();
-			MainWindow win = new MainWindow ();
-			win.Show ();
-			Application.Run ();
+			this.Build();
+			this.txtUrl.Text = settings.Url;
+		}
+
+		public void Cancel () {
+		}
+
+		protected virtual void OnCancel (object sender, System.EventArgs e)
+		{
+			Cancel ();
+		}
+
+		protected virtual void OnSave (object sender, System.EventArgs e)
+		{
 		}
 	}
 }

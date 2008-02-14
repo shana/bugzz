@@ -23,19 +23,34 @@
 //	Andreia Gaita (avidigal@novell.com)
 //
 
-using System;
-using Gtk;
 
-namespace mockup
+using System;
+using Bugzz;
+namespace mockup.Widgets
 {
-	class MainClass
+	public partial class Search : Gtk.Bin
 	{
-		public static void Main (string[] args)
+		MainWindow main;
+		Query query;
+		public Query Query {
+			get { return query; }
+		}
+		
+		public Search (MainWindow main)
 		{
-			Application.Init ();
-			MainWindow win = new MainWindow ();
-			win.Show ();
-			Application.Run ();
+			this.main = main;
+			this.query = new Query();
+			this.Build();
+		}
+
+		protected virtual void OnClear (object sender, System.EventArgs e)
+		{
+		}
+
+		protected virtual void OnSearch (object sender, System.EventArgs e)
+		{
+			query.Email = txtEmail.Text;
+			main.ToggleList (query);
 		}
 	}
 }

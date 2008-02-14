@@ -23,19 +23,19 @@
 //	Andreia Gaita (avidigal@novell.com)
 //
 
-using System;
-using Gtk;
 
-namespace mockup
+using System;
+
+namespace mockup.Widgets
 {
-	class MainClass
+	
+	
+	public partial class Detail : Gtk.Bin
 	{
-		public static void Main (string[] args)
+		
+		public Detail()
 		{
-			Application.Init ();
-			MainWindow win = new MainWindow ();
-			win.Show ();
-			Application.Run ();
+			this.Build();
 		}
 	}
 }

@@ -17,15 +17,22 @@
     <File name="gtk-gui/gui.stetic" subtype="Code" buildaction="EmbedAsResource" />
     <File name="gtk-gui/generated.cs" subtype="Code" buildaction="Compile" />
     <File name="MainWindow.cs" subtype="Code" buildaction="Compile" />
-    <File name="gtk-gui/MainWindow.cs" subtype="Code" buildaction="Compile" />
     <File name="Main.cs" subtype="Code" buildaction="Compile" />
     <File name="AssemblyInfo.cs" subtype="Code" buildaction="Compile" />
-    <File name="BugList.cs" subtype="Code" buildaction="Compile" />
-    <File name="gtk-gui/mockup.BugList.cs" subtype="Code" buildaction="Compile" />
     <File name="gtk-gui/objects.xml" subtype="Code" buildaction="EmbedAsResource" />
+    <File name="Widgets/Detail.cs" subtype="Code" buildaction="Compile" />
+    <File name="Widgets/Search.cs" subtype="Code" buildaction="Compile" />
+    <File name="Widgets/Settings.cs" subtype="Code" buildaction="Compile" />
+    <File name="Widgets/BugList.cs" subtype="Code" buildaction="Compile" />
+    <File name="gtk-gui/mockup.Widgets.Settings.cs" subtype="Code" buildaction="Compile" />
+    <File name="gtk-gui/mockup.Widgets.Search.cs" subtype="Code" buildaction="Compile" />
+    <File name="gtk-gui/mockup.Widgets.Detail.cs" subtype="Code" buildaction="Compile" />
+    <File name="gtk-gui/mockup.Widgets.BugList.cs" subtype="Code" buildaction="Compile" />
+    <File name="Settings.cs" subtype="Code" buildaction="Compile" />
+    <File name="gtk-gui/mockup.MainWindow.cs" subtype="Code" buildaction="Compile" />
+    <File name="gtk-gui/mockup.Progress.cs" subtype="Code" buildaction="Compile" />
   </Contents>
   <References>
-    <ProjectReference type="Gac" localcopy="True" refto="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <ProjectReference type="Gac" localcopy="True" refto="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <ProjectReference type="Gac" localcopy="True" refto="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <ProjectReference type="Gac" localcopy="True" refto="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
@@ -34,10 +41,25 @@
     <ProjectReference type="Gac" localcopy="True" refto="Mono.Posix, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756" />
     <ProjectReference type="Gac" localcopy="True" refto="gtk-sharp, Version=2.10.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <ProjectReference type="Assembly" localcopy="True" refto="../../library/Bugzz.dll" />
+    <ProjectReference type="Gac" localcopy="True" refto="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <ProjectReference type="Assembly" localcopy="True" refto="../../3rdparty/HtmlAgilityPack/HtmlAgilityPack.dll" />
   </References>
   <GtkDesignInfo gtkVersion="2.11.0">
     <ExportedWidgets>
-      <Widget>mockup.BugList</Widget>
+      <Widget>mockup.Widgets.Settings</Widget>
+      <Widget>mockup.Widgets.Search</Widget>
+      <Widget>mockup.Widgets.Detail</Widget>
+      <Widget>mockup.Widgets.BugList</Widget>
+      <Widget>mockup.Progress</Widget>
     </ExportedWidgets>
   </GtkDesignInfo>
+  <MonoDevelop.Autotools.MakefileInfo IntegrationEnabled="True" RelativeMakefileName="Makefile.am" ExecuteTargetName="run" SyncReferences="True" IsAutotoolsProject="True" RelativeConfigureInPath=".">
+    <BuildFilesVar Sync="True" Name="FILES" />
+    <DeployFilesVar Name="EXTRA_DIST" />
+    <ResourcesVar Sync="True" Name="RESOURCES" />
+    <OthersVar />
+    <GacRefVar Sync="True" Name="REFERENCES" />
+    <AsmRefVar Sync="True" Name="REFERENCES" />
+    <ProjectRefVar Sync="True" Name="REFERENCES" />
+  </MonoDevelop.Autotools.MakefileInfo>
 </Project>

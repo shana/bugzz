@@ -23,19 +23,23 @@
 //	Andreia Gaita (avidigal@novell.com)
 //
 
+
 using System;
-using Gtk;
 
 namespace mockup
 {
-	class MainClass
+	public class Settings
 	{
-		public static void Main (string[] args)
-		{
-			Application.Init ();
-			MainWindow win = new MainWindow ();
-			win.Show ();
-			Application.Run ();
+		private string url;
+		public string Url {
+			get { return url; }
+			set { url = value; }
+		}
+		
+		private bool online;
+		public bool Online {
+			get { return online;}
+			set { online = value;}
 		}
 	}
 }
