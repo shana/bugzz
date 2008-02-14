@@ -49,6 +49,7 @@ namespace Bugzz
 		public Query ()
 		{
 			QueryData = new Dictionary <string, QueryDataItem> ();
+			ExtraData = new Dictionary<string, string> ();
 		}
 
 		public string Email
@@ -84,6 +85,16 @@ namespace Bugzz
 				AddQueryData ("emailinfoprovider1", "1");
 			}
 		}
+#if FALLBACK
+		Dictionary<string, string> extraData;
+		public Dictionary<string, string> ExtraData
+		{
+			get { return extraData; }
+			set { extraData = value; }
+		}
+#else
+		public Dictionary <string, string> ExtraData { get; set; }
+#endif
 
 		public void AddQueryData (string fieldName, string fieldValue)
 		{
@@ -123,6 +134,7 @@ namespace Bugzz
 		public override string ToString ()
 		{
 			Dictionary <string, QueryDataItem> data = QueryData;
+
 			StringBuilder ret = new StringBuilder ((queryPath ?? String.Empty) + "?");
 			
 			if (data != null) {

@@ -98,6 +98,10 @@ namespace Bugzz.Bugzilla
 								bug.ShortDesc = innerText;
 								break;
 
+							case "bz:assigned_to":
+								bug.AssignedTo = innerText;
+								break;
+
 							default:
 								bug.AddItem (tmp.Name, innerText);
 								break;

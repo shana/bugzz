@@ -22,12 +22,19 @@ namespace Bugzz.Bugzilla
 		Regex xmlRegexp = new Regex ("<\\?xml.*\\?>", RegexOptions.Compiled);
 		Regex htmlRegexp = new Regex ("<html(.|\\n)*>", RegexOptions.Compiled);
 		
+#if FALLBACK
+		public HashBag<IInitialValue> Classifications;
+		public HashBag<IInitialValue> Products;
+		public HashBag<IInitialValue> Components;
+		public HashBag<IInitialValue> FoundInVersion;
+		public HashBag<IInitialValue> FixedInMilestone;
+#else
 		public HashBag <IInitialValue> Classifications { get; private set; }
 		public HashBag <IInitialValue> Products {get; private set; }
 		public HashBag <IInitialValue> Components {get; private set; }
 		public HashBag <IInitialValue> FoundInVersion {get; private set; }
 		public HashBag <IInitialValue> FixedInMilestone { get; private set; }		
-		
+#endif
 		string baseUrl;
 		public string BaseUrl
 		{
@@ -96,6 +103,10 @@ namespace Bugzz.Bugzilla
 
 			q.SetUrl (queryUrl);
 			q.AddQueryData ("ctype", "rdf");
+			foreach (SGC.KeyValuePair<string, string> vals in q.ExtraData) {
+				q.AddQueryData (vals.Key, vals.Value);
+			}
+
 			
 			string query = WebIO.GetDocument (q.ToString (), "application/rdf+xml", rdfRegexp);
 			if (String.IsNullOrEmpty (query))

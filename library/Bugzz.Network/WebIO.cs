@@ -30,8 +30,8 @@ namespace Bugzz.Network
 			set { baseUrl = value; }
 		}
 
-		public long MaxRequestAttempts { get; set; }
-		public long MaxLoginAttempts { get; set; }
+		public long MaxRequestAttempts;// { get; set; }
+		public long MaxLoginAttempts;// { get; set; }
 			
 		static WebIO ()
 		{
@@ -203,7 +203,7 @@ namespace Bugzz.Network
 			Console.WriteLine ("Post data: {0}", postData);
 
 			string response;
-			HttpStatusCode status = Post (new Uri (formPostUri.ToString ()), postData, out response, false);
+			HttpStatusCode status = Post (new Uri (formPostUri.ToString ()), postData, out response, true);
 			if (status == HttpStatusCode.OK)
 				return true;
 			
@@ -283,9 +283,9 @@ namespace Bugzz.Network
 					}
 				}
 
-				Console.WriteLine ("----GET----");
-				Console.WriteLine (sb.ToString ());
-				Console.WriteLine ("----END OF GET----");
+				//Console.WriteLine ("----GET----");
+				//Console.WriteLine (sb.ToString ());
+				//Console.WriteLine ("----END OF GET----");
 
 				response = sb.ToString ();
 			} catch (WebException ex) {
