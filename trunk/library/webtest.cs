@@ -3,14 +3,29 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading;
 
-using Bugzz.Bugzilla;
-using Bugzz.Network;
+using Bugzz;
 
 class App
 {
 	static void Main (string[] args)
 	{
-		Bugzz.BugzzManager bugz = new Bugzz.BugzzManager (args [0]);
+		int len = args.Length;
+
+		if (len == 0) {
+			Console.Error.WriteLine ("Usage: webtest BUGZILLA_URL [LOGIN_URL [USERNAME [PASSWORD]]]");
+			return;
+		}
+		
+		LoginData loginData = new LoginData ();
+
+		if (args.Length > 1)
+			loginData.SetUrl (args [1]);
+		if (args.Length > 2)
+			loginData.Username = args [2];
+		if (args.Length > 3)
+			loginData.Password = args [3];
+		
+		Bugzz.BugzzManager bugz = new Bugzz.BugzzManager (args [0], loginData);
 		bugz.AddCallback (new Bugzz.DownloadProgressEventHandler (OnDownloadProgress));
 		bugz.AddCallback (new Bugzz.DownloadEndedEventHandler (OnDownloadEnded));
 		bugz.AddCallback (new Bugzz.DownloadStartedEventHandler (OnDownloadStarted));
@@ -68,6 +83,7 @@ class App
 		query.AddQueryData ("classification", "Mono");
 		query.AddQueryData ("product", "Mono: Class Libraries");
 		query.AddQueryData ("component", "Sys.Web");
+		query.AddQueryData ("GoAheadAndLogIn", "1");
 
 		var results = bugz.GetBugList (query);
 		Bugzz.Bug bug1 = null, bug2 = null;

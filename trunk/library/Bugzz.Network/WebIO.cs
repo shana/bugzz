@@ -3,14 +3,20 @@ using System.IO;
 using System.Net;
 using System.Text;
 
+using Bugzz;
+using Bugzz.Bugzilla;
+
 namespace Bugzz.Network
 {
-	public class WebIO
+	internal class WebIO
 	{
 		readonly static string userAgent;
 
 		CookieManager cookieJar;
-
+		DataManager dataManager;
+		
+		LoginData loginData;
+		
 		public event Bugzz.DocumentRetrieveFailureEventHandler DocumentRetrieveFailure;
 		public event Bugzz.DownloadStartedEventHandler DownloadStarted;
 		public event Bugzz.DownloadEndedEventHandler DownloadEnded;
@@ -20,15 +26,18 @@ namespace Bugzz.Network
 			get;
 			private set;
 		}*/;
-		
+
 		static WebIO ()
 		{
 			// TODO: construct something funnier later on
 			userAgent = global::Bugzz.Constants.Package + "/" + global::Bugzz.Constants.Version;
 		}
 		
-		public WebIO (string baseUrl)
+		public WebIO (string baseUrl, LoginData loginData, DataManager dataManager)
 		{
+			this.loginData = loginData;
+			this.dataManager = dataManager;
+			
 			if (String.IsNullOrEmpty (baseUrl))
 				throw new ArgumentNullException ("Base request URL must be specified.", "baseUrl");
 			
@@ -97,12 +106,30 @@ namespace Bugzz.Network
 				
 				req.UserAgent = userAgent;
 				response = req.GetResponse () as HttpWebResponse;
+				
 				if (response.StatusCode != HttpStatusCode.OK) {
 					OnDocumentRetrieveFailure (req);
 					return null;
 				}
 
 				cookieJar.Save ();
+
+				// Check for redirects to the login page
+				Console.WriteLine (req.RequestUri != req.Address);
+				Console.WriteLine ("LoginData: " + loginData);
+				
+				if (loginData != null && loginData.Url != null && req.RequestUri != req.Address) {
+					var address = req.Address;
+					var loginAddress = loginData.Url;
+					
+					if (loginAddress.Scheme == address.Scheme &&
+					    loginAddress.Host == address.Host &&
+					    loginAddress.AbsolutePath == address.AbsolutePath)
+						if (LogIn (req))
+							return GetDocument (relativeUrl);
+						else
+							throw new WebIOException ("Login failure.", address.ToString ());
+				}
 				
 				StringBuilder sb = new StringBuilder ();
 				Stream data = response.GetResponseStream ();
@@ -132,6 +159,8 @@ namespace Bugzz.Network
 				}
 				
 				return sb.ToString ();
+			} catch (BugzzException) {
+				throw;
 			} catch (WebException ex) {
 				HttpWebResponse exResponse = ex.Response as HttpWebResponse;
 				if (exResponse != null && exResponse.StatusCode == HttpStatusCode.NotModified)
@@ -143,6 +172,53 @@ namespace Bugzz.Network
 			} catch (Exception ex) {
 				throw new WebIOException ("Error downloading document.", fullUrl, ex);
 			}
+		}
+
+		bool LogIn (HttpWebRequest req)
+		{
+			if (String.IsNullOrEmpty (loginData.Username) || String.IsNullOrEmpty (loginData.Password))
+				return false;
+
+			string usernameField = loginData.UsernameField, passwordField = loginData.PasswordField;
+			VersionData bvd = null;
+			
+			if (String.IsNullOrEmpty (usernameField)) {
+				bvd = dataManager.VersionData;
+				usernameField = bvd.GetLoginVariable ("bugzilla_login");
+				if (String.IsNullOrEmpty (usernameField))
+					throw new BugzillaException ("Missing bugzilla login form field name 'bugzilla_login'");
+			}
+
+			if (String.IsNullOrEmpty (passwordField)) {
+				if (bvd == null)
+					bvd = dataManager.VersionData;
+				passwordField = bvd.GetLoginVariable ("bugzilla_password");
+				if (String.IsNullOrEmpty (passwordField))
+					throw new BugzillaException ("Missing bugzilla login form field name 'bugzilla_password'.");
+			}
+
+			Console.WriteLine ("Attempting to log in at '" + req.Address.ToString () + "'.");
+			ASCIIEncoding ascii = new ASCIIEncoding ();
+			string postData = usernameField + "=" + loginData.Username + "&" + passwordField + "=" + loginData.Password;
+			byte[] data = ascii.GetBytes (postData);
+			
+			HttpWebRequest request = WebRequest.Create (new Uri (req.Address.ToString ())) as HttpWebRequest;
+			request.Method = "POST";
+			request.ContentType="application/x-www-form-urlencoded";
+			request.ContentLength = data.Length;
+			cookieJar.AddUri (new Uri (request.RequestUri.ToString ()));
+			request.CookieContainer = cookieJar;
+			
+			using (Stream s = request.GetRequestStream ()) {
+				s.Write (data, 0, data.Length);
+			}
+
+			HttpWebResponse response = req.GetResponse () as HttpWebResponse;
+			if (response.StatusCode != HttpStatusCode.OK)
+				return false;
+
+			req.Abort ();
+			return true;
 		}
 	}
 }

@@ -11,6 +11,11 @@ namespace Bugzz.Network
 			base ("Bugzz Web IO exception occurred.")
 		{}
 
+		public WebIOException (string message, string fullUrl)
+			: this (message, fullUrl, null)
+		{
+		}
+		
 		public WebIOException (string message, string fullUrl, Exception innerException)
 			: base (message, innerException)
 		{
@@ -28,6 +33,7 @@ namespace Bugzz.Network
 					return base.Message +
 						Environment.NewLine +
 						Locale.GetText ("URL: ") + fu;
+
 				return base.Message;
 			}
 		}
