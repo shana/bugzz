@@ -2,9 +2,8 @@ using System;
 
 namespace Bugzz.Bugzilla
 {
-	internal class InitialValue
+	public class InitialValue : IInitialValue
 	{
-
 		private string value;
 		public string Value {
 			get {return value;}

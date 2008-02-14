@@ -4,7 +4,7 @@ using System.Xml;
 
 namespace Bugzz.Bugzilla
 {
-	internal class ResponseParser
+	public sealed class ResponseParser
 	{
 		public Dictionary<string, Bugzz.Bug> Bugs/* { get; private set; }*/;
 		

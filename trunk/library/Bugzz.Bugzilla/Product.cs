@@ -2,7 +2,7 @@ using System;
 
 namespace Bugzz.Bugzilla
 {
-	internal class Product : InitialValue
+	internal sealed class Product : InitialValue
 	{
 		public Product ()
 			: base ()

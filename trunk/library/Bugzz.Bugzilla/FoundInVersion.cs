@@ -2,7 +2,7 @@ using System;
 
 namespace Bugzz.Bugzilla
 {
-	internal class FoundInVersion : InitialValue
+	internal sealed class FoundInVersion : InitialValue
 	{
 		public FoundInVersion ()
 			: base ()

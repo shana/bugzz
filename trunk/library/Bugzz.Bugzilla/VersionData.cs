@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Bugzz.Bugzilla
 {
-	internal class VersionData
+	public sealed class VersionData
 	{
 		Dictionary <string, string> urls;
 		Dictionary <string, string> initialVariables;

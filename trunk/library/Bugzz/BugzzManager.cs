@@ -3,12 +3,34 @@ using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
 
+using C5;
+
 namespace Bugzz
 {
 	public class BugzzManager
 	{
 		Bugzilla.Bugzilla bugzilla;
 
+		public HashBag <IInitialValue> Classifications {
+			get { return bugzilla.Classifications; }
+		}
+
+		public HashBag <IInitialValue> Products {
+			get { return bugzilla.Products; }
+		}
+		
+		public HashBag <IInitialValue> Components {
+			get { return bugzilla.Components; }
+		}
+		
+		public HashBag <IInitialValue> FoundInVersion {
+			get { return bugzilla.FoundInVersion; }
+		}
+		
+		public HashBag <IInitialValue> FixedInMilestone {
+			get { return bugzilla.FixedInMilestone; }
+		}
+		
 		public string Url
 		{
 			get { return bugzilla.BaseUrl; }

@@ -2,7 +2,7 @@ using System;
 
 namespace Bugzz.Bugzilla
 {
-	internal class FixedInMilestone : InitialValue
+	internal sealed class FixedInMilestone : InitialValue
 	{
 		public FixedInMilestone ()
 			: base ()
