@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -197,12 +198,27 @@ namespace Bugzz.Network
 					throw new BugzillaException ("Missing bugzilla login form field name 'bugzilla_password'.");
 			}
 
+			req.Abort ();
 			Console.WriteLine ("Attempting to log in at '" + req.Address.ToString () + "'.");
 			ASCIIEncoding ascii = new ASCIIEncoding ();
 			string postData = usernameField + "=" + loginData.Username + "&" + passwordField + "=" + loginData.Password;
-			byte[] data = ascii.GetBytes (postData);
+			foreach (KeyValuePair <string, string> kvp in loginData.ExtraData)
+				postData += ("&" + kvp.Key + "=" + kvp.Value);
+
+			Console.WriteLine ("Post data: {0}", postData);
 			
-			HttpWebRequest request = WebRequest.Create (new Uri (req.Address.ToString ())) as HttpWebRequest;
+			byte[] data = ascii.GetBytes (postData);
+
+			Uri address = req.Address;
+			UriBuilder formPostUri = new UriBuilder ();
+			formPostUri.Scheme = address.Scheme;
+			formPostUri.Host = address.Host;
+			formPostUri.Path = address.AbsolutePath + loginData.FormActionUrl;
+			formPostUri.Query = address.Query;
+			
+			Console.WriteLine ("Login POST url: {0}", formPostUri.ToString ());
+			
+			HttpWebRequest request = WebRequest.Create (new Uri (formPostUri.ToString ())) as HttpWebRequest;
 			request.Method = "POST";
 			request.ContentType="application/x-www-form-urlencoded";
 			request.ContentLength = data.Length;
@@ -211,13 +227,16 @@ namespace Bugzz.Network
 			
 			using (Stream s = request.GetRequestStream ()) {
 				s.Write (data, 0, data.Length);
+				s.Close ();
 			}
-
+			Console.WriteLine ("Data sent.");
+			
 			HttpWebResponse response = req.GetResponse () as HttpWebResponse;
+			Console.WriteLine ("Response: {0}", response.StatusCode);
+			
 			if (response.StatusCode != HttpStatusCode.OK)
 				return false;
 
-			req.Abort ();
 			return true;
 		}
 	}

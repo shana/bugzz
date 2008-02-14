@@ -24,6 +24,13 @@ class App
 			loginData.Username = args [2];
 		if (args.Length > 3)
 			loginData.Password = args [3];
+		loginData.UsernameField="username";
+		loginData.PasswordField="password";
+		loginData.FormActionUrl="auth-up";
+		
+		loginData.AddExtraData ("context", "default");
+		loginData.AddExtraData ("proxypath", "reverse");
+		loginData.AddExtraData ("url", args [0]);
 		
 		Bugzz.BugzzManager bugz = new Bugzz.BugzzManager (args [0], loginData);
 		bugz.AddCallback (new Bugzz.DownloadProgressEventHandler (OnDownloadProgress));
@@ -86,6 +93,9 @@ class App
 		query.AddQueryData ("GoAheadAndLogIn", "1");
 
 		var results = bugz.GetBugList (query);
+		if (results == null)
+			return;
+		
 		Bugzz.Bug bug1 = null, bug2 = null;
 		
 		Console.WriteLine ("List of retrieved bugs:");

@@ -65,6 +65,9 @@ namespace Bugzz.Bugzilla
 			q.AddQueryData ("ctype", "rdf");
 			
 			string query = WebIO.GetDocument (q.ToString ());
+			if (String.IsNullOrEmpty (query))
+				return null;
+			
 			ResponseParser rp = new ResponseParser (query);
 			
 			/*
@@ -97,6 +100,9 @@ namespace Bugzz.Bugzilla
 			q.AddQueryData ("ctype", "xml");
 
 			string query = WebIO.GetDocument (q.ToString ());
+			if (String.IsNullOrEmpty (query))
+				return null;
+			
 			ResponseParser rp = new ResponseParser (query);
 
 			return rp.Bugs;
