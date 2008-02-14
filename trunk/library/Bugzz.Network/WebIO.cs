@@ -95,9 +95,7 @@ namespace Bugzz.Network
 			try {
 				ub.Path = relativeUrl;
 				fullUrl = new Uri (ub.ToString ());
-
-			}
-			catch (Exception ex) {
+			} catch (Exception ex) {
 				throw new WebIOException ("Malformed relative URL.", relativeUrl, ex);
 			}
 
@@ -114,46 +112,33 @@ namespace Bugzz.Network
 				return null;
 			}
 
-			if (!addressesMatch) {
+			try {
+				if (!addressesMatch) {
+					Uri loginAddress = loginData.Url;
 
-				Uri loginAddress = loginData.Url;
+					if (loginAddress.Scheme == redirect.Scheme &&
+					    loginAddress.Host == redirect.Host &&
+					    loginAddress.AbsolutePath == redirect.AbsolutePath) {
 
-//				if (loginAddress.Scheme == redirect.Scheme &&
-//					loginAddress.Host == redirect.Host &&
-//					loginAddress.AbsolutePath == redirect.AbsolutePath) {
+						UriBuilder uri = new UriBuilder ();
+						uri.Scheme = redirect.Scheme;
+						uri.Host = redirect.Host;
+						uri.Path = redirect.AbsolutePath + loginData.FormActionUrl;
 
-					UriBuilder uri = new UriBuilder ();
-					uri.Scheme = redirect.Scheme;
-					uri.Host = redirect.Host;
-					uri.Path = redirect.AbsolutePath + loginData.FormActionUrl;
-
-					if (LogIn (uri)) {
-						return GetDocument (relativeUrl);
+						if (LogIn (uri)) {
+							return GetDocument (relativeUrl);
+						} else {
+							throw new WebIOException ("Login failure.", redirect.ToString ());
 						}
-					else {
-						throw new WebIOException ("Login failure.", redirect.ToString ());
 					}
-//				}
+				}
+
+				return response;
+			} catch (BugzzException) {
+				throw;
+			} catch (Exception ex) {
+				throw new WebIOException ("Error downloading document.", fullUrl.ToString (), ex);
 			}
-
-			return response;
-
-
-			//} catch (BugzzException) {
-			//    throw;
-			//} catch (WebException ex) {
-			//    Console.WriteLine (ex);
-			//    //HttpWebResponse exResponse = ex.Response as HttpWebResponse;
-			//    //if (exResponse != null && exResponse.StatusCode == HttpStatusCode.NotModified)
-			//    //    OnDownloadEnded (exResponse);
-			//    //else
-			//    //    OnDocumentRetrieveFailure (req);
-				
-			//    return null;
-			//} catch (Exception ex) {
-			//    Console.WriteLine (ex);
-			//    throw new WebIOException ("Error downloading document.", fullUrl, ex);
-			//}
 		}
 
 		bool LogIn (UriBuilder formPostUri)
@@ -195,25 +180,23 @@ namespace Bugzz.Network
 			if (status == HttpStatusCode.OK)
 				return true;
 			
-			
 			return false;
 		}
 
-
 		private HttpStatusCode Get (Uri uri, out string response, out bool addressesMatch, out Uri redirectAddress, bool ignoreResponse)
 		{
-
 			long contentLength = -1;
 
 			HttpStatusCode statusCode = HttpStatusCode.NotFound;
 			cookieJar.AddUri (uri);
 			HttpWebRequest request = WebRequest.Create (uri) as HttpWebRequest;
+			HttpWebResponse resp = null;
 			request.Method = "GET";
 			request.UserAgent = userAgent;
 			request.CookieContainer = cookieJar;
 
 			try {
-				HttpWebResponse resp = request.GetResponse () as HttpWebResponse;
+				resp = request.GetResponse () as HttpWebResponse;
 				statusCode = resp.StatusCode;
 
 				addressesMatch = (request.RequestUri == request.Address);
@@ -251,18 +234,12 @@ namespace Bugzz.Network
 					}
 				}
 
-				cookieJar.Save ();
-				resp.Close ();
-
 				Console.WriteLine ("----GET----");
 				Console.WriteLine (sb.ToString ());
 				Console.WriteLine ("----END OF GET----");
 
 				response = sb.ToString ();
-
-			}
-			catch (WebException ex) {
-
+			} catch (WebException ex) {
 				Console.WriteLine ("GET WebException");
 				Exception e = ex;
 				while (e != null) {
@@ -278,17 +255,17 @@ namespace Bugzz.Network
 					try {
 						HttpWebResponse exResponse = ex.Response as HttpWebResponse;
 						statusCode = exResponse.StatusCode;
-					}
-					catch {
+					} catch {
 						statusCode = HttpStatusCode.BadRequest;
 					}
 				}
 				if (statusCode == HttpStatusCode.NotModified)
 					OnDownloadEnded (uri, contentLength, statusCode);
-				else
+				else {
 					OnDocumentRetrieveFailure (uri, statusCode);
-			}
-			catch (Exception ex) {
+					throw new WebIOException ("Request failed.", uri.ToString (), ex);
+				}
+			} catch (Exception ex) {
 				Console.WriteLine ("GET Exception");
 				Exception e = ex;
 				while (e != null) {
@@ -300,8 +277,14 @@ namespace Bugzz.Network
 				response = String.Empty;
 				redirectAddress = null;
 				addressesMatch = false;
-				
+
+				throw new WebIOException ("Request failed.", uri.ToString (), ex);
+			} finally {
+				cookieJar.Save ();
+				if (resp != null)
+					resp.Close ();
 			}
+			
 			return statusCode;
 		}
 
@@ -318,21 +301,18 @@ namespace Bugzz.Network
 			request.ContentLength = data.Length;
 			request.UserAgent = userAgent;
 			request.CookieContainer = cookieJar;
-
-			Stream s = request.GetRequestStream ();
-			s.Write (data, 0, data.Length);
-			s.Close ();
-Console.WriteLine (1);
+			
+			HttpWebResponse resp = null;			
 			try {
-				HttpWebResponse resp = request.GetResponse () as HttpWebResponse;
-Console.WriteLine (2);
+				Stream s = request.GetRequestStream ();
+				s.Write (data, 0, data.Length);
+				s.Close ();
+
+				resp = request.GetResponse () as HttpWebResponse;
 				statusCode = resp.StatusCode;
-Console.WriteLine (3);
-				
 				StringBuilder sb = new StringBuilder ();
 
 				if (!ignoreResponse) {
-Console.WriteLine (4);				
 					Stream d = resp.GetResponseStream ();
 					char[] buffer = new char[4096];
 					int bufferLen = buffer.Length;
@@ -356,19 +336,10 @@ Console.WriteLine (4);
 						}
 					}
 				}
-Console.WriteLine (5);
-				cookieJar.Save ();
-Console.WriteLine (6);
-				resp.Close ();
-Console.WriteLine (7);
-				Console.WriteLine ("----POST----");
-				Console.WriteLine (sb.ToString ());
-				Console.WriteLine ("----END OF POST----");
-
+				
 				response = sb.ToString ();
-Console.WriteLine (8);
-			}
-			catch (Exception ex) {
+				Console.WriteLine (8);
+			} catch (Exception ex) {
 				Console.WriteLine ("POST Exception");
 				Exception e = ex;
 				while (e != null) {
@@ -377,7 +348,13 @@ Console.WriteLine (8);
 					e = e.InnerException;
 				}
 				response = String.Empty;
+				throw new WebIOException ("Request failed.", uri.ToString (), ex);
+			} finally {
+				cookieJar.Save ();
+				if (resp != null)
+					resp.Close ();
 			}
+			
 			return statusCode;
 		}
 	}
