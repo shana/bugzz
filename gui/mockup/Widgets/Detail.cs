@@ -28,14 +28,21 @@ using System;
 
 namespace mockup.Widgets
 {
-	
-	
 	public partial class Detail : Gtk.Bin
 	{
 		
 		public Detail()
 		{
 			this.Build();
+			
+		}
+		
+		public void LoadLists ()
+		{
+		}
+		
+		public void LoadDetail ()
+		{
 		}
 		
 		public void Cancel ()

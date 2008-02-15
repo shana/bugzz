@@ -30,8 +30,11 @@
     <File name="gtk-gui/mockup.Widgets.BugList.cs" subtype="Code" buildaction="Compile" />
     <File name="Settings.cs" subtype="Code" buildaction="Compile" />
     <File name="gtk-gui/mockup.MainWindow.cs" subtype="Code" buildaction="Compile" />
-    <File name="Utils" subtype="Directory" buildaction="Compile" />
     <File name="Utils/Loader.cs" subtype="Code" buildaction="Compile" />
+    <File name="Widgets/BugComment.cs" subtype="Code" buildaction="Compile" />
+    <File name="gtk-gui/mockup.BugComment.cs" subtype="Code" buildaction="Compile" />
+    <File name="Widgets/BugDescription.cs" subtype="Code" buildaction="Compile" />
+    <File name="gtk-gui/mockup.BugDescription.cs" subtype="Code" buildaction="Compile" />
   </Contents>
   <References>
     <ProjectReference type="Gac" localcopy="True" refto="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
@@ -53,6 +56,8 @@
       <Widget>mockup.Widgets.Detail</Widget>
       <Widget>mockup.Widgets.BugList</Widget>
       <Widget>mockup.Progress</Widget>
+      <Widget>mockup.BugComment</Widget>
+      <Widget>mockup.BugDescription</Widget>
     </ExportedWidgets>
   </GtkDesignInfo>
   <MonoDevelop.Autotools.MakefileInfo IntegrationEnabled="True" RelativeMakefileName="Makefile.am" ExecuteTargetName="run" SyncReferences="True" IsAutotoolsProject="True" RelativeConfigureInPath=".">

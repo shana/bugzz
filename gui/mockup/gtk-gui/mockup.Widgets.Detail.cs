@@ -13,17 +13,69 @@ namespace mockup.Widgets {
     
     public partial class Detail {
         
-        private Gtk.VBox vbox3;
+        private Gtk.Alignment alignment1;
         
-        private Gtk.Table table2;
+        private Gtk.VBox vbox1;
         
-        private Gtk.Entry entry4;
+        private Gtk.Table table3;
         
-        private Gtk.Entry entry5;
+        private Gtk.ComboBox combobox1;
         
-        private Gtk.Entry entry6;
+        private Gtk.ComboBox combobox10;
         
-        private Gtk.Label label4;
+        private Gtk.ComboBox combobox11;
+        
+        private Gtk.ComboBox combobox12;
+        
+        private Gtk.ComboBox combobox2;
+        
+        private Gtk.ComboBox combobox3;
+        
+        private Gtk.ComboBox combobox4;
+        
+        private Gtk.ComboBox combobox5;
+        
+        private Gtk.ComboBox combobox6;
+        
+        private Gtk.ComboBox combobox7;
+        
+        private Gtk.ComboBox combobox8;
+        
+        private Gtk.ComboBox combobox9;
+        
+        private Gtk.Label label10;
+        
+        private Gtk.Label label11;
+        
+        private Gtk.Label label12;
+        
+        private Gtk.Label label13;
+        
+        private Gtk.Label label14;
+        
+        private Gtk.Label label15;
+        
+        private Gtk.Label label16;
+        
+        private Gtk.Label label17;
+        
+        private Gtk.Label label6;
+        
+        private Gtk.Label label7;
+        
+        private Gtk.Label label8;
+        
+        private Gtk.Label label9;
+        
+        private Gtk.Expander expander1;
+        
+        private Gtk.Label GtkLabel;
+        
+        private Gtk.Expander expander2;
+        
+        private Gtk.VBox vboxComments;
+        
+        private Gtk.Label GtkLabel2;
         
         private Gtk.HButtonBox hbuttonbox5;
         
@@ -37,65 +89,312 @@ namespace mockup.Widgets {
             Stetic.BinContainer.Attach(this);
             this.Name = "mockup.Widgets.Detail";
             // Container child mockup.Widgets.Detail.Gtk.Container+ContainerChild
-            this.vbox3 = new Gtk.VBox();
-            this.vbox3.Name = "vbox3";
-            this.vbox3.Spacing = 6;
-            // Container child vbox3.Gtk.Box+BoxChild
-            this.table2 = new Gtk.Table(((uint)(3)), ((uint)(2)), false);
-            this.table2.Name = "table2";
-            this.table2.RowSpacing = ((uint)(6));
-            this.table2.ColumnSpacing = ((uint)(6));
-            // Container child table2.Gtk.Table+TableChild
-            this.entry4 = new Gtk.Entry();
-            this.entry4.CanFocus = true;
-            this.entry4.Name = "entry4";
-            this.entry4.IsEditable = true;
-            this.entry4.InvisibleChar = '●';
-            this.table2.Add(this.entry4);
-            Gtk.Table.TableChild w1 = ((Gtk.Table.TableChild)(this.table2[this.entry4]));
-            w1.LeftAttach = ((uint)(1));
-            w1.RightAttach = ((uint)(2));
+            this.alignment1 = new Gtk.Alignment(0.5F, 0.5F, 1F, 1F);
+            this.alignment1.Name = "alignment1";
+            this.alignment1.LeftPadding = ((uint)(10));
+            this.alignment1.TopPadding = ((uint)(10));
+            this.alignment1.RightPadding = ((uint)(10));
+            this.alignment1.BottomPadding = ((uint)(10));
+            // Container child alignment1.Gtk.Container+ContainerChild
+            this.vbox1 = new Gtk.VBox();
+            this.vbox1.Name = "vbox1";
+            this.vbox1.Spacing = 6;
+            // Container child vbox1.Gtk.Box+BoxChild
+            this.table3 = new Gtk.Table(((uint)(6)), ((uint)(4)), true);
+            this.table3.Name = "table3";
+            // Container child table3.Gtk.Table+TableChild
+            this.combobox1 = Gtk.ComboBox.NewText();
+            this.combobox1.Name = "combobox1";
+            this.table3.Add(this.combobox1);
+            Gtk.Table.TableChild w1 = ((Gtk.Table.TableChild)(this.table3[this.combobox1]));
+            w1.TopAttach = ((uint)(1));
+            w1.BottomAttach = ((uint)(2));
+            w1.XOptions = ((Gtk.AttachOptions)(4));
             w1.YOptions = ((Gtk.AttachOptions)(4));
-            // Container child table2.Gtk.Table+TableChild
-            this.entry5 = new Gtk.Entry();
-            this.entry5.CanFocus = true;
-            this.entry5.Name = "entry5";
-            this.entry5.IsEditable = true;
-            this.entry5.InvisibleChar = '●';
-            this.table2.Add(this.entry5);
-            Gtk.Table.TableChild w2 = ((Gtk.Table.TableChild)(this.table2[this.entry5]));
-            w2.TopAttach = ((uint)(1));
-            w2.BottomAttach = ((uint)(2));
+            // Container child table3.Gtk.Table+TableChild
+            this.combobox10 = Gtk.ComboBox.NewText();
+            this.combobox10.Name = "combobox10";
+            this.table3.Add(this.combobox10);
+            Gtk.Table.TableChild w2 = ((Gtk.Table.TableChild)(this.table3[this.combobox10]));
+            w2.TopAttach = ((uint)(5));
+            w2.BottomAttach = ((uint)(6));
             w2.LeftAttach = ((uint)(1));
             w2.RightAttach = ((uint)(2));
+            w2.XOptions = ((Gtk.AttachOptions)(4));
             w2.YOptions = ((Gtk.AttachOptions)(4));
-            // Container child table2.Gtk.Table+TableChild
-            this.entry6 = new Gtk.Entry();
-            this.entry6.CanFocus = true;
-            this.entry6.Name = "entry6";
-            this.entry6.IsEditable = true;
-            this.entry6.InvisibleChar = '●';
-            this.table2.Add(this.entry6);
-            Gtk.Table.TableChild w3 = ((Gtk.Table.TableChild)(this.table2[this.entry6]));
-            w3.TopAttach = ((uint)(2));
-            w3.BottomAttach = ((uint)(3));
-            w3.LeftAttach = ((uint)(1));
-            w3.RightAttach = ((uint)(2));
+            // Container child table3.Gtk.Table+TableChild
+            this.combobox11 = Gtk.ComboBox.NewText();
+            this.combobox11.Name = "combobox11";
+            this.table3.Add(this.combobox11);
+            Gtk.Table.TableChild w3 = ((Gtk.Table.TableChild)(this.table3[this.combobox11]));
+            w3.TopAttach = ((uint)(5));
+            w3.BottomAttach = ((uint)(6));
+            w3.LeftAttach = ((uint)(2));
+            w3.RightAttach = ((uint)(3));
+            w3.XOptions = ((Gtk.AttachOptions)(4));
             w3.YOptions = ((Gtk.AttachOptions)(4));
-            // Container child table2.Gtk.Table+TableChild
-            this.label4 = new Gtk.Label();
-            this.label4.Name = "label4";
-            this.label4.LabelProp = Mono.Unix.Catalog.GetString("label4");
-            this.table2.Add(this.label4);
-            Gtk.Table.TableChild w4 = ((Gtk.Table.TableChild)(this.table2[this.label4]));
+            // Container child table3.Gtk.Table+TableChild
+            this.combobox12 = Gtk.ComboBox.NewText();
+            this.combobox12.Name = "combobox12";
+            this.table3.Add(this.combobox12);
+            Gtk.Table.TableChild w4 = ((Gtk.Table.TableChild)(this.table3[this.combobox12]));
+            w4.TopAttach = ((uint)(5));
+            w4.BottomAttach = ((uint)(6));
+            w4.LeftAttach = ((uint)(3));
+            w4.RightAttach = ((uint)(4));
             w4.XOptions = ((Gtk.AttachOptions)(4));
             w4.YOptions = ((Gtk.AttachOptions)(4));
-            this.vbox3.Add(this.table2);
-            Gtk.Box.BoxChild w5 = ((Gtk.Box.BoxChild)(this.vbox3[this.table2]));
-            w5.Position = 0;
-            w5.Expand = false;
-            w5.Fill = false;
-            // Container child vbox3.Gtk.Box+BoxChild
+            // Container child table3.Gtk.Table+TableChild
+            this.combobox2 = Gtk.ComboBox.NewText();
+            this.combobox2.Name = "combobox2";
+            this.table3.Add(this.combobox2);
+            Gtk.Table.TableChild w5 = ((Gtk.Table.TableChild)(this.table3[this.combobox2]));
+            w5.TopAttach = ((uint)(1));
+            w5.BottomAttach = ((uint)(2));
+            w5.LeftAttach = ((uint)(1));
+            w5.RightAttach = ((uint)(2));
+            w5.XOptions = ((Gtk.AttachOptions)(4));
+            w5.YOptions = ((Gtk.AttachOptions)(4));
+            // Container child table3.Gtk.Table+TableChild
+            this.combobox3 = Gtk.ComboBox.NewText();
+            this.combobox3.Name = "combobox3";
+            this.table3.Add(this.combobox3);
+            Gtk.Table.TableChild w6 = ((Gtk.Table.TableChild)(this.table3[this.combobox3]));
+            w6.TopAttach = ((uint)(1));
+            w6.BottomAttach = ((uint)(2));
+            w6.LeftAttach = ((uint)(2));
+            w6.RightAttach = ((uint)(3));
+            w6.XOptions = ((Gtk.AttachOptions)(4));
+            w6.YOptions = ((Gtk.AttachOptions)(4));
+            // Container child table3.Gtk.Table+TableChild
+            this.combobox4 = Gtk.ComboBox.NewText();
+            this.combobox4.Name = "combobox4";
+            this.table3.Add(this.combobox4);
+            Gtk.Table.TableChild w7 = ((Gtk.Table.TableChild)(this.table3[this.combobox4]));
+            w7.TopAttach = ((uint)(1));
+            w7.BottomAttach = ((uint)(2));
+            w7.LeftAttach = ((uint)(3));
+            w7.RightAttach = ((uint)(4));
+            w7.XOptions = ((Gtk.AttachOptions)(4));
+            w7.YOptions = ((Gtk.AttachOptions)(4));
+            // Container child table3.Gtk.Table+TableChild
+            this.combobox5 = Gtk.ComboBox.NewText();
+            this.combobox5.Name = "combobox5";
+            this.table3.Add(this.combobox5);
+            Gtk.Table.TableChild w8 = ((Gtk.Table.TableChild)(this.table3[this.combobox5]));
+            w8.TopAttach = ((uint)(3));
+            w8.BottomAttach = ((uint)(4));
+            w8.XOptions = ((Gtk.AttachOptions)(4));
+            w8.YOptions = ((Gtk.AttachOptions)(4));
+            // Container child table3.Gtk.Table+TableChild
+            this.combobox6 = Gtk.ComboBox.NewText();
+            this.combobox6.Name = "combobox6";
+            this.table3.Add(this.combobox6);
+            Gtk.Table.TableChild w9 = ((Gtk.Table.TableChild)(this.table3[this.combobox6]));
+            w9.TopAttach = ((uint)(3));
+            w9.BottomAttach = ((uint)(4));
+            w9.LeftAttach = ((uint)(1));
+            w9.RightAttach = ((uint)(2));
+            w9.XOptions = ((Gtk.AttachOptions)(4));
+            w9.YOptions = ((Gtk.AttachOptions)(4));
+            // Container child table3.Gtk.Table+TableChild
+            this.combobox7 = Gtk.ComboBox.NewText();
+            this.combobox7.Name = "combobox7";
+            this.table3.Add(this.combobox7);
+            Gtk.Table.TableChild w10 = ((Gtk.Table.TableChild)(this.table3[this.combobox7]));
+            w10.TopAttach = ((uint)(3));
+            w10.BottomAttach = ((uint)(4));
+            w10.LeftAttach = ((uint)(2));
+            w10.RightAttach = ((uint)(3));
+            w10.XOptions = ((Gtk.AttachOptions)(4));
+            w10.YOptions = ((Gtk.AttachOptions)(4));
+            // Container child table3.Gtk.Table+TableChild
+            this.combobox8 = Gtk.ComboBox.NewText();
+            this.combobox8.Name = "combobox8";
+            this.table3.Add(this.combobox8);
+            Gtk.Table.TableChild w11 = ((Gtk.Table.TableChild)(this.table3[this.combobox8]));
+            w11.TopAttach = ((uint)(3));
+            w11.BottomAttach = ((uint)(4));
+            w11.LeftAttach = ((uint)(3));
+            w11.RightAttach = ((uint)(4));
+            w11.XOptions = ((Gtk.AttachOptions)(4));
+            w11.YOptions = ((Gtk.AttachOptions)(4));
+            // Container child table3.Gtk.Table+TableChild
+            this.combobox9 = Gtk.ComboBox.NewText();
+            this.combobox9.Name = "combobox9";
+            this.table3.Add(this.combobox9);
+            Gtk.Table.TableChild w12 = ((Gtk.Table.TableChild)(this.table3[this.combobox9]));
+            w12.TopAttach = ((uint)(5));
+            w12.BottomAttach = ((uint)(6));
+            w12.XOptions = ((Gtk.AttachOptions)(4));
+            w12.YOptions = ((Gtk.AttachOptions)(4));
+            // Container child table3.Gtk.Table+TableChild
+            this.label10 = new Gtk.Label();
+            this.label10.Name = "label10";
+            this.label10.LabelProp = Mono.Unix.Catalog.GetString("Found in Version");
+            this.table3.Add(this.label10);
+            Gtk.Table.TableChild w13 = ((Gtk.Table.TableChild)(this.table3[this.label10]));
+            w13.LeftAttach = ((uint)(3));
+            w13.RightAttach = ((uint)(4));
+            w13.XOptions = ((Gtk.AttachOptions)(4));
+            w13.YOptions = ((Gtk.AttachOptions)(4));
+            // Container child table3.Gtk.Table+TableChild
+            this.label11 = new Gtk.Label();
+            this.label11.Name = "label11";
+            this.label11.LabelProp = Mono.Unix.Catalog.GetString("Severity");
+            this.table3.Add(this.label11);
+            Gtk.Table.TableChild w14 = ((Gtk.Table.TableChild)(this.table3[this.label11]));
+            w14.TopAttach = ((uint)(2));
+            w14.BottomAttach = ((uint)(3));
+            w14.XOptions = ((Gtk.AttachOptions)(4));
+            w14.YOptions = ((Gtk.AttachOptions)(4));
+            // Container child table3.Gtk.Table+TableChild
+            this.label12 = new Gtk.Label();
+            this.label12.Name = "label12";
+            this.label12.LabelProp = Mono.Unix.Catalog.GetString("Priority");
+            this.table3.Add(this.label12);
+            Gtk.Table.TableChild w15 = ((Gtk.Table.TableChild)(this.table3[this.label12]));
+            w15.TopAttach = ((uint)(2));
+            w15.BottomAttach = ((uint)(3));
+            w15.LeftAttach = ((uint)(1));
+            w15.RightAttach = ((uint)(2));
+            w15.XOptions = ((Gtk.AttachOptions)(4));
+            w15.YOptions = ((Gtk.AttachOptions)(4));
+            // Container child table3.Gtk.Table+TableChild
+            this.label13 = new Gtk.Label();
+            this.label13.Name = "label13";
+            this.label13.LabelProp = Mono.Unix.Catalog.GetString("Status");
+            this.table3.Add(this.label13);
+            Gtk.Table.TableChild w16 = ((Gtk.Table.TableChild)(this.table3[this.label13]));
+            w16.TopAttach = ((uint)(2));
+            w16.BottomAttach = ((uint)(3));
+            w16.LeftAttach = ((uint)(2));
+            w16.RightAttach = ((uint)(3));
+            w16.XOptions = ((Gtk.AttachOptions)(4));
+            w16.YOptions = ((Gtk.AttachOptions)(4));
+            // Container child table3.Gtk.Table+TableChild
+            this.label14 = new Gtk.Label();
+            this.label14.Name = "label14";
+            this.label14.LabelProp = Mono.Unix.Catalog.GetString("Fixed in Milestone");
+            this.table3.Add(this.label14);
+            Gtk.Table.TableChild w17 = ((Gtk.Table.TableChild)(this.table3[this.label14]));
+            w17.TopAttach = ((uint)(2));
+            w17.BottomAttach = ((uint)(3));
+            w17.LeftAttach = ((uint)(3));
+            w17.RightAttach = ((uint)(4));
+            w17.XOptions = ((Gtk.AttachOptions)(4));
+            w17.YOptions = ((Gtk.AttachOptions)(4));
+            // Container child table3.Gtk.Table+TableChild
+            this.label15 = new Gtk.Label();
+            this.label15.Name = "label15";
+            this.label15.LabelProp = Mono.Unix.Catalog.GetString("Hardware");
+            this.table3.Add(this.label15);
+            Gtk.Table.TableChild w18 = ((Gtk.Table.TableChild)(this.table3[this.label15]));
+            w18.TopAttach = ((uint)(4));
+            w18.BottomAttach = ((uint)(5));
+            w18.XOptions = ((Gtk.AttachOptions)(4));
+            w18.YOptions = ((Gtk.AttachOptions)(4));
+            // Container child table3.Gtk.Table+TableChild
+            this.label16 = new Gtk.Label();
+            this.label16.Name = "label16";
+            this.label16.LabelProp = Mono.Unix.Catalog.GetString("OS");
+            this.table3.Add(this.label16);
+            Gtk.Table.TableChild w19 = ((Gtk.Table.TableChild)(this.table3[this.label16]));
+            w19.TopAttach = ((uint)(4));
+            w19.BottomAttach = ((uint)(5));
+            w19.LeftAttach = ((uint)(1));
+            w19.RightAttach = ((uint)(2));
+            w19.XOptions = ((Gtk.AttachOptions)(4));
+            w19.YOptions = ((Gtk.AttachOptions)(4));
+            // Container child table3.Gtk.Table+TableChild
+            this.label17 = new Gtk.Label();
+            this.label17.Name = "label17";
+            this.label17.LabelProp = Mono.Unix.Catalog.GetString("Resolution");
+            this.table3.Add(this.label17);
+            Gtk.Table.TableChild w20 = ((Gtk.Table.TableChild)(this.table3[this.label17]));
+            w20.TopAttach = ((uint)(4));
+            w20.BottomAttach = ((uint)(5));
+            w20.LeftAttach = ((uint)(2));
+            w20.RightAttach = ((uint)(3));
+            w20.XOptions = ((Gtk.AttachOptions)(4));
+            w20.YOptions = ((Gtk.AttachOptions)(4));
+            // Container child table3.Gtk.Table+TableChild
+            this.label6 = new Gtk.Label();
+            this.label6.Name = "label6";
+            this.label6.LabelProp = Mono.Unix.Catalog.GetString("Keywords");
+            this.table3.Add(this.label6);
+            Gtk.Table.TableChild w21 = ((Gtk.Table.TableChild)(this.table3[this.label6]));
+            w21.TopAttach = ((uint)(4));
+            w21.BottomAttach = ((uint)(5));
+            w21.LeftAttach = ((uint)(3));
+            w21.RightAttach = ((uint)(4));
+            w21.XOptions = ((Gtk.AttachOptions)(4));
+            w21.YOptions = ((Gtk.AttachOptions)(4));
+            // Container child table3.Gtk.Table+TableChild
+            this.label7 = new Gtk.Label();
+            this.label7.Name = "label7";
+            this.label7.LabelProp = Mono.Unix.Catalog.GetString("Classification");
+            this.table3.Add(this.label7);
+            Gtk.Table.TableChild w22 = ((Gtk.Table.TableChild)(this.table3[this.label7]));
+            w22.XOptions = ((Gtk.AttachOptions)(4));
+            w22.YOptions = ((Gtk.AttachOptions)(4));
+            // Container child table3.Gtk.Table+TableChild
+            this.label8 = new Gtk.Label();
+            this.label8.Name = "label8";
+            this.label8.LabelProp = Mono.Unix.Catalog.GetString("Product");
+            this.table3.Add(this.label8);
+            Gtk.Table.TableChild w23 = ((Gtk.Table.TableChild)(this.table3[this.label8]));
+            w23.LeftAttach = ((uint)(1));
+            w23.RightAttach = ((uint)(2));
+            w23.XOptions = ((Gtk.AttachOptions)(4));
+            w23.YOptions = ((Gtk.AttachOptions)(4));
+            // Container child table3.Gtk.Table+TableChild
+            this.label9 = new Gtk.Label();
+            this.label9.Name = "label9";
+            this.label9.LabelProp = Mono.Unix.Catalog.GetString("Component");
+            this.table3.Add(this.label9);
+            Gtk.Table.TableChild w24 = ((Gtk.Table.TableChild)(this.table3[this.label9]));
+            w24.LeftAttach = ((uint)(2));
+            w24.RightAttach = ((uint)(3));
+            w24.XOptions = ((Gtk.AttachOptions)(4));
+            w24.YOptions = ((Gtk.AttachOptions)(4));
+            this.vbox1.Add(this.table3);
+            Gtk.Box.BoxChild w25 = ((Gtk.Box.BoxChild)(this.vbox1[this.table3]));
+            w25.Position = 0;
+            w25.Expand = false;
+            w25.Fill = false;
+            // Container child vbox1.Gtk.Box+BoxChild
+            this.expander1 = new Gtk.Expander(null);
+            this.expander1.CanFocus = true;
+            this.expander1.Name = "expander1";
+            this.expander1.Expanded = true;
+            this.GtkLabel = new Gtk.Label();
+            this.GtkLabel.Name = "GtkLabel";
+            this.GtkLabel.LabelProp = Mono.Unix.Catalog.GetString("Description");
+            this.GtkLabel.UseUnderline = true;
+            this.expander1.LabelWidget = this.GtkLabel;
+            this.vbox1.Add(this.expander1);
+            Gtk.Box.BoxChild w26 = ((Gtk.Box.BoxChild)(this.vbox1[this.expander1]));
+            w26.Position = 1;
+            // Container child vbox1.Gtk.Box+BoxChild
+            this.expander2 = new Gtk.Expander(null);
+            this.expander2.CanFocus = true;
+            this.expander2.Name = "expander2";
+            this.expander2.Expanded = true;
+            // Container child expander2.Gtk.Container+ContainerChild
+            this.vboxComments = new Gtk.VBox();
+            this.vboxComments.Name = "vboxComments";
+            this.vboxComments.Spacing = 6;
+            this.expander2.Add(this.vboxComments);
+            this.GtkLabel2 = new Gtk.Label();
+            this.GtkLabel2.Name = "GtkLabel2";
+            this.GtkLabel2.LabelProp = Mono.Unix.Catalog.GetString("Comments");
+            this.GtkLabel2.UseUnderline = true;
+            this.expander2.LabelWidget = this.GtkLabel2;
+            this.vbox1.Add(this.expander2);
+            Gtk.Box.BoxChild w28 = ((Gtk.Box.BoxChild)(this.vbox1[this.expander2]));
+            w28.Position = 2;
+            // Container child vbox1.Gtk.Box+BoxChild
             this.hbuttonbox5 = new Gtk.HButtonBox();
             this.hbuttonbox5.Name = "hbuttonbox5";
             this.hbuttonbox5.Spacing = 6;
@@ -107,9 +406,9 @@ namespace mockup.Widgets {
             this.button25.UseUnderline = true;
             this.button25.Label = Mono.Unix.Catalog.GetString("button25");
             this.hbuttonbox5.Add(this.button25);
-            Gtk.ButtonBox.ButtonBoxChild w6 = ((Gtk.ButtonBox.ButtonBoxChild)(this.hbuttonbox5[this.button25]));
-            w6.Expand = false;
-            w6.Fill = false;
+            Gtk.ButtonBox.ButtonBoxChild w29 = ((Gtk.ButtonBox.ButtonBoxChild)(this.hbuttonbox5[this.button25]));
+            w29.Expand = false;
+            w29.Fill = false;
             // Container child hbuttonbox5.Gtk.ButtonBox+ButtonBoxChild
             this.button26 = new Gtk.Button();
             this.button26.CanFocus = true;
@@ -117,16 +416,17 @@ namespace mockup.Widgets {
             this.button26.UseUnderline = true;
             this.button26.Label = Mono.Unix.Catalog.GetString("button26");
             this.hbuttonbox5.Add(this.button26);
-            Gtk.ButtonBox.ButtonBoxChild w7 = ((Gtk.ButtonBox.ButtonBoxChild)(this.hbuttonbox5[this.button26]));
-            w7.Position = 1;
-            w7.Expand = false;
-            w7.Fill = false;
-            this.vbox3.Add(this.hbuttonbox5);
-            Gtk.Box.BoxChild w8 = ((Gtk.Box.BoxChild)(this.vbox3[this.hbuttonbox5]));
-            w8.Position = 1;
-            w8.Expand = false;
-            w8.Fill = false;
-            this.Add(this.vbox3);
+            Gtk.ButtonBox.ButtonBoxChild w30 = ((Gtk.ButtonBox.ButtonBoxChild)(this.hbuttonbox5[this.button26]));
+            w30.Position = 1;
+            w30.Expand = false;
+            w30.Fill = false;
+            this.vbox1.Add(this.hbuttonbox5);
+            Gtk.Box.BoxChild w31 = ((Gtk.Box.BoxChild)(this.vbox1[this.hbuttonbox5]));
+            w31.Position = 3;
+            w31.Expand = false;
+            w31.Fill = false;
+            this.alignment1.Add(this.vbox1);
+            this.Add(this.alignment1);
             if ((this.Child != null)) {
                 this.Child.ShowAll();
             }

@@ -48,6 +48,8 @@ all: $(ASSEMBLY) $(BINARIES)
 FILES =  \
 	AssemblyInfo.cs \
 	gtk-gui/generated.cs \
+	gtk-gui/mockup.BugComment.cs \
+	gtk-gui/mockup.BugDescription.cs \
 	gtk-gui/mockup.MainWindow.cs \
 	gtk-gui/mockup.Widgets.BugList.cs \
 	gtk-gui/mockup.Widgets.Detail.cs \
@@ -57,6 +59,8 @@ FILES =  \
 	MainWindow.cs \
 	Settings.cs \
 	Utils/Loader.cs \
+	Widgets/BugComment.cs \
+	Widgets/BugDescription.cs \
 	Widgets/BugList.cs \
 	Widgets/Detail.cs \
 	Widgets/Search.cs \
@@ -103,4 +107,4 @@ $(ASSEMBLY) $(ASSEMBLY_MDB): $(build_sources) $(build_resources) $(build_datafil
 	$(ASSEMBLY_COMPILER_COMMAND) $(ASSEMBLY_COMPILER_FLAGS) -out:$(ASSEMBLY) -target:$(COMPILE_TARGET) $(build_sources_embed) $(build_resources_embed) $(build_references_ref)
 
 run:
-	mono --debug $(ASSEMBLY)
+	mono $(ASSEMBLY)
