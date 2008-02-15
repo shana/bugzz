@@ -1,7 +1,6 @@
 using System;
-using SGC = System.Collections.Generic;
+using System.Collections.Generic;
 using System.Text;
-using C5;
 using Bugzz;
 using Bugzz.Network;
 using HtmlAgilityPack;
@@ -16,7 +15,8 @@ namespace Bugzz.Bugzilla
 		private Data bugzillaData;
 		private bool loaded;
 		private VersionData versionData;
-
+		Dictionary <string, List <string>> mimeTypes;
+		
 		public VersionData VersionData
 		{
 			get {
@@ -35,6 +35,25 @@ namespace Bugzz.Bugzilla
 			targetVersion = targetVersion;
 		}
 
+		public List <string> GetMimeType (string name)
+		{
+			if (String.IsNullOrEmpty (name))
+				return null;
+			
+			if (!loaded)
+				LoadData ();
+
+			if (mimeTypes == null)
+				return null;
+			
+			List <string> ret;
+
+			if (mimeTypes.TryGetValue (name, out ret))
+				return ret;
+
+			return null;
+		}
+		
 		VersionData GetVersionData ()
 		{
 			VersionData ret = null;
@@ -164,11 +183,29 @@ namespace Bugzz.Bugzilla
 						StoreBugzillaVersion (node);
 				}
 
-			}
-			catch (BugzzException) {
+				nodes = doc.SelectNodes ("/bugzilla/mimeTypes/type[string-length (@name) > 0]");
+				if (nodes == null || nodes.Count == 0)
+					return;
+
+				mimeTypes = new Dictionary <string, List <string>> ();
+				XmlNodeList tmp;
+				string typeName;
+				List <string> values;
+				
+				foreach (XmlNode node in nodes) {
+					typeName = node.Attributes ["name"].Value;
+					tmp = node.SelectNodes ("./string[string-length (@value) > 0]");
+					if (!mimeTypes.TryGetValue (typeName, out values)) {
+						values = new List <string> ();
+						mimeTypes.Add (typeName, values);
+					}
+
+					foreach (XmlNode tmpNode in tmp)
+						values.Add (tmpNode.Attributes ["value"].Value);
+				}
+			} catch (BugzzException) {
 				throw;
-			}
-			catch (Exception ex) {
+			} catch (Exception ex) {
 				throw new BugzillaException ("Failed to load data file.", ex);
 			}
 		}
