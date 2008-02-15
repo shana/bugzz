@@ -30,6 +30,30 @@ namespace Bugzz
 		public HashBag <IInitialValue> FixedInMilestone {
 			get { return bugzilla.FixedInMilestone; }
 		}
+
+		public HashBag <IInitialValue> Status {
+			get { return bugzilla.Status; }
+		}
+		
+		public HashBag <IInitialValue> Resolution {
+			get { return bugzilla.Resolution; }
+		}
+		
+		public HashBag <IInitialValue> Severity {
+			get { return bugzilla.Severity; }
+		}
+		
+		public HashBag <IInitialValue> Priority {
+			get { return bugzilla.Priority; }
+		}
+		
+		public HashBag <IInitialValue> Hardware {
+			get { return bugzilla.Hardware; }
+		}
+		
+		public HashBag <IInitialValue> OS {
+			get { return bugzilla.OS; }
+		}
 		
 		public string Url
 		{
