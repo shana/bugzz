@@ -25,11 +25,15 @@ namespace mockup {
         
         private Gtk.ToggleAction actBugDetail;
         
-        private Gtk.ToggleAction actOnline;
+        private Gtk.Action actOnline;
         
         private Gtk.VBox vbox1;
         
         private Gtk.Toolbar toolbar1;
+        
+        private Gtk.VPaned vpane;
+        
+        private Gtk.ProgressBar progressbar1;
         
         protected virtual void Build() {
             Stetic.Gui.Initialize(this);
@@ -53,8 +57,7 @@ namespace mockup {
             this.actBugDetail = new Gtk.ToggleAction("actBugDetail", Mono.Unix.Catalog.GetString("Bug Detail"), null, null);
             this.actBugDetail.ShortLabel = Mono.Unix.Catalog.GetString("Bug Detail");
             w2.Add(this.actBugDetail, null);
-            this.actOnline = new Gtk.ToggleAction("actOnline", Mono.Unix.Catalog.GetString("Offline"), null, null);
-            this.actOnline.ShortLabel = Mono.Unix.Catalog.GetString("Offline");
+            this.actOnline = new Gtk.Action("actOnline", null, null, null);
             w2.Add(this.actOnline, null);
             w1.InsertActionGroup(w2, 0);
             this.AddAccelGroup(w1.AccelGroup);
@@ -76,6 +79,22 @@ namespace mockup {
             w3.Position = 0;
             w3.Expand = false;
             w3.Fill = false;
+            // Container child vbox1.Gtk.Box+BoxChild
+            this.vpane = new Gtk.VPaned();
+            this.vpane.CanFocus = true;
+            this.vpane.Name = "vpane";
+            this.vpane.Position = 20;
+            this.vbox1.Add(this.vpane);
+            Gtk.Box.BoxChild w4 = ((Gtk.Box.BoxChild)(this.vbox1[this.vpane]));
+            w4.Position = 1;
+            // Container child vbox1.Gtk.Box+BoxChild
+            this.progressbar1 = new Gtk.ProgressBar();
+            this.progressbar1.Name = "progressbar1";
+            this.vbox1.Add(this.progressbar1);
+            Gtk.Box.BoxChild w5 = ((Gtk.Box.BoxChild)(this.vbox1[this.progressbar1]));
+            w5.Position = 2;
+            w5.Expand = false;
+            w5.Fill = false;
             this.Add(this.vbox1);
             if ((this.Child != null)) {
                 this.Child.ShowAll();
@@ -88,7 +107,7 @@ namespace mockup {
             this.actSearch.Toggled += new System.EventHandler(this.OnToggleSearch);
             this.actBugList.Toggled += new System.EventHandler(this.OnToggleList);
             this.actBugDetail.Toggled += new System.EventHandler(this.OnToggleDetail);
-            this.actOnline.Toggled += new System.EventHandler(this.OnToggleOnline);
+            this.actOnline.Activated += new System.EventHandler(this.OnToggleOnline);
         }
     }
 }

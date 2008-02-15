@@ -15,8 +15,4 @@
     <itemgroups />
     <signals />
   </object>
-  <object type="mockup.Progress" palette-category="mockup" allow-children="false" base-type="Gtk.Widget">
-    <itemgroups />
-    <signals />
-  </object>
 </objects>

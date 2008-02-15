@@ -49,6 +49,7 @@ namespace mockup
 				dataPath = Path.Combine (dataPath, "config.xml");
 				if (File.Exists (dataPath)) {
 					xmldoc.Load (dataPath);
+					Console.WriteLine (xmldoc.OuterXml);
 				}
 				
 				if (xmldoc.SelectSingleNode ("//root") == null) {

@@ -45,17 +45,25 @@ namespace mockup {
 		public MainWindow (): base (Gtk.WindowType.Toplevel)
 		{
 		
+			Build ();
+			
 			settings = new Settings ();
 			Loader.Load (settings);
 			Bugzz.LoginData loginData = new LoginData();
 			Loader.Load (loginData);
-			if (settings.Online)
+			
+			if (settings.Online) {
+				Console.WriteLine (1);
 				bugzzManager = new BugzzManager (settings.Url, loginData);
-			else
+				this.actOnline.Label =  Mono.Unix.Catalog.GetString("Online");
+			}
+			else {
+				Console.WriteLine (2);
 				bugzzManager = new BugzzManager (loginData);
-
-		
-			Build ();
+				this.actOnline.Label =  Mono.Unix.Catalog.GetString("Offline");
+			}
+			ShowAll ();
+			
 		}
 		
 		protected void OnDeleteEvent (object sender, DeleteEventArgs a)
@@ -68,13 +76,20 @@ namespace mockup {
 		{
 			if (settingsWidget == null) {
 				settingsWidget = new Widgets.Settings (settings);
-				vbox1.PackStart (settingsWidget, true, true, 0);
+				//vbox1.PackStart (settingsWidget, true, true, 0);
+				vpane.Add (settingsWidget);
+				
 			} else {			
-				if (settingsWidget.Visible)
+				if (settingsWidget.Visible) {
 					settingsWidget.Cancel ();
-				else
+					vpane.Remove (settingsWidget);
+					settingsWidget.Hide ();
+				} else {
+					vpane.Add (settingsWidget);
 					settingsWidget.Show ();
+				}
 			}
+			vpane.Position = vpane.Child1.SizeRequest ().Height;
 			ShowAll ();
 		}
 
@@ -82,13 +97,19 @@ namespace mockup {
 		{
 			if (searchWidget == null) {
 				searchWidget = new Widgets.Search (this);
-				vbox1.PackStart (searchWidget, true, true, 0);
+				//vbox1.PackStart (searchWidget, true, true, 0);
+				vpane.Add (searchWidget);
 			} else {			
-				if (searchWidget.Visible)
+				if (searchWidget.Visible) {
+					vpane.Remove (searchWidget);
 					searchWidget.Hide ();
-				else
+				} else {
+					vpane.Add (searchWidget);
 					searchWidget.Show ();
+				}
 			}
+			if (vpane.Child1 != null)
+				vpane.Position = vpane.Child1.SizeRequest ().Height;
 			ShowAll ();
 		}
 
@@ -103,13 +124,19 @@ namespace mockup {
 		{
 			if (bugsWidget == null) {
 				bugsWidget = new Widgets.BugList (bugzzManager);
-				vbox1.PackStart (bugsWidget, true, true, 0);
+				//vbox1.PackStart (bugsWidget, true, true, 0);
+				vpane.Add (bugsWidget);
 			} else {						
-				if (bugsWidget.Visible)
+				if (bugsWidget.Visible) {
+					vpane.Remove (bugsWidget);
 					bugsWidget.Hide ();
-				else
+				} else {
+					vpane.Add (bugsWidget);
 					bugsWidget.Show ();
+				}
 			}
+			if (vpane.Child1 != null)
+				vpane.Position = vpane.Child1.SizeRequest ().Height;
 			ShowAll ();
 			bugsWidget.Load (query);
 		}
@@ -118,14 +145,20 @@ namespace mockup {
 		{
 			if (detailWidget == null) {
 				detailWidget = new Widgets.Detail ();
-				vbox1.PackStart (detailWidget, true, true, 0);
+				//vbox1.PackStart (detailWidget, true, true, 0);
+				vpane.Add (detailWidget);
 			} else {			
-			
-				if (detailWidget.Visible)
+				if (detailWidget.Visible) {
+					detailWidget.Cancel ();
+					vpane.Remove (detailWidget);
 					detailWidget.Hide ();
-				else
+				} else {
+					vpane.Add (detailWidget);
 					detailWidget.Show ();
+				}
 			}
+			if (vpane.Child1 != null)
+				vpane.Position = vpane.Child1.SizeRequest ().Height;
 			ShowAll ();
 		}
 
@@ -133,10 +166,10 @@ namespace mockup {
 		{
 			if (settings.Online) {
 				settings.Online = false;
-				this.actOnline.Label = "Offline";
+				this.actOnline.Label =  Mono.Unix.Catalog.GetString("Offline");
 			} else {
 				settings.Online = true;
-				this.actOnline.Label = "Online";
+				this.actOnline.Label = Mono.Unix.Catalog.GetString("Online");
 			}
 		}
 	}
