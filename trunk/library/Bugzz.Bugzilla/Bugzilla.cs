@@ -51,11 +51,11 @@ namespace Bugzz.Bugzilla
 			}
 		}
 
-		public WebIO WebIO /*{
-			get;
-			private set;
-		}*/;
-
+#if FALLBACK
+		public WebIO WebIO;
+#else
+		public WebIO WebIO {get; private set; }
+#endif
 
 		private DataManager dataManager;
 
