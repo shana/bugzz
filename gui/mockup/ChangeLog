@@ -1,3 +1,9 @@
+2008-02-15  Andreia Gaita <avidigal@novell.com> 
+
+	* Add a vpane to resize panes when more than one widget is shown
+	* Add --debug to run
+	* Fix online/offline toggle	
+
 2008-02-14  Andreia Gaita <avidigal@novell.com> 
 
 * Load settings, login data from config.xml with a generic loader

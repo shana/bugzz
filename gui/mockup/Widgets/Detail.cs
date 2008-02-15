@@ -37,5 +37,9 @@ namespace mockup.Widgets
 		{
 			this.Build();
 		}
+		
+		public void Cancel ()
+		{
+		}
 	}
 }
