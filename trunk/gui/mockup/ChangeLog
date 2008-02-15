@@ -1,5 +1,9 @@
 2008-02-15  Andreia Gaita <avidigal@novell.com> 
 
+	oops, slight bug there, fixed
+
+2008-02-15  Andreia Gaita <avidigal@novell.com> 
+
 	* Setup layouting so widgets can be shown in pairs or solo, updating the 
 	toolbar button status when one widget toggles another one's visibility
 
