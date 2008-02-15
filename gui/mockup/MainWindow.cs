@@ -90,6 +90,7 @@ namespace mockup {
 					ShowFull (settingsWidget);
 				}
 			}
+			UpdateToggles ();
 			ShowAll ();
 		}
 
@@ -111,6 +112,7 @@ namespace mockup {
 					ShowTop (searchWidget);
 				}
 			}
+			UpdateToggles ();
 			ShowAll ();
 		}
 
@@ -133,6 +135,7 @@ namespace mockup {
 					ShowBottom (bugsWidget);
 				}
 			}
+			UpdateToggles ();
 			ShowAll ();
 		}
 		
@@ -162,6 +165,7 @@ namespace mockup {
 					ShowBottom (detailWidget);				
 				}
 			}
+			UpdateToggles ();
 			ShowAll ();
 		}
 
@@ -181,7 +185,6 @@ namespace mockup {
 		{
 			vpane.Remove (widget);
 			widget.Hide ();
-			UpdateToggles ();
 		}
 		
 		private void MoveUp () 
@@ -253,8 +256,6 @@ namespace mockup {
 			widget.Show ();
 			if (vpane.Child1 != null)
 				vpane.Position = vpane.Child1.SizeRequest ().Height;
-
-			UpdateToggles ();
 		}
 		
 		private void ShowTop (Gtk.Widget widget)
@@ -266,8 +267,6 @@ namespace mockup {
 			vpane.Add1 (widget);
 			widget.Show ();
 			vpane.Position = widget.SizeRequest ().Height;
-
-			UpdateToggles ();
 		}
 		
 		private void ShowFull (Gtk.Widget widget)
