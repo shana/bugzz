@@ -203,6 +203,7 @@ namespace mockup {
 				HideBottom ();
 				ShowTop (pre);
 			} else {
+				HideTop ();
 				HideBottom ();
 			}
 		}
@@ -224,6 +225,7 @@ namespace mockup {
 				ShowBottom (pre);
 			} else {
 				HideTop ();
+				HideBottom ();
 			}
 		}
 
