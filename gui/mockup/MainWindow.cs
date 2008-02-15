@@ -134,7 +134,7 @@ namespace mockup {
 		
 		public void Search (Query query)
 		{
-			if (!bugsWidget.Visible)
+			if (bugsWidget == null || !bugsWidget.Visible)
 				ToggleList ();
 			
 			bugsWidget.Load (query);
