@@ -15,4 +15,12 @@
     <itemgroups />
     <signals />
   </object>
+  <object type="mockup.BugComment" palette-category="mockup" allow-children="false" base-type="Gtk.Bin">
+    <itemgroups />
+    <signals />
+  </object>
+  <object type="mockup.BugDescription" palette-category="mockup" allow-children="false" base-type="Gtk.Bin">
+    <itemgroups />
+    <signals />
+  </object>
 </objects>

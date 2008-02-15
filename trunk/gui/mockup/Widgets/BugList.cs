@@ -50,6 +50,10 @@ namespace mockup.Widgets
 
 			AddColumns (treeView);
 
+			treeView.RowActivated += delegate (object o, RowActivatedArgs args) {
+				
+			};
+
 			//NodeView nodeview = new NodeView (store);
 			
 			

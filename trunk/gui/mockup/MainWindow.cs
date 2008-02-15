@@ -79,7 +79,6 @@ namespace mockup {
 			if (suspendLayout) return;
 			if (settingsWidget == null) {
 				settingsWidget = new Widgets.Settings (settings);
-				//vbox1.PackStart (settingsWidget, true, true, 0);
 				ShowFull (settingsWidget);
 				
 			} else {			
@@ -100,7 +99,6 @@ namespace mockup {
 			
 			if (searchWidget == null) {
 				searchWidget = new Widgets.Search (this);
-				//vbox1.PackStart (searchWidget, true, true, 0);
 				MoveDown (bugsWidget);
 				ShowTop (searchWidget);				
 			} else {			
@@ -126,7 +124,6 @@ namespace mockup {
 		{
 			if (bugsWidget == null) {
 				bugsWidget = new Widgets.BugList (bugzzManager);
-				//vbox1.PackStart (bugsWidget, true, true, 0);
 				ShowBottom (bugsWidget);
 			} else {						
 				if (bugsWidget.Visible) {
@@ -152,7 +149,6 @@ namespace mockup {
 			if (suspendLayout) return;
 			if (detailWidget == null) {
 				detailWidget = new Widgets.Detail ();
-				//vbox1.PackStart (detailWidget, true, true, 0);
 				MoveUp (bugsWidget);
 				ShowBottom (detailWidget);
 			} else {			
