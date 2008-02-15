@@ -96,14 +96,18 @@ namespace mockup {
 		protected virtual void OnToggleSearch (object sender, System.EventArgs e)
 		{
 			if (suspendLayout) return;
+			
 			if (searchWidget == null) {
 				searchWidget = new Widgets.Search (this);
 				//vbox1.PackStart (searchWidget, true, true, 0);
+				MoveDown (bugsWidget);
 				ShowTop (searchWidget);				
 			} else {			
 				if (searchWidget.Visible) {
 					Hide (searchWidget);
+					MoveUp (bugsWidget);
 				} else {
+					MoveDown (bugsWidget);
 					ShowTop (searchWidget);
 				}
 			}
@@ -146,12 +150,15 @@ namespace mockup {
 			if (detailWidget == null) {
 				detailWidget = new Widgets.Detail ();
 				//vbox1.PackStart (detailWidget, true, true, 0);
+				MoveUp (bugsWidget);
 				ShowBottom (detailWidget);
 			} else {			
 				if (detailWidget.Visible) {
 					detailWidget.Cancel ();
 					Hide (detailWidget);
+					MoveDown (bugsWidget);
 				} else {
+					MoveUp (bugsWidget);
 					ShowBottom (detailWidget);				
 				}
 			}
@@ -177,51 +184,98 @@ namespace mockup {
 			UpdateToggles ();
 		}
 		
-		private void ShowBottom (Gtk.Widget widget)
+		private void MoveUp () 
+		{
+			Gtk.Widget pre = vpane.Child2;
+			HideBottom ();
+			ShowTop (pre);
+		}
+		
+		private void MoveUp (Gtk.Widget widget) 
+		{
+			if (widget == null) return;
+			
+			Gtk.Widget pre = vpane.Child2;
+			if (pre == widget) {			
+				HideBottom ();
+				ShowTop (pre);
+			} else {
+				HideBottom ();
+			}
+		}
+
+		private void MoveDown ()
+		{
+			Gtk.Widget pre = vpane.Child1;
+			HideTop ();
+			ShowBottom (pre);
+		}
+
+		private void MoveDown (Gtk.Widget widget) 
+		{
+			if (widget == null) return;
+			
+			Gtk.Widget pre = vpane.Child1;
+			if (pre == widget) {			
+				HideTop ();
+				ShowBottom (pre);
+			} else {
+				HideTop ();
+			}
+		}
+
+		
+		private void HideTop ()
+		{
+			Gtk.Widget pre = vpane.Child1;
+			if (pre != null) {
+				pre.Hide ();
+				vpane.Remove (pre);
+			}			
+		}
+		
+		private void HideBottom ()
 		{
 			Gtk.Widget pre = vpane.Child2;
 			if (pre != null) {
 				pre.Hide ();
 				vpane.Remove (pre);
-			}
+			}			
+		}
+		
+		private void ShowBottom (Gtk.Widget widget)
+		{
+			if (widget == null) return;
+
+			HideBottom ();
+
 			vpane.Add2 (widget);
 			widget.Show ();
 			if (vpane.Child1 != null)
 				vpane.Position = vpane.Child1.SizeRequest ().Height;
+
 			UpdateToggles ();
 		}
 		
 		private void ShowTop (Gtk.Widget widget)
 		{
-			Gtk.Widget pre = vpane.Child1;
-			if (pre != null) {
-				pre.Hide ();
-				vpane.Remove (pre);
-			}
+			if (widget == null) return;
+
+			HideTop ();
+
 			vpane.Add1 (widget);
 			widget.Show ();
 			vpane.Position = widget.SizeRequest ().Height;
+
 			UpdateToggles ();
 		}
 		
 		private void ShowFull (Gtk.Widget widget)
 		{
-			Gtk.Widget pre = vpane.Child1;
-			if (pre != null) {
-				pre.Hide ();
-				vpane.Remove (pre);
-			}
-
-			pre = vpane.Child2;
-			if (pre != null) {
-				pre.Hide ();
-				vpane.Remove (pre);
-			}
+			if (widget == null) return;
 			
-			vpane.Add (widget);
-			widget.Show ();
-			vpane.Position = widget.SizeRequest ().Height;
-			UpdateToggles ();
+			HideBottom ();
+			ShowTop (widget);
 		}
 		
 		private void UpdateToggles ()
