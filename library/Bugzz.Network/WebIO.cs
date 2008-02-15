@@ -47,15 +47,15 @@ namespace Bugzz.Network
 			this.loginData = loginData;
 			this.dataManager = dataManager;
 			
-			if (String.IsNullOrEmpty (baseUrl))
-				throw new ArgumentNullException ("Base request URL must be specified.", "baseUrl");
+			if (!String.IsNullOrEmpty (baseUrl)) {
 			
-			try {
-				this.baseUrl = new Uri (baseUrl);
-			} catch (Exception ex) {
-				throw new ArgumentException ("Invalid base URL.", "baseUrl", ex);
+				try {
+					this.baseUrl = new Uri (baseUrl);
+				} catch (Exception ex) {
+					throw new ArgumentException ("Invalid base URL.", "baseUrl", ex);
+				}
 			}
-
+			
 			cookieJar = new CookieManager ();
 		}
 
@@ -95,9 +95,13 @@ namespace Bugzz.Network
 		// times before returning an error.
 		public string GetDocument (string relativeUrl, string expectedContentType, Regex fallbackTypeRegex)
 		{
+			Uri baseUrl = BaseUrl;
+			if (baseUrl == null)
+				return null;
+			
 			Uri fullUrl;
 			
-			UriBuilder ub = new UriBuilder (BaseUrl);
+			UriBuilder ub = new UriBuilder (baseUrl);
 			try {
 				ub.Path = relativeUrl;
 				fullUrl = new Uri (ub.ToString ());
@@ -215,15 +219,21 @@ namespace Bugzz.Network
 			Console.WriteLine ("{0}.MatchingContentType ()", this);
 			Console.WriteLine ("\tcontent type: {0}", contentType);
 			Console.WriteLine ("\texpected: {0}", expectedContentType);
+
+			List <string> typeStrings = dataManager.GetMimeType (expectedContentType);
+			Console.WriteLine ("typeStrings == {0}", typeStrings);
 			
-			if (String.IsNullOrEmpty (contentType) && !String.IsNullOrEmpty (expectedContentType)) {
+			if (String.IsNullOrEmpty (contentType) || typeStrings == null) {
 				if (fallbackTypeRegex == null || response == null)
 					return false;
 				return fallbackTypeRegex.IsMatch (response);
 			}
 
-			if (contentType.StartsWith (expectedContentType))
-				return true;
+			foreach (string type in typeStrings) {
+				Console.WriteLine ("Type: {0}", type);
+				if (contentType.StartsWith (type))
+					return true;
+			}
 			
 			return false;
 		}

@@ -60,8 +60,8 @@ namespace Bugzz.Bugzilla
 		private DataManager dataManager;
 
 		public Bugzilla (LoginData loginData)
+		: this (null, loginData, null)
 		{
-			this.loginData = loginData;
 		}
 
 		public Bugzilla (string baseUrl, LoginData loginData)
@@ -69,11 +69,12 @@ namespace Bugzz.Bugzilla
 		{
 		}
 
-		public Bugzilla (string baseUrl, LoginData loginData, string targetVersion) : this (loginData)
+		public Bugzilla (string baseUrl, LoginData loginData, string targetVersion)
 		{
 			this.targetVersion = targetVersion;
 			this.baseUrl = baseUrl;
 			this.dataManager = new DataManager (targetVersion);
+			this.loginData = loginData;
 			WebIO = new WebIO (baseUrl, loginData, dataManager);
 			
 			Classifications = new HashBag <IInitialValue> ();
@@ -106,9 +107,8 @@ namespace Bugzz.Bugzilla
 			foreach (SGC.KeyValuePair<string, string> vals in q.ExtraData) {
 				q.AddQueryData (vals.Key, vals.Value);
 			}
-
 			
-			string query = WebIO.GetDocument (q.ToString (), "application/rdf+xml", rdfRegexp);
+			string query = WebIO.GetDocument (q.ToString (), "rdf", rdfRegexp);
 			if (String.IsNullOrEmpty (query))
 				throw new BugzillaException ("No valid response retrieved.");
 			
@@ -128,7 +128,7 @@ namespace Bugzz.Bugzilla
 			q.SetUrl (queryUrl);
 			q.AddQueryData ("ctype", "xml");
 
-			string query = WebIO.GetDocument (q.ToString (), "application/xml", xmlRegexp);
+			string query = WebIO.GetDocument (q.ToString (), "xml", xmlRegexp);
 			if (String.IsNullOrEmpty (query))
 				throw new BugzillaException ("No valid response retrieved.");
 			
@@ -147,7 +147,7 @@ namespace Bugzz.Bugzilla
 			if (String.IsNullOrEmpty (queryUrl))
 				throw new BugzillaException ("Cannot retrieve initial data - no URL given.");
 			
-			string query = WebIO.GetDocument (queryUrl, "text/html", htmlRegexp);
+			string query = WebIO.GetDocument (queryUrl, "html", htmlRegexp);
 			if (String.IsNullOrEmpty (query))
 				throw new BugzillaException ("No document returned by server for initial data.");
 			

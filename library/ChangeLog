@@ -1,10 +1,19 @@
+2008-02-15  Marek Habersack  <mhabersack@novell.com>
+
+	* Bugzz.Bugzilla/DataManager.cs: implemented mime type list
+	support.
+
+	* Bugzz.Network/WebIO.cs: content type matching now uses
+	DataManager.GetMimeType to retrieve the list of accepted strings.
+
 2008-02-14  Andreia Gaita <avidigal@novell.com> 
 
 	* Bugzilla.cs: Add non-3.0 stuff so vs2k5 is happy
 	* ResponseParser.cs: Add assigned_to field
 	* WebIO.cs: ignore post response
 	* LoginData.cs: non-3.0 stuff
-	* Query.cs: Add ExtraData field to store mandatory fields that are always sent (coming from a config) 
+	* Query.cs: Add ExtraData field to store mandatory fields that are
+	always sent (coming from a config) 
 
 2008-02-12  Andreia Gaita <avidigal@novell.com>
 	

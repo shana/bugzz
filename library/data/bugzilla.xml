@@ -4,6 +4,22 @@
     <version name="3.0" label="3.0" default="true"/>
   </supportedVersions>
 
+  <mimeTypes>
+    <type name="xml">
+      <string value="application/xml"/>
+      <string value="text/xml"/>
+    </type>
+
+    <type name="rdf">
+      <string value="application/rdf+xml"/>
+      <string value="text/rdf"/>
+    </type>
+
+    <type name="html">
+      <string value="text/html"/>
+    </type>
+  </mimeTypes>
+
   <version value="3.0">
     <urls>
       <url name="initial" value="query.cgi?format=advanced"/>
