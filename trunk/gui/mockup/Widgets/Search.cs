@@ -51,7 +51,7 @@ namespace mockup.Widgets
 		{
 			query.Email = txtEmail.Text;
 			Loader.Load (query);
-			main.ToggleList (query);
+			main.Search (query);
 		}
 	}
 }

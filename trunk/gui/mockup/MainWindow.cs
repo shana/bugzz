@@ -42,6 +42,8 @@ namespace mockup {
 		Settings settings;
 		BugzzManager bugzzManager;
 		
+		bool suspendLayout;
+		
 		public MainWindow (): base (Gtk.WindowType.Toplevel)
 		{
 		
@@ -74,96 +76,91 @@ namespace mockup {
 
 		protected virtual void OnToggleSettings (object sender, System.EventArgs e)
 		{
+			if (suspendLayout) return;
 			if (settingsWidget == null) {
 				settingsWidget = new Widgets.Settings (settings);
 				//vbox1.PackStart (settingsWidget, true, true, 0);
-				vpane.Add (settingsWidget);
+				ShowFull (settingsWidget);
 				
 			} else {			
 				if (settingsWidget.Visible) {
 					settingsWidget.Cancel ();
-					vpane.Remove (settingsWidget);
-					settingsWidget.Hide ();
+					Hide (settingsWidget);
 				} else {
-					vpane.Add (settingsWidget);
-					settingsWidget.Show ();
+					ShowFull (settingsWidget);
 				}
 			}
-			vpane.Position = vpane.Child1.SizeRequest ().Height;
 			ShowAll ();
 		}
 
 		protected virtual void OnToggleSearch (object sender, System.EventArgs e)
 		{
+			if (suspendLayout) return;
 			if (searchWidget == null) {
 				searchWidget = new Widgets.Search (this);
 				//vbox1.PackStart (searchWidget, true, true, 0);
-				vpane.Add (searchWidget);
+				ShowTop (searchWidget);				
 			} else {			
 				if (searchWidget.Visible) {
-					vpane.Remove (searchWidget);
-					searchWidget.Hide ();
+					Hide (searchWidget);
 				} else {
-					vpane.Add (searchWidget);
-					searchWidget.Show ();
+					ShowTop (searchWidget);
 				}
 			}
-			if (vpane.Child1 != null)
-				vpane.Position = vpane.Child1.SizeRequest ().Height;
 			ShowAll ();
 		}
 
 		protected virtual void OnToggleList (object sender, System.EventArgs e)
 		{
-			if (searchWidget == null)
-				return;
-			ToggleList (searchWidget.Query);
+			if (suspendLayout) return;
+			ToggleList ();
 		}
 		
-		public void ToggleList (Query query)
+		public void ToggleList ()
 		{
 			if (bugsWidget == null) {
 				bugsWidget = new Widgets.BugList (bugzzManager);
 				//vbox1.PackStart (bugsWidget, true, true, 0);
-				vpane.Add (bugsWidget);
+				ShowBottom (bugsWidget);
 			} else {						
 				if (bugsWidget.Visible) {
-					vpane.Remove (bugsWidget);
-					bugsWidget.Hide ();
+					Hide (bugsWidget);
 				} else {
-					vpane.Add (bugsWidget);
-					bugsWidget.Show ();
+					ShowBottom (bugsWidget);
 				}
 			}
-			if (vpane.Child1 != null)
-				vpane.Position = vpane.Child1.SizeRequest ().Height;
 			ShowAll ();
+		}
+		
+		public void Search (Query query)
+		{
+			if (!bugsWidget.Visible)
+				ToggleList ();
+			
 			bugsWidget.Load (query);
 		}
 
 		protected virtual void OnToggleDetail (object sender, System.EventArgs e)
 		{
+			if (suspendLayout) return;
 			if (detailWidget == null) {
 				detailWidget = new Widgets.Detail ();
 				//vbox1.PackStart (detailWidget, true, true, 0);
-				vpane.Add (detailWidget);
+				ShowBottom (detailWidget);
 			} else {			
 				if (detailWidget.Visible) {
 					detailWidget.Cancel ();
-					vpane.Remove (detailWidget);
-					detailWidget.Hide ();
+					Hide (detailWidget);
 				} else {
-					vpane.Add (detailWidget);
-					detailWidget.Show ();
+					ShowBottom (detailWidget);				
 				}
 			}
-			if (vpane.Child1 != null)
-				vpane.Position = vpane.Child1.SizeRequest ().Height;
 			ShowAll ();
 		}
 
 		protected virtual void OnToggleOnline (object sender, System.EventArgs e)
 		{
+			if (suspendLayout) return;
 			if (settings.Online) {
 				settings.Online = false;
 				this.actOnline.Label =  Mono.Unix.Catalog.GetString("Offline");
@@ -172,5 +169,70 @@ namespace mockup {
 				this.actOnline.Label = Mono.Unix.Catalog.GetString("Online");
 			}
 		}
+		
+		private void Hide (Gtk.Widget widget)
+		{
+			vpane.Remove (widget);
+			widget.Hide ();
+			UpdateToggles ();
+		}
+		
+		private void ShowBottom (Gtk.Widget widget)
+		{
+			Gtk.Widget pre = vpane.Child2;
+			if (pre != null) {
+				pre.Hide ();
+				vpane.Remove (pre);
+			}
+			vpane.Add2 (widget);
+			widget.Show ();
+			if (vpane.Child1 != null)
+				vpane.Position = vpane.Child1.SizeRequest ().Height;
+			UpdateToggles ();
+		}
+		
+		private void ShowTop (Gtk.Widget widget)
+		{
+			Gtk.Widget pre = vpane.Child1;
+			if (pre != null) {
+				pre.Hide ();
+				vpane.Remove (pre);
+			}
+			vpane.Add1 (widget);
+			widget.Show ();
+			vpane.Position = widget.SizeRequest ().Height;
+			UpdateToggles ();
+		}
+		
+		private void ShowFull (Gtk.Widget widget)
+		{
+			Gtk.Widget pre = vpane.Child1;
+			if (pre != null) {
+				pre.Hide ();
+				vpane.Remove (pre);
+			}
+
+			pre = vpane.Child2;
+			if (pre != null) {
+				pre.Hide ();
+				vpane.Remove (pre);
+			}
+			
+			vpane.Add (widget);
+			widget.Show ();
+			vpane.Position = widget.SizeRequest ().Height;
+			UpdateToggles ();
+		}
+		
+		private void UpdateToggles ()
+		{
+			suspendLayout = true;
+			actBugDetail.Active = detailWidget != null ? detailWidget.Visible : false;
+			actBugList.Active = bugsWidget != null ? bugsWidget.Visible : false;
+			actSearch.Active = searchWidget != null ? searchWidget.Visible : false;
+			actSettings.Active = settingsWidget != null ? settingsWidget.Visible : false;
+			suspendLayout = false;
+		}
+		
 	}
 }
