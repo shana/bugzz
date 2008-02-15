@@ -1,5 +1,11 @@
 2008-02-15  Andreia Gaita <avidigal@novell.com> 
 
+	* hide both top and bottom widgets when moving a specific widget up or down, 
+	since we move it when preparing a replace, so effectively both top and bottom
+	are going to be replaced.
+
+2008-02-15  Andreia Gaita <avidigal@novell.com> 
+
 	* MainWindow.cs: more layouting fun	
 
 2008-02-15  Andreia Gaita <avidigal@novell.com> 
