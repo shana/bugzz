@@ -25,6 +25,7 @@
       <url name="initial" value="query.cgi?format=advanced"/>
       <url name="buglist" value="buglist.cgi" />
       <url name="show_bug" value="show_bug.cgi"/>
+      <url name="enter_bug" value="enter_bug.cgi"/>
     </urls>
 
     <variables>

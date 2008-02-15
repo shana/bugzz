@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 
 using Bugzz;
 using Bugzz.Bugzilla;
+using HtmlAgilityPack;
 
 namespace Bugzz.Network
 {
@@ -111,7 +112,7 @@ namespace Bugzz.Network
 
 			string response;
 			Uri redirect;
-			bool addressesMatch;
+			bool addressesMatch, standardLogin;
 			long attempts = MaxRequestAttempts;
 			long loginAttempts = MaxLoginAttempts;
 			HttpStatusCode status = HttpStatusCode.BadRequest;
@@ -121,7 +122,8 @@ namespace Bugzz.Network
 
 			while (attempts > 0) {
 				try {
-					status = Get (fullUrl, expectedContentType, fallbackTypeRegex, out response, out addressesMatch, out redirect, false);
+					status = Get (fullUrl, expectedContentType, fallbackTypeRegex, out response, out addressesMatch,
+						      out standardLogin, out redirect, false);
 
 					if (status != HttpStatusCode.OK) {
 						attempts--;
@@ -147,6 +149,9 @@ namespace Bugzz.Network
 							LogIn (uri);
 							continue;
 						}
+					} else if (standardLogin) {
+						Console.WriteLine ("Standard login found. Will POST to '{0}'", redirect.ToString ());
+						LogIn (new UriBuilder (redirect));
 					} else
 						loggedIn = true;
 					
@@ -237,9 +242,82 @@ namespace Bugzz.Network
 			
 			return false;
 		}
+
+		bool HasLoginForm (HttpWebRequest request, string response, out Uri action)
+		{
+			if (String.IsNullOrEmpty (response)) {
+				action = null;
+				return false;
+			}
+			
+			HtmlDocument doc = new HtmlDocument ();
+			try {
+				doc.LoadHtml (response);
+			} catch {
+				// failed, not html - no form
+				action = null;
+				return false;
+			}
+
+			HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes ("//form[string-length (@name) > 0 and string-length (@action) > 0]");
+			if (nodes == null || nodes.Count == 0) {
+				action = null;
+				return false;
+			}
+			
+			VersionData bvd = dataManager.VersionData;
+			string usernameField = bvd.GetLoginVariable ("bugzilla_login");
+			if (String.IsNullOrEmpty (usernameField))
+					throw new BugzillaException ("Missing bugzilla login form field name 'bugzilla_login'");
+			
+			string passwordField = bvd.GetLoginVariable ("bugzilla_password");
+			if (String.IsNullOrEmpty (passwordField))
+					throw new BugzillaException ("Missing bugzilla login form field name 'bugzilla_password'.");
+
+			HtmlAttributeCollection attributes;
+			foreach (HtmlNode node in nodes) {
+				attributes = node.Attributes;
+				if (attributes ["name"].Value != "login")
+					continue;
+
+				string actionValue = attributes ["action"].Value;
+				Uri actionUri = new Uri (actionValue, UriKind.RelativeOrAbsolute);
+				if (actionUri.IsAbsoluteUri) {
+					action = actionUri;
+					return true;
+				}				
+
+				UriBuilder ub = new UriBuilder (request.Address);
+				ub.Query = null;
+				ub.Fragment = null;
+				
+				string path = ub.Path;
+				int idx;
+				if (!path.EndsWith ("/")) {
+					idx = path.LastIndexOf ("/");
+					if (idx > -1)
+						path = path.Substring (0, idx + 1);
+					else
+						path += "/";
+				}
+				
+				idx = actionValue.IndexOf ("?");
+				if (idx > -1)
+					path += actionValue.Substring (0, idx + 1);
+				else
+					path += actionValue;
+				
+				ub.Path = path;
+				action = ub.Uri;
+				return true;
+			}
+
+			action = null;
+			return false;
+		}
 		
 		private HttpStatusCode Get (Uri uri, string expectedContentType, Regex fallbackTypeRegex,
-					    out string response, out bool addressesMatch, out Uri redirectAddress, bool ignoreResponse)
+					    out string response, out bool addressesMatch, out bool standardLogin, out Uri redirectAddress, bool ignoreResponse)
 		{
 			long contentLength = -1;
 
@@ -252,11 +330,12 @@ namespace Bugzz.Network
 			request.CookieContainer = cookieJar;
 
 			response = null;
+			standardLogin = false;
 			
 			try {
 				resp = request.GetResponse () as HttpWebResponse;
 				statusCode = resp.StatusCode;
-
+				
 				Console.WriteLine ("GET: content type == '" + resp.ContentType + "'");
 				addressesMatch = (request.Address == uri);
 				Console.WriteLine ("GET:addressesMatch = " + addressesMatch); 
@@ -342,7 +421,10 @@ namespace Bugzz.Network
 			} finally {
 				cookieJar.Save ();
 				if (resp != null) {
-					if (!MatchingContentType (resp.ContentType, response, expectedContentType, fallbackTypeRegex))
+					if (HasLoginForm (request, response, out redirectAddress)) {
+						standardLogin = true;
+						response = null;
+					} else if (!MatchingContentType (resp.ContentType, response, expectedContentType, fallbackTypeRegex))
 						response = null;
 					
 					resp.Close ();
