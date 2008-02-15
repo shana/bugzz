@@ -137,9 +137,8 @@ namespace Bugzz
 
 			StringBuilder ret = new StringBuilder ((queryPath ?? String.Empty) + "?");
 			
+			bool first = true;
 			if (data != null) {
-				bool first = true;
-				
 				foreach (QueryDataItem qdi in data.Values) {
 					if (!first)
 						ret.Append ("&");
@@ -148,6 +147,17 @@ namespace Bugzz
 					
 					ret.Append (qdi.ToString ());
 				}
+			}
+			
+			// data on ExtraData is client-configured, fixed, and not to be repeated,
+			// so we don't want to add it to the QueryData
+			foreach (KeyValuePair<string, string> vals in ExtraData) {
+				if (!first)
+					ret.Append ("&");
+				else
+					first = false;
+				
+				ret.Append (vals.Key + "=" + vals.Value);
 			}
 
 			return ret.ToString ();

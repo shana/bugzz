@@ -104,9 +104,6 @@ namespace Bugzz.Bugzilla
 
 			q.SetUrl (queryUrl);
 			q.AddQueryData ("ctype", "rdf");
-			foreach (SGC.KeyValuePair<string, string> vals in q.ExtraData) {
-				q.AddQueryData (vals.Key, vals.Value);
-			}
 			
 			string query = WebIO.GetDocument (q.ToString (), "rdf", rdfRegexp);
 			if (String.IsNullOrEmpty (query))

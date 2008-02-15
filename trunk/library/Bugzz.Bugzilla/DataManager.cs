@@ -32,7 +32,7 @@ namespace Bugzz.Bugzilla
 		string targetVersion;
 		public DataManager (string targetVersion)
 		{
-			targetVersion = targetVersion;
+			this.targetVersion = targetVersion;
 		}
 
 		public List <string> GetMimeType (string name)
