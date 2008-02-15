@@ -1,1 +1,18 @@
-<root>  <Settings>    <Url>https://bugzilla.novell.com</Url>    <Online>True</Online>  </Settings>  <LoginData>    <Url>https://bugzilla.novell.com/ICSLogin/</Url>    <UsernameField>username</UsernameField>    <PasswordField>password</PasswordField>    <Username></Username>    <Password></Password>    <FormActionUrl>auth-up</FormActionUrl>    <ExtraData>proxypath=reverse&amp;context=default&amp;url=https://bugzilla.novell.com/ichainlogin.cgi?target=query.cgi?format%3Dadvanced%26field0-0-0%3Dxyzzy%26GoAheadAndLogIn%3D1</ExtraData>  </LoginData>  <Query>    <ExtraData>GoAheadAndLogIn=1</ExtraData>  </Query></root>
+<root>
+  <Settings>
+    <Url>https://bugzilla.novell.com</Url>
+    <Online>True</Online>
+  </Settings>
+  <LoginData>
+    <Url>https://bugzilla.novell.com/ICSLogin/</Url>
+    <UsernameField>username</UsernameField>
+    <PasswordField>password</PasswordField>
+    <Username></Username>
+    <Password></Password>
+    <FormActionUrl>auth-up</FormActionUrl>
+    <ExtraData>proxypath=reverse&amp;context=default&amp;url=https://bugzilla.novell.com/ichainlogin.cgi?target=query.cgi?format%3Dadvanced%26field0-0-0%3Dxyzzy%26GoAheadAndLogIn%3D1</ExtraData>
+  </LoginData>
+  <Query>
+    <ExtraData>GoAheadAndLogIn=1</ExtraData>
+  </Query>
+</root>
