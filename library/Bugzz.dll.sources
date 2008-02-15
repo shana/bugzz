@@ -24,6 +24,12 @@ Bugzz.Bugzilla/Data.cs
 Bugzz.Bugzilla/DataManager.cs
 Bugzz.Bugzilla/FoundInVersion.cs
 Bugzz.Bugzilla/ResponseParser.cs
+Bugzz.Bugzilla/Status.cs
+Bugzz.Bugzilla/Resolution.cs
+Bugzz.Bugzilla/Severity.cs
+Bugzz.Bugzilla/Priority.cs
+Bugzz.Bugzilla/Hardware.cs
+Bugzz.Bugzilla/OS.cs
 Bugzz/BugzzException.cs
 Bugzz/Bug.cs
 Bugzz/Query.cs

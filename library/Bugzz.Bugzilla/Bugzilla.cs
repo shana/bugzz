@@ -23,17 +23,29 @@ namespace Bugzz.Bugzilla
 		Regex htmlRegexp = new Regex ("<html(.|\\n)*>", RegexOptions.Compiled);
 		
 #if FALLBACK
-		public HashBag<IInitialValue> Classifications;
-		public HashBag<IInitialValue> Products;
-		public HashBag<IInitialValue> Components;
-		public HashBag<IInitialValue> FoundInVersion;
-		public HashBag<IInitialValue> FixedInMilestone;
+		public HashBag <IInitialValue> Classifications;
+		public HashBag <IInitialValue> Products;
+		public HashBag <IInitialValue> Components;
+		public HashBag <IInitialValue> FoundInVersion;
+		public HashBag <IInitialValue> FixedInMilestone;
+		public HashBag <IInitialValue> Status;
+		public HashBag <IInitialValue> Resolution;
+		public HashBag <IInitialValue> Severity;
+		public HashBag <IInitialValue> Priority;
+		public HashBag <IInitialValue> Hardware;
+		public HashBag <IInitialValue> OS;
 #else
 		public HashBag <IInitialValue> Classifications { get; private set; }
 		public HashBag <IInitialValue> Products {get; private set; }
 		public HashBag <IInitialValue> Components {get; private set; }
 		public HashBag <IInitialValue> FoundInVersion {get; private set; }
-		public HashBag <IInitialValue> FixedInMilestone { get; private set; }		
+		public HashBag <IInitialValue> FixedInMilestone { get; private set; }
+		public HashBag <IInitialValue> Status { get; private set; }
+		public HashBag <IInitialValue> Resolution { get; private set; }
+		public HashBag <IInitialValue> Severity { get; private set; }
+		public HashBag <IInitialValue> Priority { get; private set; }
+		public HashBag <IInitialValue> Hardware { get; private set; }
+		public HashBag <IInitialValue> OS { get; private set; }
 #endif
 		string baseUrl;
 		public string BaseUrl
@@ -82,6 +94,12 @@ namespace Bugzz.Bugzilla
 			Components = new HashBag <IInitialValue> ();
 			FoundInVersion = new HashBag <IInitialValue> ();
 			FixedInMilestone = new HashBag <IInitialValue> ();
+			Status = new HashBag <IInitialValue> ();
+			Resolution = new HashBag <IInitialValue> ();
+			Severity = new HashBag <IInitialValue> ();
+			Priority = new HashBag <IInitialValue> ();
+			Hardware = new HashBag <IInitialValue> ();
+			OS = new HashBag <IInitialValue> ();
 		}
 
 		public void Refresh ()
@@ -197,6 +215,30 @@ namespace Bugzz.Bugzilla
 
 				case "target_milestone":
 					StoreValues <FixedInMilestone> (FixedInMilestone, nodes);
+					break;
+
+				case "bug_status":
+					StoreValues <Status> (Status, nodes);
+					break;
+
+				case "resolution":
+					StoreValues <Resolution> (Resolution, nodes);
+					break;
+
+				case "bug_severity":
+					StoreValues <Severity> (Severity, nodes);
+					break;
+
+				case "priority":
+					StoreValues <Priority> (Priority, nodes);
+					break;
+
+				case "rep_platform":
+					StoreValues <Hardware> (Hardware, nodes);
+					break;
+
+				case "op_sys":
+					StoreValues <OS> (OS, nodes);
 					break;
 			}
 		}
