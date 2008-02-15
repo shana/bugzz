@@ -1,3 +1,12 @@
+2008-02-15  Andreia Gaita <avidigal@novell.com> 
+
+	* Query.cs, Bugzilla.cs: ExtraData is for fixed data coming directly from a config,
+	like a parameter that needs to be included in any query always. So,
+	it doesn't need to be repeated and is not included in the standard 
+	query data, so output it directly on tostring instead of adding it to
+	the query data
+	* DataManager.cs: csc complains that the attribution is bogus, so add "this".
+
 2008-02-15  Marek Habersack  <mhabersack@novell.com>
 
 	* Bugzz.Bugzilla/DataManager.cs: implemented mime type list
