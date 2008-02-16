@@ -135,9 +135,47 @@ namespace Bugzz.Bugzilla
 			LoadInitialData ();
 		}
 
-		public SGC.List <Bug> Search (Query q)
+		public Bug CreateBug (Query q)
 		{
-			return null;
+			VersionData bvd = dataManager.VersionData;
+			string queryUrl = bvd.GetUrl ("post_bug");
+
+			if (String.IsNullOrEmpty (queryUrl))
+				throw new BugzillaException ("Cannot create bug - no URL given.");
+
+			string formName = bvd.GetFormName ("changeform");
+			if (String.IsNullOrEmpty (formName))
+				throw new BugzillaException ("Cannot create bug - no form name given.");
+			
+			q.SetUrl (queryUrl);
+
+			string response = WebIO.PostDocument (q.ToString (), "html", htmlRegexp);
+			if (String.IsNullOrEmpty (response))
+				throw new BugzillaException ("Bug not created.");
+
+			HtmlDocument doc = new HtmlDocument ();
+
+			try {
+				doc.LoadHtml (response);
+			} catch (Exception ex) {
+				throw new BugzillaException ("Failed to parse the response document.", ex);
+			}
+			
+			HtmlNode node = doc.DocumentNode.SelectSingleNode ("//form[@name='" + formName + "']");
+			HtmlNode id;
+			
+			if (node != null)
+				id = node.SelectSingleNode ("//input[@type='hidden' and @name='id' and string-length (@value) > 0]");
+			else
+				id = null;
+
+			if (id == null)
+				throw new BugzillaException ("Unable to determine created bug number - no form found.");
+
+			Bug ret = new Bug ();
+			ret.ID = id.Attributes ["value"].Value;
+
+			return ret;
 		}
 		
 		public SGC.Dictionary <string, Bug> GetBugList (Query q)

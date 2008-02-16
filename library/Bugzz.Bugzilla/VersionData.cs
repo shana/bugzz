@@ -37,6 +37,7 @@ namespace Bugzz.Bugzilla
 		Dictionary <string, string> initialVariables;
 		Dictionary <string, string> searchVariables;
 		Dictionary <string, string> loginVariables;
+		Dictionary <string, string> formNames;
 		
 		private string version;
 		public string Version {
@@ -50,6 +51,7 @@ namespace Bugzz.Bugzilla
 			initialVariables = new Dictionary <string, string> ();
 			searchVariables = new Dictionary <string, string> ();
 			loginVariables = new Dictionary <string, string> ();
+			formNames = new Dictionary <string, string> ();
 			
 			Version = version;
 		}
@@ -88,6 +90,11 @@ namespace Bugzz.Bugzilla
 		{
 			AddVariable (loginVariables, name, value);
 		}
+
+		public void AddFormName (string name, string value)
+		{
+			AddVariable (formNames, name, value);
+		}
 		
 		public string GetUrl (string name)
 		{
@@ -124,6 +131,11 @@ namespace Bugzz.Bugzilla
 		public string GetLoginVariable (string name) 
 		{
 			return GetVariable (loginVariables, name);
+		}
+
+		public string GetFormName (string name)
+		{
+			return GetVariable (formNames, name);
 		}
 		
 		// Checks if we're interested for a variable with a web name 'name' and returns the
