@@ -171,12 +171,23 @@ namespace Bugzz.Bugzilla
 
 				bvd.AddLoginVariable (name.Value, value.Value);
 			}
+
+			nodes = versionNode.SelectNodes ("./formNames/form[string-length (@name) > 0 and string-length (@value) > 0]");
+			if (nodes == null || nodes.Count == 0)
+				throw new BugzillaException ("No form names defined for version.");
+
+			foreach (XmlNode node in nodes) {
+				attrs = node.Attributes;
+				name = attrs ["name"];
+				value = attrs ["value"];
+
+				bvd.AddFormName (name.Value, value.Value);
+			}
 			
 			name = versionNode.Attributes["default"];
 			bool isDefault = name != null ? name.Value == "true" : false;
 			bugzillaData.AddVersionData (version, bvd, isDefault);
 		}
-
 
 		private void LoadDataFile (string dataFile)
 		{

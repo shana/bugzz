@@ -158,24 +158,41 @@ namespace Bugzz
 				}
 			}
 		}
+
+		public string ToPostData ()
+		{
+			return ToPostData (null);
+		}
+		
+		public string ToPostData (StringBuilder sb)
+		{
+			Dictionary <string, QueryDataItem> data = QueryData;
+			
+			if (sb == null)
+				sb = new StringBuilder ();
+			
+			bool first = true;
+			if (data != null) {
+				foreach (QueryDataItem qdi in data.Values) {
+					if (!first)
+						sb.Append ("&");
+					else
+						first = false;
+					
+					sb.Append (qdi.ToString ());
+				}
+			}
+
+			return sb.ToString ();
+		}
 		
 		public override string ToString ()
 		{
 			Dictionary <string, QueryDataItem> data = QueryData;
 
 			StringBuilder ret = new StringBuilder ((queryPath ?? String.Empty) + "?");
-			
-			bool first = true;
-			if (data != null) {
-				foreach (QueryDataItem qdi in data.Values) {
-					if (!first)
-						ret.Append ("&");
-					else
-						first = false;
-					
-					ret.Append (qdi.ToString ());
-				}
-			}
+			string postData = ToPostData (ret);
+			bool first = String.IsNullOrEmpty (postData);
 			
 			// data on ExtraData is client-configured, fixed, and not to be repeated,
 			// so we don't want to add it to the QueryData

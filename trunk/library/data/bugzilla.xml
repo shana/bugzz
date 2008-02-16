@@ -25,8 +25,13 @@
       <url name="initial" value="query.cgi?format=advanced"/>
       <url name="buglist" value="buglist.cgi" />
       <url name="show_bug" value="show_bug.cgi"/>
-      <url name="enter_bug" value="enter_bug.cgi"/>
+      <url name="post_bug" value="post_bug.cgi"/>
     </urls>
+
+    <formNames>
+      <form name="changeform" value="changeform"/>
+      <form name="login" value="login"/>
+    </formNames>
 
     <variables>
       <initial>

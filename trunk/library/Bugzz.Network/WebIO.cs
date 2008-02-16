@@ -120,8 +120,11 @@ namespace Bugzz.Network
 			DownloadProgress (new DownloadProgressEventArgs (maxCount, curCount));
 		}
 		
-		// TODO: this method should retry to retrieve the document a configurable amount of
-		// times before returning an error.
+		public string PostDocument (string relativeUrl, string expectedResponseType, Regex fallbackTypeRegex)
+		{
+			return null;
+		}
+		
 		public string GetDocument (string relativeUrl, string expectedContentType, Regex fallbackTypeRegex)
 		{
 			Uri baseUrl = BaseUrl;
@@ -129,8 +132,8 @@ namespace Bugzz.Network
 				return null;
 			
 			Uri fullUrl;
-			
 			UriBuilder ub = new UriBuilder (baseUrl);
+			
 			try {
 				ub.Path = relativeUrl;
 				fullUrl = new Uri (ub.ToString ());
@@ -164,9 +167,10 @@ namespace Bugzz.Network
 						
 						loggedIn = false;
 						Uri loginAddress = loginData.Url;
-
+						Console.WriteLine ("loginAddress == {0}", loginAddress);
+						
 						loginAttempts--;
-						if (loginAddress.Scheme == redirect.Scheme &&
+						if (redirect != null && loginAddress.Scheme == redirect.Scheme &&
 						    loginAddress.Host == redirect.Host &&
 						    loginAddress.AbsolutePath == redirect.AbsolutePath) {
 							UriBuilder uri = new UriBuilder ();
@@ -185,7 +189,7 @@ namespace Bugzz.Network
 					
 					if (!loggedIn)
 						if (loginAttempts <= 0)
-							throw new WebIOException ("Login failure.", redirect.ToString ());
+							throw new WebIOException ("Login failure.", redirect != null ? redirect.ToString () : String.Empty);
 						else {
 							loginAttempts--;
 							continue;
@@ -449,9 +453,12 @@ namespace Bugzz.Network
 			} finally {
 				cookieJar.Save ();
 				if (resp != null) {
-					if (HasLoginForm (request, response, out redirectAddress)) {
+					Uri loginFormRedirect;
+					
+					if (HasLoginForm (request, response, out loginFormRedirect)) {
 						standardLogin = true;
 						response = null;
+						redirectAddress = loginFormRedirect;
 					} else if (!MatchingContentType (resp.ContentType, response, expectedContentType, fallbackTypeRegex))
 						response = null;
 					
@@ -478,9 +485,9 @@ namespace Bugzz.Network
 			
 			HttpWebResponse resp = null;			
 			try {
-				Stream s = request.GetRequestStream ();
-				s.Write (data, 0, data.Length);
-				s.Close ();
+				using (Stream s = request.GetRequestStream ()) {
+					s.Write (data, 0, data.Length);
+				}
 
 				resp = request.GetResponse () as HttpWebResponse;
 				statusCode = resp.StatusCode;
